@@ -1,0 +1,746 @@
+schema_version: 1
+contract_id: or-output-v1
+status: ACCEPTED
+task_id: PH0-T04
+
+contracts:
+  input: or-input-v1
+  mathematical_model: cargo-recovery-math-v1
+  solver_execution: highs-execution-v1
+  validator: plan-validator-v1
+  cost_policy: cost-policy-try-v1
+
+serialization:
+  format: JSON
+  encoding: UTF-8
+  newline: LF
+  key_order: LEXICOGRAPHIC
+  decision_order: shipment_id_ASC
+  flight_load_order: flight_id_ASC
+  violation_order:
+    - code_ASC
+    - entity_type_ASC
+    - entity_id_ASC
+    - field_ASC
+  unknown_field_action: REJECT
+  hash_algorithm: SHA-256
+
+units:
+  currency: TRY
+  authoritative_cost_unit: kurus
+  cost_type: integer
+  weight: kg_decimal_scale_1
+  volume: m3_decimal_scale_3
+  time: UTC_ISO8601_Z
+
+enums:
+  strategy:
+    - GREEDY_BASELINE
+    - RISK_BLIND_MILP
+    - ML_INFORMED_MILP
+  assignment_state:
+    - ASSIGNED
+    - UNASSIGNED
+  solver_status:
+    - OPTIMAL
+    - FEASIBLE_TIMEOUT
+    - INFEASIBLE
+    - NO_SOLUTION_TIMEOUT
+    - ERROR
+  greedy_status:
+    - HEURISTIC_FEASIBLE
+    - ERROR
+  tie_break_status:
+    - COMPLETED
+    - INCOMPLETE_TIMEOUT
+    - NOT_RUN_NO_TIME
+    - NOT_RUN_PRIMARY_NOT_OPTIMAL
+    - NOT_APPLICABLE_NO_PLAN
+    - ERROR
+  validation_status:
+    - VALID
+    - INVALID
+    - NOT_APPLICABLE_NO_PLAN
+    - ERROR
+  check_status:
+    - PASSED
+    - FAILED
+    - SKIPPED_DEPENDENCY
+
+solver_status_semantics:
+  OPTIMAL:
+    requires_incumbent: true
+    requires_native_optimal_termination: true
+    maximum_relative_gap: 0.001
+    plan_emitted: true
+  FEASIBLE_TIMEOUT:
+    requires_incumbent: true
+    requires_time_limit_termination: true
+    plan_emitted: true
+  INFEASIBLE:
+    requires_incumbent: false
+    requires_native_infeasible_termination: true
+    plan_emitted: false
+  NO_SOLUTION_TIMEOUT:
+    requires_incumbent: false
+    requires_time_limit_termination: true
+    plan_emitted: false
+  ERROR:
+    plan_emitted: false
+
+plan_artifact:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - plan_id
+    - content_sha256
+    - created_at_utc
+    - case_id
+    - input_snapshot_id
+    - input_sha256
+    - strategy
+    - planner_execution_id
+    - execution_status
+    - model_manifest_sha256
+    - eligibility_matrix_sha256
+    - cost_matrix_sha256
+    - currency
+    - cost_basis
+    - decisions
+    - flight_loads
+    - cost_summary
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    plan_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    content_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    created_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+      excluded_from_content_hash: true
+    case_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_snapshot_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    strategy:
+      type: enum
+      values_from: enums.strategy
+    planner_execution_id:
+      type: string
+      min_length: 1
+    execution_status:
+      type: conditional_enum
+      GREEDY_BASELINE: HEURISTIC_FEASIBLE
+      RISK_BLIND_MILP:
+        - OPTIMAL
+        - FEASIBLE_TIMEOUT
+      ML_INFORMED_MILP:
+        - OPTIMAL
+        - FEASIBLE_TIMEOUT
+    model_manifest_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    eligibility_matrix_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    cost_matrix_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    currency:
+      type: string
+      const: TRY
+    cost_basis:
+      type: string
+      const: SYNTHETIC_NOMINAL_2024
+    decisions:
+      type: array
+      minimum_items: 50
+      maximum_items: 500
+      items_ref: entities.decision
+    flight_loads:
+      type: array
+      minimum_items: 2
+      maximum_items: 30
+      items_ref: entities.flight_load
+    cost_summary:
+      ref: entities.cost_summary
+
+solver_execution_artifact:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - solver_execution_id
+    - content_sha256
+    - case_id
+    - input_snapshot_id
+    - input_sha256
+    - strategy
+    - model_contract_id
+    - model_manifest_sha256
+    - eligibility_matrix_sha256
+    - cost_matrix_sha256
+    - solver_name
+    - solver_version
+    - adapter_version
+    - logical_options
+    - started_at_utc
+    - finished_at_utc
+    - solver_runtime_seconds
+    - native_model_status
+    - native_solver_status
+    - native_termination_condition
+    - status
+    - has_incumbent
+    - plan_emitted
+    - primal_bound_kurus
+    - dual_bound_kurus
+    - native_relative_gap
+    - recomputed_relative_gap
+    - primary_objective_kurus
+    - tie_break_status
+    - deterministic_environment_sha256
+    - solver_log_sha256
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    solver_execution_id:
+      type: string
+      min_length: 1
+    content_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    case_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_snapshot_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    strategy:
+      type: enum
+      allowed:
+        - RISK_BLIND_MILP
+        - ML_INFORMED_MILP
+    model_contract_id:
+      type: string
+      const: cargo-recovery-math-v1
+    model_manifest_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    eligibility_matrix_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    cost_matrix_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    solver_name:
+      type: string
+      const: HiGHS
+    solver_version:
+      type: string
+      min_length: 1
+    adapter_version:
+      type: string
+      min_length: 1
+    logical_options:
+      ref: entities.logical_solver_options
+    started_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    finished_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    solver_runtime_seconds:
+      type: decimal
+      minimum: 0
+      maximum_with_clock_tolerance: 60.5
+    native_model_status:
+      type: string
+      min_length: 1
+    native_solver_status:
+      type: string
+      min_length: 1
+    native_termination_condition:
+      type: string
+      min_length: 1
+    status:
+      type: enum
+      values_from: enums.solver_status
+    has_incumbent:
+      type: boolean
+    plan_emitted:
+      type: boolean
+      invariant: equals_solver_status_semantics
+    primal_bound_kurus:
+      type: nullable_integer
+      required_non_null_for_status:
+        - OPTIMAL
+        - FEASIBLE_TIMEOUT
+    dual_bound_kurus:
+      type: nullable_integer
+      required_non_null_for_status:
+        - OPTIMAL
+    native_relative_gap:
+      type: nullable_decimal
+      minimum: 0
+    recomputed_relative_gap:
+      type: nullable_decimal
+      minimum: 0
+      required_non_null_for_status:
+        - OPTIMAL
+    primary_objective_kurus:
+      type: nullable_integer
+      required_non_null_for_status:
+        - OPTIMAL
+        - FEASIBLE_TIMEOUT
+    tie_break_status:
+      type: enum
+      values_from: enums.tie_break_status
+    deterministic_environment_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    solver_log_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+
+greedy_execution_artifact:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - greedy_execution_id
+    - content_sha256
+    - case_id
+    - input_snapshot_id
+    - input_sha256
+    - strategy
+    - status
+    - plan_emitted
+    - greedy_contract_id
+    - greedy_trace_sha256
+    - started_at_utc
+    - finished_at_utc
+    - runtime_seconds
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    greedy_execution_id:
+      type: string
+      min_length: 1
+    content_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    case_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_snapshot_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    strategy:
+      type: string
+      const: GREEDY_BASELINE
+    status:
+      type: enum
+      values_from: enums.greedy_status
+    plan_emitted:
+      type: boolean
+      true_requires_status: HEURISTIC_FEASIBLE
+    greedy_contract_id:
+      type: string
+      const: cargo-recovery-math-v1
+    greedy_trace_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    started_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    finished_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    runtime_seconds:
+      type: decimal
+      minimum: 0
+
+validation_report_artifact:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - validation_report_id
+    - content_sha256
+    - validator_contract_id
+    - validator_version
+    - validator_code_sha
+    - input_snapshot_id
+    - input_sha256
+    - plan_id
+    - plan_sha256
+    - planner_execution_id
+    - strategy
+    - status
+    - started_at_utc
+    - finished_at_utc
+    - runtime_seconds
+    - checks_total
+    - checks_passed
+    - checks_failed
+    - checks_skipped
+    - violations
+    - recomputed_decision_counts
+    - recomputed_cost_summary
+    - publishable
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    validation_report_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    content_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    validator_contract_id:
+      type: string
+      const: plan-validator-v1
+    validator_version:
+      type: string
+      min_length: 1
+    validator_code_sha:
+      type: string
+      pattern: "^[a-f0-9]{40,64}$"
+    input_snapshot_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    input_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    plan_id:
+      type: nullable_string
+      required_non_null_unless_status: NOT_APPLICABLE_NO_PLAN
+    plan_sha256:
+      type: nullable_string
+      pattern_when_non_null: "^[a-f0-9]{64}$"
+      required_non_null_unless_status: NOT_APPLICABLE_NO_PLAN
+    planner_execution_id:
+      type: string
+      min_length: 1
+    strategy:
+      type: enum
+      values_from: enums.strategy
+    status:
+      type: enum
+      values_from: enums.validation_status
+    started_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    finished_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    runtime_seconds:
+      type: decimal
+      minimum: 0
+    checks_total:
+      type: integer
+      minimum: 0
+    checks_passed:
+      type: integer
+      minimum: 0
+    checks_failed:
+      type: integer
+      minimum: 0
+    checks_skipped:
+      type: integer
+      minimum: 0
+    violations:
+      type: array
+      items_ref: entities.violation
+    recomputed_decision_counts:
+      nullable_ref: entities.decision_counts
+      required_non_null_unless_status: NOT_APPLICABLE_NO_PLAN
+    recomputed_cost_summary:
+      nullable_ref: entities.cost_summary
+      required_non_null_unless_status: NOT_APPLICABLE_NO_PLAN
+    publishable:
+      type: boolean
+      true_requires_status: VALID
+
+entities:
+  decision:
+    type: object
+    additional_properties: false
+    key: shipment_id
+    required:
+      - shipment_id
+      - assignment_state
+      - flight_id
+      - cargo_type
+      - weight_kg
+      - volume_m3
+      - cost_components
+    fields:
+      shipment_id:
+        type: string
+        min_length: 1
+      assignment_state:
+        type: enum
+        values_from: enums.assignment_state
+      flight_id:
+        type: nullable_string
+        ASSIGNED_requires_non_null: true
+        UNASSIGNED_requires_null: true
+      cargo_type:
+        type: enum
+        allowed:
+          - STANDARD
+          - EXPRESS
+          - PHARMA
+      weight_kg:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 1
+      volume_m3:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 3
+      cost_components:
+        ref: entities.cost_components
+
+  cost_components:
+    type: object
+    additional_properties: false
+    required:
+      - handling_cost_kurus
+      - delay_cost_kurus
+      - expected_disruption_cost_kurus
+      - unassigned_penalty_kurus
+      - total_cost_kurus
+    fields:
+      handling_cost_kurus:
+        type: integer
+        minimum: 0
+      delay_cost_kurus:
+        type: integer
+        minimum: 0
+      expected_disruption_cost_kurus:
+        type: integer
+        minimum: 0
+      unassigned_penalty_kurus:
+        type: integer
+        minimum: 0
+      total_cost_kurus:
+        type: integer
+        minimum: 0
+        invariant: equals_component_sum
+
+  flight_load:
+    type: object
+    additional_properties: false
+    key: flight_id
+    required:
+      - flight_id
+      - assigned_shipment_count
+      - used_weight_kg
+      - capacity_weight_kg
+      - used_volume_m3
+      - capacity_volume_m3
+    fields:
+      flight_id:
+        type: string
+        min_length: 1
+      assigned_shipment_count:
+        type: integer
+        minimum: 0
+      used_weight_kg:
+        type: decimal
+        minimum: 0
+        scale: 1
+      capacity_weight_kg:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 1
+      used_volume_m3:
+        type: decimal
+        minimum: 0
+        scale: 3
+      capacity_volume_m3:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 3
+
+  cost_summary:
+    type: object
+    additional_properties: false
+    required:
+      - handling_cost_kurus
+      - delay_cost_kurus
+      - expected_disruption_cost_kurus
+      - unassigned_penalty_kurus
+      - total_cost_kurus
+    fields:
+      handling_cost_kurus:
+        type: integer
+        minimum: 0
+      delay_cost_kurus:
+        type: integer
+        minimum: 0
+      expected_disruption_cost_kurus:
+        type: integer
+        minimum: 0
+      unassigned_penalty_kurus:
+        type: integer
+        minimum: 0
+      total_cost_kurus:
+        type: integer
+        minimum: 0
+        invariant: equals_component_sum_and_decision_sum
+
+  logical_solver_options:
+    type: object
+    additional_properties: false
+    required:
+      - time_limit_seconds
+      - mip_rel_gap
+      - threads
+      - random_seed
+      - presolve
+      - warm_start
+    fields:
+      time_limit_seconds:
+        type: decimal
+        const: 60.0
+      mip_rel_gap:
+        type: decimal
+        const: 0.001
+      threads:
+        type: integer
+        const: 1
+      random_seed:
+        type: integer
+        const: 20240831
+      presolve:
+        type: string
+        const: "on"
+      warm_start:
+        type: boolean
+        const: false
+
+  violation:
+    type: object
+    additional_properties: false
+    required:
+      - code
+      - entity_type
+      - entity_id
+      - field
+      - expected
+      - actual
+      - message
+    fields:
+      code:
+        type: enum
+        values_from: violation_reason_codes
+      entity_type:
+        type: string
+        min_length: 1
+      entity_id:
+        type: nullable_string
+      field:
+        type: nullable_string
+      expected:
+        type: safe_scalar_or_null
+      actual:
+        type: safe_scalar_or_null
+      message:
+        type: string
+        min_length: 1
+
+  decision_counts:
+    type: object
+    additional_properties: false
+    required:
+      - shipment_count
+      - assigned_count
+      - unassigned_count
+    fields:
+      shipment_count:
+        type: integer
+        minimum: 0
+      assigned_count:
+        type: integer
+        minimum: 0
+      unassigned_count:
+        type: integer
+        minimum: 0
+    invariants:
+      - shipment_count_equals_assigned_plus_unassigned
+
+violation_reason_codes:
+  - INPUT_SCHEMA_MISMATCH
+  - OUTPUT_SCHEMA_MISMATCH
+  - CONTRACT_VERSION_MISMATCH
+  - INPUT_HASH_MISMATCH
+  - PLAN_HASH_MISMATCH
+  - MODEL_HASH_MISMATCH
+  - ELIGIBILITY_HASH_MISMATCH
+  - COST_MATRIX_HASH_MISMATCH
+  - UNKNOWN_SHIPMENT
+  - UNKNOWN_FLIGHT
+  - DUPLICATE_SHIPMENT_DECISION
+  - MISSING_SHIPMENT_DECISION
+  - INVALID_ASSIGNMENT_STATE
+  - INVALID_FLIGHT_NULLABILITY
+  - INELIGIBLE_ASSIGNMENT
+  - TIME_WINDOW_VIOLATION
+  - DESTINATION_VIOLATION
+  - COLD_CHAIN_VIOLATION
+  - WEIGHT_CAPACITY_EXCEEDED
+  - VOLUME_CAPACITY_EXCEEDED
+  - FLIGHT_LOAD_RECONCILIATION_MISMATCH
+  - COST_RECONCILIATION_MISMATCH
+  - STRATEGY_COST_COLUMN_MISMATCH
+  - GREEDY_REPLAY_MISMATCH
+  - PREDICTION_BINDING_MISMATCH
+  - FUTURE_PREDICTION_USED
+  - OUTCOME_FIELD_PRESENT
+  - NONFINITE_VALUE
+  - FRACTIONAL_KURUS
+  - UNEXPECTED_PLAN_FOR_STATUS
+  - MISSING_PLAN_FOR_STATUS
+  - SOLVER_EVIDENCE_MISMATCH
+  - NONCANONICAL_OUTPUT
+
+publish_gate:
+  allowed_execution_status:
+    - HEURISTIC_FEASIBLE
+    - OPTIMAL
+    - FEASIBLE_TIMEOUT
+  required_validation_status: VALID
+  required_plan_hash_binding: true
+  invalid_or_error_publishable: false
+
+forbidden_planning_output_fields:
+  - Cancelled
+  - Diverted
+  - ArrDelayMinutes
+  - severe_disruption
+  - realized_cost_try
+  - realized_cost_kurus

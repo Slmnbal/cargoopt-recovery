@@ -1,0 +1,620 @@
+schema_version: 1
+contract_id: evaluation-output-v1
+status: ACCEPTED
+task_id: PH0-T05
+
+contracts:
+  blind_replay: blind-replay-v1
+  metrics_statistics: evaluation-metrics-statistics-v1
+  release_gate: evaluation-release-gate-v1
+  prediction: flight-severe-disruption-prediction-v2
+  cost_policy: cost-policy-try-v1
+  or_input: or-input-v1
+  or_output: or-output-v1
+  plan_validator: plan-validator-v1
+
+canonicalization:
+  format: CANONICAL_JSON
+  encoding: UTF-8
+  newline: LF
+  key_order: LEXICOGRAPHIC
+  array_order:
+    strategy_summaries: strategy_enum_order
+    paired_strategy_metrics: strategy_enum_order
+    comparisons: comparison_id_ASC
+    gate_results: gate_id_ASC
+    attrition: step_number_ASC
+    exclusion_reasons: reason_code_ASC
+    limitations: UTF8_ASC
+  unknown_field_action: REJECT
+  hash_algorithm: SHA-256
+  hash_hex_case: lower
+
+units:
+  time: UTC_ISO8601_Z
+  money_solver: integer_kurus
+  money_display: TRY_2DP
+  probability_and_rate: decimal_0_to_1
+  duration: seconds
+
+enums:
+  run_mode:
+    - PRIMARY_BLIND
+    - EXPLORATORY_POST_REVEAL
+  run_status:
+    - INVALID_EXPERIMENT
+    - INSUFFICIENT_EVIDENCE
+    - VALID_NEUTRAL_OR_NEGATIVE
+    - VALID_POSITIVE
+  policy_decision:
+    - NO_DECISION_INVALID_EXPERIMENT
+    - RETAIN_RISK_BLIND
+    - ADOPT_ML_INFORMED
+  approval_status:
+    - PENDING_HUMAN_APPROVAL
+    - APPROVED
+    - REJECTED
+  freeze_status:
+    - COMPLETE
+    - INCOMPLETE
+  reveal_status:
+    - NOT_REVEALED
+    - REVEALED
+    - UNAUTHORIZED_REVEAL
+  gate_status:
+    - PASS
+    - FAIL
+    - NOT_EVALUABLE
+  gate_family:
+    - INTEGRITY
+    - EVIDENCE_OPERATIONAL
+    - IMPACT
+  strategy:
+    - GREEDY_BASELINE
+    - RISK_BLIND_MILP
+    - ML_INFORMED_MILP
+  comparison_id:
+    - ML_INFORMED_MINUS_RISK_BLIND
+    - ML_INFORMED_MINUS_GREEDY
+    - RISK_BLIND_MINUS_GREEDY
+  paired_exclusion_reason:
+    - PAIRED_COMPLETE
+    - MISSING_GREEDY_VALID_PLAN
+    - MISSING_RISK_BLIND_VALID_PLAN
+    - MISSING_ML_INFORMED_VALID_PLAN
+    - INPUT_HASH_MISMATCH
+    - MISSING_ASSIGNED_CANDIDATE_OUTCOME
+    - REALIZED_COST_RECONCILIATION_ERROR
+
+gate_catalog:
+  I01_ROSTER_OUTCOME_BLIND:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I02_ROSTER_DETERMINISTIC:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I03_ASOF_ACCESS_VALID:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I04_SHARED_CASE_INPUT:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I05_PRE_REVEAL_TERMINAL:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I06_FREEZE_COMPLETE:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I07_REVEAL_AUTHORIZED:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I08_NO_POST_REVEAL_MUTATION:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I09_SCHEMA_AND_HASH_INTEGRITY:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  I10_NUMERIC_INTEGRITY:
+    family: INTEGRITY
+    operator: IS_TRUE
+    threshold: true
+  E01_MIN_PAIRED_CASES:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 30
+  E02_MIN_UNIQUE_DATES:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 10
+  E03_MIN_DESTINATIONS:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 5
+  E04_PLAN_COVERAGE_GREEDY:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.95
+  E05_PLAN_COVERAGE_RISK_BLIND:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.95
+  E06_PLAN_COVERAGE_ML_INFORMED:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.95
+  E07_TRIGGERED_PAIRED_COVERAGE:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.95
+  E08_VALIDATOR_GREEDY:
+    family: EVIDENCE_OPERATIONAL
+    operator: EQUAL
+    threshold: 1.00
+  E09_VALIDATOR_RISK_BLIND:
+    family: EVIDENCE_OPERATIONAL
+    operator: EQUAL
+    threshold: 1.00
+  E10_VALIDATOR_ML_INFORMED:
+    family: EVIDENCE_OPERATIONAL
+    operator: EQUAL
+    threshold: 1.00
+  E11_OPTIMAL_RATE_RISK_BLIND:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.90
+  E12_OPTIMAL_RATE_ML_INFORMED:
+    family: EVIDENCE_OPERATIONAL
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.90
+  P01_MEAN_COST_IMPROVEMENT:
+    family: IMPACT
+    operator: GREATER_THAN_OR_EQUAL
+    threshold: 0.05
+  P02_CLUSTER_CI_BELOW_ZERO:
+    family: IMPACT
+    operator: LESS_THAN
+    threshold: 0
+
+evaluation_run:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - evaluation_run_id
+    - content_sha256
+    - run_mode
+    - created_at_utc
+    - completed_at_utc
+    - contract_versions
+    - freeze
+    - reveal
+    - populations
+    - strategy_summaries
+    - paired_strategy_metrics
+    - comparisons
+    - bootstrap
+    - attrition
+    - exclusion_reasons
+    - gate_results
+    - run_status
+    - policy_decision
+    - approval_status
+    - limitations
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    evaluation_run_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+      derived_from: >-
+        SHA256(evaluation-run-v1|freeze_manifest_sha256|outcome_snapshot_sha256|
+        evaluation-metrics-statistics-v1|evaluation-release-gate-v1)
+    content_sha256:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+      excludes_from_hash:
+        - content_sha256
+    run_mode:
+      type: enum
+      values_from: enums.run_mode
+    created_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+    completed_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+      invariant: completed_at_utc_gte_created_at_utc
+    contract_versions:
+      ref: entities.contract_versions
+    freeze:
+      ref: entities.freeze_summary
+    reveal:
+      ref: entities.reveal_summary
+    populations:
+      ref: entities.population_summary
+    strategy_summaries:
+      type: array
+      items_ref: entities.strategy_summary
+      exact_items: 3
+      unique_by: strategy
+    paired_strategy_metrics:
+      type: array
+      items_ref: entities.paired_strategy_metric
+      exact_items: 3
+      unique_by: strategy
+    comparisons:
+      type: array
+      items_ref: entities.paired_comparison
+      exact_items: 3
+      unique_by: comparison_id
+    bootstrap:
+      ref: entities.bootstrap_summary
+    attrition:
+      type: array
+      items_ref: entities.attrition_step
+      minimum_items: 1
+      unique_by: step_number
+    exclusion_reasons:
+      type: array
+      items_ref: entities.exclusion_reason_summary
+      exact_items: 7
+      unique_by: reason_code
+    gate_results:
+      type: array
+      items_ref: entities.gate_result
+      exact_items: 24
+      unique_by: gate_id
+      exact_key_set_from: gate_catalog
+    run_status:
+      type: enum
+      values_from: enums.run_status
+    policy_decision:
+      type: enum
+      values_from: enums.policy_decision
+    approval_status:
+      type: enum
+      values_from: enums.approval_status
+      initial_value: PENDING_HUMAN_APPROVAL
+    limitations:
+      type: array
+      items:
+        type: string
+        min_length: 1
+      minimum_items: 4
+
+entities:
+  contract_versions:
+    type: object
+    additional_properties: false
+    required:
+      - blind_replay
+      - metrics_statistics
+      - release_gate
+      - prediction
+      - cost_policy
+      - or_input
+      - or_output
+      - plan_validator
+    fields:
+      blind_replay: {type: string, const: blind-replay-v1}
+      metrics_statistics: {type: string, const: evaluation-metrics-statistics-v1}
+      release_gate: {type: string, const: evaluation-release-gate-v1}
+      prediction: {type: string, const: flight-severe-disruption-prediction-v2}
+      cost_policy: {type: string, const: cost-policy-try-v1}
+      or_input: {type: string, const: or-input-v1}
+      or_output: {type: string, const: or-output-v1}
+      plan_validator: {type: string, const: plan-validator-v1}
+
+  freeze_summary:
+    type: object
+    additional_properties: false
+    required:
+      - status
+      - frozen_at_utc
+      - freeze_manifest_id
+      - freeze_manifest_sha256
+      - roster_manifest_sha256
+      - schedule_snapshot_sha256
+      - committed_outcome_snapshot_sha256
+      - asof_access_ledger_sha256
+      - expected_case_count
+      - canonical_execution_count
+      - terminal_validation_count
+    fields:
+      status: {type: enum, values_from: enums.freeze_status}
+      frozen_at_utc: {type: datetime, format: UTC_ISO8601_Z}
+      freeze_manifest_id: {type: string, pattern: "^[a-f0-9]{64}$"}
+      freeze_manifest_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+      roster_manifest_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+      schedule_snapshot_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+      committed_outcome_snapshot_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+      asof_access_ledger_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+      expected_case_count: {type: integer, minimum: 0, maximum: 300}
+      canonical_execution_count:
+        type: integer
+        minimum: 0
+        invariant: equals_expected_case_count_times_3_when_complete
+      terminal_validation_count:
+        type: integer
+        minimum: 0
+        invariant: equals_expected_case_count_times_3_when_complete
+
+  reveal_summary:
+    type: object
+    additional_properties: false
+    required:
+      - status
+      - reveal_authorization_id
+      - revealed_at_utc
+      - outcome_snapshot_sha256
+      - outcome_row_count
+      - hash_matches_freeze_commit
+    fields:
+      status: {type: enum, values_from: enums.reveal_status}
+      reveal_authorization_id: {type: nullable_string}
+      revealed_at_utc: {type: nullable_datetime, format: UTC_ISO8601_Z}
+      outcome_snapshot_sha256: {type: nullable_string, pattern_when_non_null: "^[a-f0-9]{64}$"}
+      outcome_row_count: {type: nullable_integer, minimum: 0}
+      hash_matches_freeze_commit: {type: nullable_boolean}
+
+  population_summary:
+    type: object
+    additional_properties: false
+    required:
+      - eligible_source_count
+      - selected_roster_count
+      - source_outcome_known_count
+      - triggered_count
+      - complete_paired_triggered_count
+      - unique_paired_dates
+      - unique_paired_destinations
+      - triggered_paired_coverage
+    fields:
+      eligible_source_count: {type: integer, minimum: 0}
+      selected_roster_count: {type: integer, minimum: 0, maximum: 300}
+      source_outcome_known_count: {type: integer, minimum: 0}
+      triggered_count: {type: integer, minimum: 0}
+      complete_paired_triggered_count: {type: integer, minimum: 0}
+      unique_paired_dates: {type: integer, minimum: 0, maximum: 31}
+      unique_paired_destinations: {type: integer, minimum: 0, maximum: 10}
+      triggered_paired_coverage: {type: nullable_decimal, minimum: 0, maximum: 1}
+
+  strategy_summary:
+    type: array_item
+    additional_properties: false
+    key: strategy
+    required:
+      - strategy
+      - canonical_execution_count
+      - plan_emitted_count
+      - valid_plan_count
+      - valid_plan_coverage
+      - emitted_plan_validator_pass_rate
+      - plan_emission_rate
+      - optimal_count
+      - optimal_rate
+      - feasible_timeout_count
+      - no_solution_timeout_count
+      - infeasible_count
+      - error_count
+    fields:
+      strategy: {type: enum, values_from: enums.strategy}
+      canonical_execution_count: {type: integer, minimum: 0}
+      plan_emitted_count: {type: integer, minimum: 0}
+      valid_plan_count: {type: integer, minimum: 0}
+      valid_plan_coverage: {type: nullable_decimal, minimum: 0, maximum: 1}
+      emitted_plan_validator_pass_rate: {type: nullable_decimal, minimum: 0, maximum: 1}
+      plan_emission_rate: {type: nullable_decimal, minimum: 0, maximum: 1}
+      optimal_count: {type: nullable_integer, minimum: 0, null_for: GREEDY_BASELINE}
+      optimal_rate: {type: nullable_decimal, minimum: 0, maximum: 1, null_for: GREEDY_BASELINE}
+      feasible_timeout_count: {type: nullable_integer, minimum: 0, null_for: GREEDY_BASELINE}
+      no_solution_timeout_count: {type: nullable_integer, minimum: 0, null_for: GREEDY_BASELINE}
+      infeasible_count: {type: nullable_integer, minimum: 0, null_for: GREEDY_BASELINE}
+      error_count: {type: integer, minimum: 0}
+
+  paired_strategy_metric:
+    type: array_item
+    additional_properties: false
+    key: strategy
+    required:
+      - strategy
+      - paired_case_count
+      - realized_total_cost_kurus
+      - realized_mean_case_cost_kurus
+      - realized_median_case_cost_kurus
+      - total_shipments
+      - unassigned_shipments
+      - unassigned_rate
+      - planned_sla_breach_shipments
+      - planned_sla_breach_rate
+      - service_failure_shipments
+      - service_failure_rate
+      - disrupted_candidate_assignment_count
+    fields:
+      strategy: {type: enum, values_from: enums.strategy}
+      paired_case_count: {type: integer, minimum: 0}
+      realized_total_cost_kurus: {type: integer, minimum: 0}
+      realized_mean_case_cost_kurus: {type: nullable_decimal, minimum: 0}
+      realized_median_case_cost_kurus: {type: nullable_decimal, minimum: 0}
+      total_shipments: {type: integer, minimum: 0}
+      unassigned_shipments: {type: integer, minimum: 0}
+      unassigned_rate: {type: nullable_decimal, minimum: 0, maximum: 1}
+      planned_sla_breach_shipments: {type: integer, minimum: 0}
+      planned_sla_breach_rate: {type: nullable_decimal, minimum: 0, maximum: 1}
+      service_failure_shipments: {type: integer, minimum: 0}
+      service_failure_rate: {type: nullable_decimal, minimum: 0, maximum: 1}
+      disrupted_candidate_assignment_count: {type: integer, minimum: 0}
+
+  paired_comparison:
+    type: array_item
+    additional_properties: false
+    key: comparison_id
+    required:
+      - comparison_id
+      - left_strategy
+      - right_strategy
+      - difference_definition
+      - paired_case_count
+      - total_left_cost_kurus
+      - total_right_cost_kurus
+      - total_difference_kurus
+      - mean_difference_kurus
+      - median_difference_kurus
+      - aggregate_relative_improvement
+      - inferential_role
+    fields:
+      comparison_id: {type: enum, values_from: enums.comparison_id}
+      left_strategy: {type: enum, values_from: enums.strategy}
+      right_strategy: {type: enum, values_from: enums.strategy}
+      difference_definition: {type: string, invariant: left_cost_minus_right_cost}
+      paired_case_count: {type: integer, minimum: 0}
+      total_left_cost_kurus: {type: integer, minimum: 0}
+      total_right_cost_kurus: {type: integer, minimum: 0}
+      total_difference_kurus: {type: integer}
+      mean_difference_kurus: {type: nullable_decimal}
+      median_difference_kurus: {type: nullable_decimal}
+      aggregate_relative_improvement: {type: nullable_decimal}
+      inferential_role: {type: enum, allowed: [PRIMARY, SECONDARY_DESCRIPTIVE]}
+
+  bootstrap_summary:
+    type: object
+    additional_properties: false
+    required:
+      - comparison_id
+      - statistic
+      - cluster_field
+      - unique_cluster_count
+      - repeats
+      - seed
+      - draw_algorithm
+      - quantile_method
+      - confidence_level
+      - ci_lower_kurus
+      - ci_upper_kurus
+      - bootstrap_vector_sha256
+    fields:
+      comparison_id: {type: string, const: ML_INFORMED_MINUS_RISK_BLIND}
+      statistic: {type: string, const: MEAN_PAIRED_DIFFERENCE_KURUS}
+      cluster_field: {type: string, const: SOURCE_FLIGHT_DATE}
+      unique_cluster_count: {type: integer, minimum: 0, maximum: 31}
+      repeats: {type: integer, const: 10000}
+      seed: {type: integer, const: 20240831}
+      draw_algorithm: {type: string, const: SHA256_FIRST64_BIG_ENDIAN_REJECTION_V1}
+      quantile_method: {type: string, const: R7_LINEAR_PERCENTILE}
+      confidence_level: {type: decimal, const: 0.95}
+      ci_lower_kurus: {type: nullable_decimal}
+      ci_upper_kurus: {type: nullable_decimal}
+      bootstrap_vector_sha256: {type: nullable_string, pattern_when_non_null: "^[a-f0-9]{64}$"}
+
+  attrition_step:
+    type: array_item
+    additional_properties: false
+    key: step_number
+    required:
+      - step_number
+      - step_name
+      - count
+      - rate_from_previous
+      - rate_from_selected_roster
+    fields:
+      step_number: {type: integer, minimum: 1, maximum: 8}
+      step_name:
+        type: enum
+        allowed:
+          - ELIGIBLE_SOURCE
+          - SELECTED_ROSTER
+          - SOURCE_OUTCOME_KNOWN
+          - TRIGGERED
+          - THREE_STRATEGIES_TERMINAL
+          - THREE_VALID_PLANS
+          - ASSIGNED_CANDIDATE_OUTCOMES_COMPLETE
+          - COMPLETE_PAIRED_TRIGGERED
+      count: {type: integer, minimum: 0}
+      rate_from_previous: {type: nullable_decimal, minimum: 0, maximum: 1}
+      rate_from_selected_roster: {type: nullable_decimal, minimum: 0, maximum: 1}
+
+  exclusion_reason_summary:
+    type: array_item
+    additional_properties: false
+    key: reason_code
+    required:
+      - reason_code
+      - count
+      - case_ids_sha256
+    fields:
+      reason_code: {type: enum, values_from: enums.paired_exclusion_reason}
+      count: {type: integer, minimum: 0}
+      case_ids_sha256: {type: string, pattern: "^[a-f0-9]{64}$"}
+
+  gate_result:
+    type: array_item
+    additional_properties: false
+    key: gate_id
+    required:
+      - gate_id
+      - family
+      - status
+      - operator
+      - threshold
+      - actual_value
+      - numerator
+      - denominator
+      - evidence_artifact_sha256
+      - reason
+    fields:
+      gate_id: {type: string, key_from: gate_catalog}
+      family: {type: enum, values_from: enums.gate_family}
+      status: {type: enum, values_from: enums.gate_status}
+      operator: {type: enum, allowed: [IS_TRUE, EQUAL, GREATER_THAN_OR_EQUAL, LESS_THAN]}
+      threshold: {type: boolean_integer_or_decimal}
+      actual_value: {type: nullable_boolean_integer_or_decimal}
+      numerator: {type: nullable_integer_or_decimal}
+      denominator: {type: nullable_integer_or_decimal}
+      evidence_artifact_sha256: {type: nullable_string, pattern_when_non_null: "^[a-f0-9]{64}$"}
+      reason: {type: string, min_length: 1}
+
+cross_entity_invariants:
+  - freeze.expected_case_count_equals_populations.selected_roster_count
+  - strategy_summaries_each_canonical_execution_count_equals_selected_roster_count
+  - paired_strategy_metrics_each_paired_case_count_equals_complete_paired_triggered_count
+  - comparisons_each_paired_case_count_equals_complete_paired_triggered_count
+  - comparison_primary_is_ml_informed_left_minus_risk_blind_right
+  - primary_total_difference_equals_total_left_minus_total_right
+  - primary_relative_improvement_equals_right_minus_left_divided_by_right
+  - bootstrap_unique_cluster_count_equals_unique_paired_dates
+  - exclusion_reason_counts_reconcile_triggered_count
+  - gate_results_exactly_match_gate_catalog
+  - run_status_and_policy_decision_follow_release_gate_precedence
+  - exploratory_post_reveal_cannot_adopt_ml_informed
+  - valid_positive_requires_all_integrity_evidence_and_impact_gates_pass
+  - invalid_experiment_requires_no_decision_invalid_experiment
+  - all_costs_reconcile_to_integer_kurus_source_artifacts
+  - content_sha256_matches_canonical_payload
+
+required_limitations:
+  - OPEN_BTS_US_PASSENGER_FLIGHT_DATA_NOT_TURKISH_CARGO
+  - SYNTHETIC_CARGO_CAPACITY_AND_NOMINAL_2024_TRY_COSTS
+  - CONDITIONAL_ON_CORRECT_OR_EXOGENOUS_SOURCE_ALERT
+  - NO_CAUSAL_OR_LIVE_OPERATIONAL_EFFECT_CLAIM
+  - PLANNED_LATENESS_IS_NOT_REALIZED_CARGO_SLA
+
+policy_mapping:
+  INVALID_EXPERIMENT: NO_DECISION_INVALID_EXPERIMENT
+  INSUFFICIENT_EVIDENCE: RETAIN_RISK_BLIND
+  VALID_NEUTRAL_OR_NEGATIVE: RETAIN_RISK_BLIND
+  VALID_POSITIVE: ADOPT_ML_INFORMED
+
+initial_publish_state:
+  approval_status: PENDING_HUMAN_APPROVAL
+  automatic_model_or_policy_mutation: false
+  human_approval_required: true

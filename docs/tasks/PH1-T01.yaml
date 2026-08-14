@@ -1,0 +1,122 @@
+schema_version: 1
+task_id: PH1-T01
+phase: PHASE_1
+status: COMPLETED
+activated_at: "2026-08-13"
+activation_source: explicit_phase_transition_approval
+execution_requires_separate_human_approval: true
+execution_approved_at: "2026-08-13"
+execution_approval_status: APPROVED
+execution_approval_source: explicit_user_command_start
+completed_at: "2026-08-13"
+decision_approved_at: "2026-08-13"
+decision_approval_status: APPROVED
+decision_approval_source: explicit_user_exact_toolchain_approval
+next_task: PH1-T02
+goal: >-
+  CargoOpt Recovery için hiçbir dependency eklemeden, resmi primary sources
+  üzerinden exact Python runtime, package manager, build backend ve yalnız
+  repository-foundation kalite araçlarını karşılaştırmak; uyumlu, lisansı
+  doğrulanmış ve clean-room kurulabilir tek bir pinned toolchain önerisini
+  PH1-T02 scaffold planına dönüştürmek.
+in_scope:
+  - official Python support ve lifecycle araştırması
+  - package manager ve lock/frozen-sync davranışı araştırması
+  - build backend seçenekleri ve src-layout uyumluluğu
+  - formatter linter type checker ve test runner seçenekleri
+  - exact candidate version release support license ve security kontrolü
+  - Linux CPU-first local environment uyumluluğu
+  - direct ve transitive dependency etki tahmini
+  - standard library veya daha küçük alternatif analizi
+  - deterministic clean environment komut sözleşmesi
+  - PH1-T02 için exact file-by-file scaffold planı
+  - runtime toolchain ADR önerisi
+out_of_scope:
+  - dependency kurmak indirmek veya lock çözmek
+  - pyproject.toml uv.lock source test CI ya da package shell oluşturmak
+  - Phase 2 ile Phase 8 dependency'lerini seçmek
+  - pandas polars scikit-learn XGBoost MLflow Pyomo HiGHS FastAPI PostgreSQL React Docker RAG LLM veya Hugging Face kararı
+  - BTS verisi indirmek model eğitmek solver çalıştırmak
+  - GitHub Actions veya başka CI workflow dosyası oluşturmak
+  - ücretli API managed service ya da cloud zorunluluğu
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH1-T01.yaml
+  - docs/foundation/RUNTIME_TOOLCHAIN_DECISION.md
+  - docs/foundation/DEPENDENCY_CATALOG.yaml
+  - docs/foundation/COMPATIBILITY_MATRIX.md
+  - docs/foundation/SCAFFOLD_FILE_PLAN.md
+  - docs/foundation/CLEAN_ENVIRONMENT_VERIFICATION.md
+  - docs/adr/ADR-009-runtime-and-toolchain.md
+files_forbidden:
+  - AGENTS.md
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-T02.yaml
+  - docs/tasks/PH1-T03.yaml
+  - docs/data/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - docs/governance/CONTRACT_REGISTRY.yaml
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - yalnız official primary source veya canonical package metadata kullanılmalı
+  - her source URL erişim tarihi ve desteklediği claim ile kaydedilmeli
+  - Python runtime exact minor version ve support gerekçesi taşımalı
+  - package manager exact version ve frozen deterministic sync kanıtı taşımalı
+  - build backend exact version ve minimal src-layout gerekçesi taşımalı
+  - foundation quality araçları exact version ve rol ayrımı taşımalı
+  - her dependency için amaç alternatif lisans maintenance security transitive impact ve removal cost bulunmalı
+  - runtime dependency ile development dependency ayrılmalı
+  - broad range latest yanked pre-release Git URL veya unpinned branch önerilmemeli
+  - Phase 2 ile Phase 8 paketi kataloğa eklenmemeli
+  - PH1-T02 scaffold planı yalnız foundation dosyalarını içermeli
+  - clean-room komutları boş environment frozen sync ikinci sync import lint type ve test akışını kapsamalı
+  - hiçbir dependency veya implementation artifact'ı oluşmamalı
+tests_required:
+  - bütün yeni YAML dosyaları safe parser ile parse edilebilmeli
+  - research source'larının her biri official domain veya canonical package metadata olmalı
+  - exact candidate version alanları boş veya latest olmamalı
+  - seçilen bütün araçların aynı Python runtime üzerinde uyumlu olduğu kanıtlanmalı
+  - SPDX license alanları dolu olmalı
+  - direct dependency listesi yalnız foundation araçlarından oluşmalı
+  - scaffold planında Phase 2+ path veya placeholder bulunmamalı
+  - verification komutları lock mutation yapmayan frozen mode içermeli
+  - onaylı files_allowed dışında dosya değişmemeli
+  - pyproject lock source tests ve CI yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+external_research_allowed: true
+research_source_policy: OFFICIAL_PRIMARY_ONLY
+stop_conditions:
+  - official compatibility license maintenance veya security bilgisi doğrulanamazsa
+  - seçilen araçlar için ortak supported Python runtime bulunamazsa
+  - exact version yalnız pre-release yanked veya unsupported ise
+  - dependency çözümünü doğrulamak için bu görevde install veya lock üretmek gerekirse
+  - Phase 2+ dependency veya abstraction gereksinimi doğarsa
+  - onaylı files_allowed dışında değişiklik gerekirse
+  - araştırma kapsamı official-primary-source sınırının dışına çıkarsa
+validation_results:
+  official_primary_source_policy: PASSED
+  exact_versions_selected: PASSED
+  common_python_runtime_documented: PASSED
+  runtime_and_dev_dependencies_separated: PASSED
+  direct_dependency_catalog_complete: PASSED
+  compatibility_license_maintenance_security_controls: PASSED
+  transitive_impact_estimated_without_resolution: PASSED
+  phase_2_to_8_dependencies_excluded: PASSED
+  scaffold_plan_foundation_only: PASSED
+  clean_environment_command_contract: PASSED
+  dependency_install_or_lock_created: false
+  implementation_artifact_created: false
+  decision_status: APPROVED

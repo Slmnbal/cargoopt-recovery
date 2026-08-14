@@ -1,0 +1,493 @@
+schema_version: 1
+contract_id: or-input-v1
+status: ACCEPTED
+task_id: PH0-T03
+
+contracts:
+  cargo_domain: cargo-domain-v1
+  synthetic_generator: synthetic-cargo-v1
+  cost_policy: cost-policy-try-v1
+  prediction: flight-severe-disruption-prediction-v2
+
+serialization:
+  format: JSON
+  encoding: UTF-8
+  newline: LF
+  key_order: LEXICOGRAPHIC
+  shipment_order: shipment_id_ASC
+  candidate_flight_order: flight_id_ASC
+  prediction_order: flight_id_ASC
+  unknown_field_action: REJECT
+  hash_algorithm: SHA-256
+
+limits:
+  hub_count: 1
+  destination_case_count_max: 10
+  recovery_window_hours: 24
+  shipment_count:
+    minimum: 50
+    default: 200
+    maximum: 500
+  candidate_flight_count:
+    minimum: 2
+    maximum: 30
+
+units:
+  time: UTC_ISO8601_Z
+  weight: kg
+  volume: m3
+  currency: TRY
+  cost_precision: "0.01"
+  cost_basis: SYNTHETIC_NOMINAL_2024
+
+enums:
+  cargo_type:
+    - STANDARD
+    - EXPRESS
+    - PHARMA
+  strategy:
+    - RISK_BLIND_MILP
+    - ML_INFORMED_MILP
+  assignment_state:
+    - ASSIGNED
+    - UNASSIGNED
+
+snapshot:
+  type: object
+  additional_properties: false
+  required:
+    - schema_version
+    - snapshot_id
+    - created_at_utc
+    - recovery_case
+    - shipments
+    - candidate_flights
+    - prediction_batch
+    - predictions
+    - cost_policy
+    - provenance
+  fields:
+    schema_version:
+      type: integer
+      const: 1
+    snapshot_id:
+      type: string
+      pattern: "^[a-f0-9]{64}$"
+    created_at_utc:
+      type: datetime
+      format: UTC_ISO8601_Z
+      excluded_from_content_hash: true
+    recovery_case:
+      ref: entities.recovery_case
+    shipments:
+      type: array
+      items_ref: entities.shipment
+      minimum_items: 50
+      maximum_items: 500
+    candidate_flights:
+      type: array
+      items_ref: entities.candidate_flight
+      minimum_items: 2
+      maximum_items: 30
+    prediction_batch:
+      ref: entities.prediction_batch
+    predictions:
+      type: array
+      items_ref: entities.prediction
+      minimum_items: 2
+      maximum_items: 30
+    cost_policy:
+      ref: entities.cost_policy
+    provenance:
+      ref: entities.provenance
+
+entities:
+  recovery_case:
+    type: object
+    additional_properties: false
+    key: case_id
+    required:
+      - case_id
+      - source_flight_id
+      - hub_airport_id
+      - origin_airport_id
+      - destination_airport_id
+      - source_scheduled_departure_at_utc
+      - source_scheduled_arrival_at_utc
+      - prediction_cutoff_at_utc
+      - recovery_window_start_at_utc
+      - recovery_window_end_at_utc
+      - shipment_count
+      - candidate_flight_count
+    fields:
+      case_id:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      source_flight_id:
+        type: string
+        min_length: 1
+      hub_airport_id:
+        type: integer
+        minimum: 1
+      origin_airport_id:
+        type: integer
+        minimum: 1
+        invariant: equals_hub_airport_id
+      destination_airport_id:
+        type: integer
+        minimum: 1
+        invariant: not_equal_origin_airport_id
+      source_scheduled_departure_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+      source_scheduled_arrival_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+      prediction_cutoff_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: source_departure_minus_6_hours
+      recovery_window_start_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: equals_prediction_cutoff
+      recovery_window_end_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: start_plus_24_hours
+      shipment_count:
+        type: integer
+        minimum: 50
+        maximum: 500
+      candidate_flight_count:
+        type: integer
+        minimum: 2
+        maximum: 30
+
+  shipment:
+    type: array_item
+    additional_properties: false
+    key: shipment_id
+    required:
+      - shipment_id
+      - case_id
+      - cargo_type
+      - weight_kg
+      - volume_m3
+      - ready_at_utc
+      - handling_minutes
+      - delivery_due_at_utc
+      - requires_cold_chain
+    fields:
+      shipment_id:
+        type: string
+        pattern: "^SHP-[a-f0-9]{16}$"
+      case_id:
+        type: string
+        parent_key: recovery_case.case_id
+      cargo_type:
+        type: enum
+        values_from: enums.cargo_type
+      weight_kg:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 1
+      volume_m3:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 3
+      ready_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+      handling_minutes:
+        type: integer
+        allowed_by_cargo_type:
+          STANDARD: 60
+          EXPRESS: 45
+          PHARMA: 90
+      delivery_due_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+      requires_cold_chain:
+        type: boolean
+        allowed_by_cargo_type:
+          STANDARD: false
+          EXPRESS: false
+          PHARMA: true
+
+  candidate_flight:
+    type: array_item
+    additional_properties: false
+    key: flight_id
+    required:
+      - flight_id
+      - case_id
+      - origin_airport_id
+      - destination_airport_id
+      - scheduled_departure_at_utc
+      - scheduled_arrival_at_utc
+      - is_direct
+      - capacity_weight_kg
+      - capacity_volume_m3
+      - cold_chain_capable
+    fields:
+      flight_id:
+        type: string
+        min_length: 1
+        invariant: not_equal_source_flight_id
+      case_id:
+        type: string
+        parent_key: recovery_case.case_id
+      origin_airport_id:
+        type: integer
+        invariant: equals_recovery_case_origin
+      destination_airport_id:
+        type: integer
+        invariant: equals_recovery_case_destination
+      scheduled_departure_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: strictly_after_recovery_decision_and_within_recovery_window
+      scheduled_arrival_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: after_departure_and_within_recovery_window
+      is_direct:
+        type: boolean
+        const: true
+      capacity_weight_kg:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 1
+      capacity_volume_m3:
+        type: decimal
+        exclusive_minimum: 0
+        scale: 3
+      cold_chain_capable:
+        type: boolean
+
+  prediction_batch:
+    type: object
+    additional_properties: false
+    required:
+      - prediction_batch_id
+      - model_version
+      - calibration_version
+      - feature_schema_version
+      - assembled_at_utc
+      - frozen
+    fields:
+      prediction_batch_id:
+        type: string
+        min_length: 1
+      model_version:
+        type: string
+        min_length: 1
+      calibration_version:
+        type: string
+        min_length: 1
+      feature_schema_version:
+        type: string
+        const: flight-risk-features-v2
+      assembled_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: equals_recovery_case_prediction_cutoff
+      frozen:
+        type: boolean
+        const: true
+
+  prediction:
+    type: array_item
+    additional_properties: false
+    key: flight_id
+    required:
+      - prediction_batch_id
+      - prediction_record_id
+      - flight_id
+      - lead_time_hours
+      - produced_at_utc
+      - severe_disruption_probability
+    fields:
+      prediction_batch_id:
+        type: string
+        parent_key: prediction_batch.prediction_batch_id
+      prediction_record_id:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      flight_id:
+        type: string
+        foreign_key: candidate_flight.flight_id
+      lead_time_hours:
+        type: integer
+        enum: [6, 12, 18, 24]
+        invariant: latest_available_ceiling_horizon
+      produced_at_utc:
+        type: datetime
+        format: UTC_ISO8601_Z
+        invariant: candidate_departure_minus_horizon_and_not_after_recovery_decision
+      severe_disruption_probability:
+        type: decimal
+        minimum: 0
+        maximum: 1
+        scale: 6
+
+  cost_policy:
+    type: object
+    additional_properties: false
+    required:
+      - cost_policy_id
+      - currency
+      - cost_basis
+      - vat_included
+      - maximum_lateness_hours
+      - cargo_costs
+    fields:
+      cost_policy_id:
+        type: string
+        const: cost-policy-try-v1
+      currency:
+        type: string
+        const: TRY
+      cost_basis:
+        type: string
+        const: SYNTHETIC_NOMINAL_2024
+      vat_included:
+        type: boolean
+        const: false
+      maximum_lateness_hours:
+        type: integer
+        const: 24
+      cargo_costs:
+        type: mapping
+        exact_keys_from: enums.cargo_type
+
+  provenance:
+    type: object
+    additional_properties: false
+    required:
+      - generator_contract_version
+      - generator_implementation_version
+      - master_seed
+      - source_schedule_snapshot_id
+      - generator_input_sha256
+      - generator_output_sha256
+      - or_snapshot_sha256
+    fields:
+      generator_contract_version:
+        type: string
+        const: synthetic-cargo-v1
+      generator_implementation_version:
+        type: string
+        min_length: 1
+      master_seed:
+        type: integer
+        const: 20240831
+      source_schedule_snapshot_id:
+        type: string
+        min_length: 1
+      generator_input_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      generator_output_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+      or_snapshot_sha256:
+        type: string
+        pattern: "^[a-f0-9]{64}$"
+
+cargo_costs:
+  STANDARD:
+    handling_cost_try: 500
+    delay_cost_per_hour_try: 250
+    disruption_consequence_try: 10000
+    unassigned_penalty_try: 50000
+  EXPRESS:
+    handling_cost_try: 750
+    delay_cost_per_hour_try: 750
+    disruption_consequence_try: 30000
+    unassigned_penalty_try: 150000
+  PHARMA:
+    handling_cost_try: 1250
+    delay_cost_per_hour_try: 1250
+    disruption_consequence_try: 50000
+    unassigned_penalty_try: 250000
+
+synthetic_generator:
+  generator_contract_version: synthetic-cargo-v1
+  master_seed: 20240831
+  cargo_mix:
+    STANDARD: 0.70
+    EXPRESS: 0.20
+    PHARMA: 0.10
+  capacity_mode: BALANCED_110
+  network_capacity_factor: 1.10
+  cold_chain_probability: 0.35
+  permitted_input_groups:
+    - generator_config
+    - recovery_case_key
+    - source_schedule
+    - eligible_candidate_schedule
+  forbidden_input_fields:
+    - severe_disruption_probability
+    - prediction_batch_id
+    - model_version
+    - calibration_version
+    - Cancelled
+    - Diverted
+    - ArrDelayMinutes
+    - severe_disruption
+    - DepDelay
+    - ArrDelay
+    - solver_result
+    - objective_value
+    - assignment
+    - blind_replay_metric
+
+strategy_contract:
+  shared_inputs:
+    - recovery_case
+    - shipments
+    - candidate_flights
+    - prediction_batch
+    - predictions
+    - cost_policy
+  risk_blind_probability_coefficient: 0
+  ml_informed_probability_term: probability_times_disruption_consequence_try
+  only_controlled_business_objective_difference: expected_disruption_cost_try
+  constraints_identical: true
+  unassigned_penalties_identical: true
+
+cross_entity_invariants:
+  - recovery_case.shipment_count_equals_len_shipments
+  - recovery_case.candidate_flight_count_equals_len_candidate_flights
+  - shipment_ids_unique
+  - candidate_flight_ids_unique
+  - prediction_flight_ids_unique
+  - prediction_flight_ids_equal_candidate_flight_ids
+  - selected_prediction_horizon_is_minimum_allowed_horizon_gte_time_to_departure
+  - prediction_produced_at_not_after_recovery_decision
+  - prediction_age_at_recovery_decision_strictly_less_than_6_hours
+  - all_case_ids_equal_recovery_case_case_id
+  - all_timestamps_timezone_aware_utc
+  - candidate_departure_and_arrival_within_24_hour_window
+  - shipment_assignment_is_exactly_one_flight_or_unassigned
+  - weight_capacity_not_exceeded
+  - volume_capacity_not_exceeded
+  - pharma_assignment_requires_cold_chain
+  - outcome_fields_absent
+  - cost_policy_values_equal_cargo_costs
+  - unassigned_penalty_dominates_maximum_assignment_cost
+  - snapshot_hash_matches_canonical_content
+
+failure_policy:
+  invalid_schema: REJECT_SNAPSHOT
+  unknown_field: REJECT_SNAPSHOT
+  duplicate_key: REJECT_SNAPSHOT
+  missing_prediction: REJECT_SNAPSHOT
+  invalid_probability: REJECT_SNAPSHOT
+  future_prediction_at_decision: REJECT_SNAPSHOT
+  wrong_latest_available_horizon: REJECT_SNAPSHOT
+  outcome_field_present: REJECT_SNAPSHOT
+  hash_mismatch: REJECT_SNAPSHOT
+  no_feasible_assignment_except_unassigned: ALLOW_OPTIMIZATION

@@ -1,0 +1,461 @@
+schema_version: 1
+task_id: PH1-T02
+phase: PHASE_1
+status: COMPLETED
+planned_at: "2026-08-13"
+planning_source: explicit_user_request
+execution_requires_separate_human_approval: true
+execution_approval_status: APPROVED
+execution_approved_at: "2026-08-13"
+execution_approval_source: explicit_user_command
+execution_approval_text: "PH1-T02 planını onaylıyorum; başlat"
+started_at: "2026-08-13"
+completed_at: "2026-08-13"
+goal: >-
+  Onaylanmış exact CPython ve foundation toolchain ile yalnız import edilebilir
+  minimal Python package shell'ini, canonical PyPI kaynaklı deterministic
+  uv.lock dosyasını ve local format lint strict-type test build kapılarını
+  oluşturmak; hiçbir Phase 2+ ürün davranışı veya placeholder eklememek.
+
+preconditions:
+  phase_1_status: ACTIVE
+  ph1_t01_status: COMPLETED
+  toolchain_decision_status: APPROVED
+  adr_009_status: ACCEPTED
+  execution_approval: SATISFIED
+
+approved_toolchain_snapshot:
+  runtime:
+    implementation: CPython
+    version: 3.14.7
+    variant: standard_gil_enabled
+    requires_python: ">=3.14,<3.15"
+  package_manager:
+    name: uv
+    version: 0.12.3
+    role: external_bootstrap_tool_not_project_dependency
+  build_backend:
+    name: hatchling
+    version: 1.32.0
+  development_dependencies:
+    - name: ruff
+      version: 0.16.3
+    - name: mypy
+      version: 2.3.0
+    - name: pytest
+      version: 9.1.1
+  project_runtime_direct_dependencies: []
+  canonical_index: https://pypi.org/simple
+  exclude_newer: "2026-08-13T23:59:59Z"
+  prerelease_policy: DISALLOW
+
+in_scope:
+  - exact runtime pin taşıyan .python-version oluşturmak
+  - yalnız local environment cache build ve editor artifacts için dar .gitignore oluşturmak
+  - exact build ve dev dependency pinleriyle pyproject.toml oluşturmak
+  - canonical PyPI ve sabit upload cutoff ile uv.lock dosyasını bir kez çözmek
+  - lock graph'ını expected package markers source types ve wheel availability açısından incelemek
+  - davranış içermeyen minimal src/cargoopt_recovery package shell oluşturmak
+  - tek package import ve version smoke testi oluşturmak
+  - foundation-only README local komutlarını belgelemek
+  - local import format lint strict type test ve build smoke kapılarını çalıştırmak
+  - dependency catalog tahminini observed lock graph ile güncellemek
+  - Linux CPU local validation sonucunu compatibility matrix'e kaydetmek
+  - tamamlanma durumunu task phase ve project status belgelerinde eşitlemek
+
+out_of_scope:
+  - PH1-T03 clean-room ikinci frozen sync CI security audit ve full license inventory
+  - GitHub Actions veya başka CI workflow oluşturmak
+  - coverage pre-commit Makefile task runner Docker veya container eklemek
+  - CLI config logging environment loader plugin ya da code generator eklemek
+  - BTS data cargo domain ML OR solver validator API database UI RAG LLM veya Hugging Face işi
+  - Phase 2 ile Phase 8 için dependency path interface adapter TODO veya empty directory oluşturmak
+  - toolchain sürümünü source index'i cutoff'u dependency grubunu veya kalite standardını değiştirmek
+  - package publish etmek Git işlemi yapmak veya dış sisteme artifact göndermek
+
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - .python-version
+  - .gitignore
+  - pyproject.toml
+  - uv.lock
+  - src/cargoopt_recovery/__init__.py
+  - tests/test_package_import.py
+  - README.md
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH1-T02.yaml
+  - docs/foundation/DEPENDENCY_CATALOG.yaml
+  - docs/foundation/COMPATIBILITY_MATRIX.md
+  - docs/foundation/SCAFFOLD_FILE_PLAN.md
+
+files_forbidden:
+  - AGENTS.md
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-T01.yaml
+  - docs/tasks/PH1-T03.yaml
+  - docs/adr/**
+  - docs/governance/**
+  - docs/data/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - .github/**
+  - docker-compose.yml
+  - Dockerfile
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+  - any source file other than src/cargoopt_recovery/__init__.py
+  - any test file other than tests/test_package_import.py
+
+transient_paths:
+  allowed_during_execution:
+    - .venv/**
+    - .ruff_cache/**
+    - .mypy_cache/**
+    - .pytest_cache/**
+    - __pycache__/**
+    - operating-system temporary build directory outside repository
+  checkpoint_rule: MUST_BE_EXCLUDED_OR_REMOVED_BEFORE_ARCHIVE
+
+pyproject_contract:
+  project:
+    name: cargoopt-recovery
+    version: 0.1.0
+    requires_python: ">=3.14,<3.15"
+    dependencies: []
+    dynamic_fields: []
+    scripts: []
+  build_system:
+    requires:
+      - hatchling==1.32.0
+    build_backend: hatchling.build
+  dependency_groups:
+    dev:
+      - ruff==0.16.3
+      - mypy==2.3.0
+      - pytest==9.1.1
+  uv:
+    default_groups: [dev]
+    exclude_newer: "2026-08-13T23:59:59Z"
+    alternate_sources: []
+    audit_malware_check: true
+    audit_ignore_list: []
+    third_party_source_build_policy:
+      local_project_editable_build_allowed: true
+      no_build_package:
+        - ast-serialize
+        - colorama
+        - hatchling
+        - iniconfig
+        - librt
+        - mypy
+        - mypy-extensions
+        - packaging
+        - pathspec
+        - pluggy
+        - pygments
+        - pytest
+        - ruff
+        - tomlkit
+        - trove-classifiers
+        - typing-extensions
+  hatch:
+    wheel_packages:
+      - src/cargoopt_recovery
+  ruff:
+    target_version: py314
+    line_length: 100
+    lint_select: [E4, E7, E9, F, I, UP, B]
+    lint_fix_in_gate: false
+  mypy:
+    python_version: "3.14"
+    strict: true
+    paths: [src, tests]
+    rule_weakening_allowed: false
+  pytest:
+    testpaths: [tests]
+    strict_config: true
+    strict_markers: true
+    third_party_plugin_autoload_in_gate: false
+
+execution_sequence:
+  - step: 1
+    name: repository_preflight
+    actions:
+      - verify current phase task and exact allowlist
+      - verify no forbidden or unexpected implementation path exists
+      - verify uv version equals 0.12.3
+      - verify requested interpreter is standard GIL-enabled CPython 3.14.7
+    gate: ALL_PASS_OR_STOP
+  - step: 2
+    name: metadata_only
+    actions:
+      - create .python-version
+      - create .gitignore
+      - create pyproject.toml exactly from pyproject_contract
+      - parse TOML and verify exact direct pins before resolution
+    gate: ALL_PASS_OR_STOP
+  - step: 3
+    name: single_lock_resolution
+    actions:
+      - resolve uv.lock once using uv 0.12.3 canonical PyPI and fixed exclude-newer cutoff
+      - prohibit pre-release Git path editable alternate-index and manual lock edits
+    gate: LOCK_CREATED_OR_STOP
+  - step: 4
+    name: lock_graph_review
+    actions:
+      - compare direct and transitive graph with dependency catalog estimate
+      - inspect source types markers versions wheel availability and yanked metadata
+      - update dependency catalog with observed graph without changing approved direct pins
+    gate: NO_UNEXPECTED_OR_ADVERSE_RESULT_OR_STOP
+  - step: 5
+    name: minimal_package_shell
+    actions:
+      - create only src/cargoopt_recovery/__init__.py
+      - expose only package docstring and __version__ equal to project version 0.1.0
+      - create only tests/test_package_import.py
+      - create foundation-only README.md with exact local commands and phase-lock warning
+    gate: EXACT_FILE_ALLOWLIST_OR_STOP
+  - step: 6
+    name: local_frozen_validation
+    actions:
+      - run uv lock check without mutation
+      - run one frozen exact sync
+      - run package import and version smoke
+      - run Ruff format check and lint as independent commands
+      - run mypy strict over src and tests
+      - run pytest with third-party plugin autoload disabled
+      - build wheel and sdist into an operating-system temporary directory outside repository
+      - inspect artifact metadata and import installed wheel in an isolated temporary environment
+    gate: ALL_COMMANDS_EXIT_ZERO_WITHOUT_RULE_WEAKENING
+  - step: 7
+    name: scope_and_state_closeout
+    actions:
+      - verify runtime dependency count remains zero
+      - verify no Phase 2+ dependency path abstraction TODO or placeholder exists
+      - verify lock and metadata remain unchanged after validation
+      - update compatibility matrix task status phase status and project status
+      - create checkpoint excluding transient files
+    gate: READY_FOR_PH1_T03_PLANNING_ONLY
+
+acceptance_criteria:
+  - only files in the exact files_allowed list are created or modified
+  - uv executable version is exactly 0.12.3
+  - interpreter is standard GIL-enabled CPython exactly 3.14.7
+  - pyproject project runtime dependency count is zero
+  - build and development direct dependencies exactly match approved_toolchain_snapshot
+  - every direct package declaration uses an exact equality pin
+  - uv.lock is generated by the approved manager without manual edit
+  - lock contains no Git path editable alternate-index pre-release or yanked dependency
+  - unexpected source distribution or native compiler requirement is absent
+  - src package contains no business behavior placeholder interface adapter TODO or future-phase import
+  - package __version__ and project version are exactly 0.1.0
+  - import smoke succeeds from the frozen project environment
+  - Ruff format check and Ruff lint pass independently
+  - mypy strict passes for src and tests
+  - pytest smoke passes with third-party plugin autoload disabled
+  - local isolated build smoke and installed-wheel import pass
+  - validation does not mutate pyproject.toml or uv.lock
+  - README commands match the commands actually executed
+  - no quality rule test or assertion is weakened to obtain a pass
+  - Phase 2 through Phase 8 remain LOCKED
+  - PH1-T03 is not created or started
+
+tests_required:
+  - parse all repository YAML files with a safe YAML parser
+  - parse pyproject.toml with Python standard library tomllib
+  - validate exact path allowlist against pre-task manifest
+  - validate exact runtime package-manager build-backend and dev-tool versions
+  - validate empty project.dependencies and exact dev group membership
+  - validate uv.lock metadata consistency with uv lock --check
+  - validate lock source and version policy with a deterministic parser
+  - validate importlib package discovery import and __version__ equality
+  - run ruff format --check as a non-mutating command
+  - run ruff check as a non-mutating command without fix
+  - run mypy strict without per-file ignore or config relaxation
+  - run pytest with PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+  - build outside repository and inspect package name version and Python requirement
+  - install built wheel into a temporary isolated environment and import package
+  - verify pyproject.toml and uv.lock hashes before and after validation are equal
+  - verify no conflict marker or unbalanced Markdown code fence exists
+  - verify transient files are absent from checkpoint archive
+
+dependencies_allowed: true
+dependency_change_policy:
+  allowed_exact_only:
+    - hatchling==1.32.0
+    - ruff==0.16.3
+    - mypy==2.3.0
+    - pytest==9.1.1
+  project_runtime_dependencies_allowed: false
+  package_manager_dependency_allowed: false
+  new_or_changed_direct_dependency_requires_stop: true
+migrations_allowed: false
+network_access:
+  allowed_after_execution_approval: true
+  allowed_hosts: [pypi.org, files.pythonhosted.org, astral.sh, python.org]
+  purpose: approved runtime availability and canonical package resolution only
+
+stop_conditions:
+  - explicit PH1-T02 execution approval is absent
+  - repository state no longer matches the approved precondition snapshot
+  - uv version is not exactly 0.12.3
+  - standard GIL-enabled CPython 3.14.7 cannot be obtained or verified
+  - an approved exact release is unavailable incompatible yanked pre-release deprecated or adversely flagged
+  - canonical PyPI resolution fails or requires source substitution
+  - lock graph contains unexpected package Git path editable alternate-index or unexplained native build
+  - a direct pin runtime range cutoff source or quality policy would need to change
+  - a new dependency plugin config module CLI or helper tool appears necessary
+  - quality gates pass only by weakening rule strictness test or assertion
+  - files outside the exact allowlist would need creation or modification
+  - Phase 2+ path dependency abstraction TODO placeholder or business behavior appears necessary
+  - local validation mutates pyproject.toml or uv.lock unexpectedly
+  - existing user work conflicts with an allowed target file
+  - PH1-T03 clean-room CI audit or license work becomes necessary to finish this task
+
+handoff:
+  on_success: >-
+    Mark PH1-T02 COMPLETED, keep Phase 1 ACTIVE, set the next gate to
+    PH1_T03_PLANNING_REQUIRED and wait for a separate user request; do not create
+    or start PH1-T03 automatically.
+  on_failure: >-
+    Preserve the last verified gate, record the exact blocker, make no fallback
+    dependency or scope expansion, and return to human decision.
+
+planning_validation_results:
+  all_yaml_safe_parse: PASSED
+  active_phase_and_task_alignment: PASSED
+  ph1_t01_completed_and_decision_approved: PASSED
+  adr_009_accepted: PASSED
+  exact_toolchain_snapshot: PASSED
+  exact_file_allowlist_defined: PASSED
+  phase_2_to_phase_8_lock_invariants: PASSED
+  only_authorized_planning_files_changed: PASSED
+  implementation_or_dependency_artifact_created: false
+  execution_approval_status: APPROVED
+  document_hygiene: PASSED
+
+execution_results:
+  repository_preflight:
+    status: PASSED
+    uv_version: 0.12.3
+    uv_bootstrap_location: task_scoped_workspace_outside_repository
+    python_implementation: CPython
+    python_version: 3.14.7
+    python_variant: standard_gil_enabled
+    python_cache_tag: cpython-314
+    forbidden_or_unexpected_implementation_paths: 0
+  metadata_only:
+    status: PASSED
+    files_created: [.python-version, .gitignore, pyproject.toml]
+    toml_parse_runtime: CPython_3_14_7_tomllib
+    exact_direct_pin_policy: PASSED
+    project_runtime_dependency_count: 0
+    prelock_check: EXPECTED_MISSING_LOCK_EXIT_2
+  single_lock_resolution:
+    status: PASSED
+    resolver: uv_0_12_3
+    interpreter: standard_gil_enabled_cpython_3_14_7
+    total_package_entries: 14
+    project_lock_sha256: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+  lock_graph_review:
+    status: PASSED
+    canonical_registry_entries: 13
+    project_editable_entries: 1
+    linux_cp314_active_transitive_packages: 9
+    windows_marker_only_packages: [colorama]
+    unexpected_packages: []
+    git_url_path_or_alternate_index_packages: []
+    prerelease_packages: []
+    resolver_yanked_warnings: []
+    compatible_linux_cp314_wheels: PASSED
+    local_compiler_expected: false
+    lock_check_hash_stability: PASSED
+  minimal_package_shell:
+    status: PASSED
+    source_files: [src/cargoopt_recovery/__init__.py]
+    test_files: [tests/test_package_import.py]
+    documentation_files: [README.md]
+    package_version: 0.1.0
+    business_behavior_or_future_phase_placeholder_count: 0
+    exact_file_allowlist: PASSED
+  local_frozen_validation:
+    status: PASSED
+    frozen_exact_sync: PASSED
+    installed_package_entries: 13
+    project_import_and_version: PASSED
+    ruff_format_check: PASSED
+    ruff_lint: PASSED
+    mypy_strict: PASSED
+    pytest:
+      status: PASSED
+      tests_passed: 1
+      third_party_plugin_autoload: DISABLED
+    build:
+      status: PASSED
+      output_location: operating_system_temporary_directory_outside_repository
+      wheel_name: cargoopt_recovery-0.1.0-py3-none-any.whl
+      wheel_sha256: 8c54d9c05a77b149709c5986bc55cf4405e2e8adde17009f2d12ae07a5c2357a
+      sdist_name: cargoopt_recovery-0.1.0.tar.gz
+      sdist_sha256: adc313f1230c26c379552a10da2efaabdf9cb28ac6634ca26a15fef180e1d8bd
+      metadata_inspection: PASSED
+      isolated_wheel_install_and_import: PASSED
+      temporary_artifacts_removed: true
+    third_party_source_builds: 0
+    native_compiler_invocations: 0
+    pyproject_sha256_after_validation: db02c0b9ea47e128a595682da17c9176dac55b9052e900d5dc67084076bc9b6b
+    uv_lock_sha256_after_validation: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+    metadata_or_lock_mutation: false
+  local_validation_safeguard_calibration:
+    initial_global_no_build_result: BLOCKED_LOCAL_EDITABLE_AS_DESIGNED
+    dependency_installation_completed: false
+    metadata_or_lock_mutation: false
+    correction: >-
+      Global --no-build yerine local editable project build'ine izin veren ve
+      bütün beklenen üçüncü taraf package'larda source build'i yasaklayan exact
+      no-build-package listesi kullanıldı.
+    quality_or_dependency_policy_weakened: false
+  build_command_compatibility:
+    unsupported_command_detected_before_build: uv build --frozen
+    artifact_created_by_unsupported_command: false
+    supported_command: uv build --no-sources
+    determinism_control: >-
+      Build öncesi ve sonrası uv lock --check ile pyproject.toml ve uv.lock
+      SHA-256 eşitliği zorunludur; build output repository dışına yazılır.
+    dependency_version_or_quality_policy_changed: false
+  scope_and_state_closeout:
+    status: PASSED
+    authorized_changed_files: 13
+    project_runtime_dependency_count: 0
+    source_files: 1
+    test_files: 1
+    phase_2_to_phase_8_status: LOCKED
+    phase_2_to_phase_8_implementation_artifacts: 0
+    ph1_t03_created_or_started: false
+    repository_transient_paths_removed: true
+    conflict_markers: 0
+    markdown_fence_balance: PASSED
+    checkpoint_archive_integrity: VERIFIED_IN_FINAL_CLOSEOUT
+
+final_validation_results:
+  all_yaml_safe_parse: PASSED
+  pyproject_tomllib_parse: PASSED
+  exact_runtime_and_tool_versions: PASSED
+  exact_direct_dependency_policy: PASSED
+  empty_project_runtime_dependencies: PASSED
+  canonical_lock_source_policy: PASSED
+  prerelease_and_unapproved_source_absence: PASSED
+  lock_check_and_hash_stability: PASSED
+  package_import_and_version: PASSED
+  ruff_format_check: PASSED
+  ruff_lint: PASSED
+  mypy_strict: PASSED
+  pytest_smoke: PASSED
+  isolated_build_metadata_and_wheel_import: PASSED
+  exact_file_allowlist: PASSED
+  phase_lock_invariants: PASSED
+  transient_checkpoint_exclusion: PASSED
+  execution_errors_remaining: 0

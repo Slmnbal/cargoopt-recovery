@@ -1,0 +1,122 @@
+schema_version: 1
+task_id: PH0-T04
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_user_approval
+goal: >-
+  Risk-blind ve ML-informed MILP formülünü, deterministic greedy baseline'ı,
+  HiGHS execution/status davranışını ve solver state'inden bağımsız plan
+  validation sözleşmesini uygulama kodundan önce kesinleştirmek.
+in_scope:
+  - shipment candidate ve eligibility setlerinin matematiksel tanımı
+  - binary assignment ve unassigned karar değişkenleri
+  - exactly-one weight volume ve eligibility constraint'leri
+  - risk-blind ve ML-informed objective formülleri
+  - tam sayı kuruş cost coefficient politikası
+  - deterministic greedy risk-blind baseline algoritması
+  - primary objective koruyan secondary tie-break protokolü
+  - HiGHS 60 saniye time limit ve 0.001 relative MIP gap
+  - OPTIMAL FEASIBLE_TIMEOUT INFEASIBLE NO_SOLUTION_TIMEOUT ERROR durumları
+  - incumbent dual bound gap ve runtime raporlama
+  - no-plan durumlarında assignment yayımlama yasağı
+  - Pyomo ve solver state'inden bağımsız validator sorumluluğu
+  - schema hash assignment capacity eligibility ve cost doğrulamaları
+  - plan solver execution ve validation output schema
+out_of_scope:
+  - Python Pyomo veya validator implementation
+  - HiGHS veya başka dependency kurulumu
+  - pyproject.toml veya lock file
+  - optimizasyon veya benchmark çalıştırmak
+  - sentetik veri üretmek veya BTS indirmek
+  - database migration API frontend
+  - blind replay case seçimi istatistik veya release kararı
+  - RAG LLM Hugging Face pgvector veya Ollama
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T04.yaml
+  - docs/or/MATHEMATICAL_MODEL_CONTRACT.md
+  - docs/or/SOLVER_EXECUTION_CONTRACT.md
+  - docs/or/PLAN_VALIDATION_CONTRACT.md
+  - docs/or/OR_OUTPUT_SCHEMA.yaml
+  - docs/adr/ADR-006-or-solver-validator-contract.md
+files_forbidden:
+  - AGENTS.md
+  - docs/or/OR_INPUT_SCHEMA.yaml
+  - docs/or/COST_MODEL_CONTRACT.md
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - her shipment tam bir candidate flight'a atanmalı veya UNASSIGNED kalmalı
+  - split shipment matematiksel olarak mümkün olmamalı
+  - weight ve volume capacity hard constraint olmalı
+  - eligibility dışı pair için karar değişkeni oluşturulmamalı
+  - risk-blind ve ML-informed aynı set variable ve constraint'leri kullanmalı
+  - iki MILP arasındaki tek business objective farkı expected risk cost olmalı
+  - solver cost coefficient'leri integer kurus olmalı
+  - greedy baseline deterministic ve risk-blind olmalı
+  - unassigned değişkeni geçerli inputta yapısal feasibility sağlamalı
+  - timeout hiçbir koşulda OPTIMAL olarak sunulmamalı
+  - incumbent olmayan execution plan yayımlamamalı
+  - solver native status ve configured gap birlikte raporlanmalı
+  - validator Pyomo model veya solver object okuyamamalı
+  - validator feasibility ve cost'u OR inputtan yeniden hesaplamalı
+  - validator optimalite kanıtı ürettiğini iddia etmemeli
+  - invalid plan UI backtest veya downstream tüketiciye yayımlanmamalı
+  - PHASE_1 ile PHASE_8 kilitli kalmalı
+  - kapsam dışı dosya dependency veya implementation oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - tam bir ACTIVE faz bulunmalı ve bu PHASE_0 olmalı
+  - decision variable ve constraint isimleri belgeler arasında eşleşmeli
+  - risk-blind ile ML-informed objective exact tek terimde ayrışmalı
+  - bütün objective katsayıları kuruş integer sözleşmesine uymalı
+  - greedy shipment ve candidate sort key'leri tam tanımlı olmalı
+  - solver status enum'u exact beş durum içermeli
+  - OPTIMAL yalnızca solver optimal termination ve gap <= 0.001 ile mümkün olmalı
+  - FEASIBLE_TIMEOUT incumbent true gerektirmeli
+  - INFEASIBLE NO_SOLUTION_TIMEOUT ve ERROR plan_emitted false gerektirmeli
+  - output schema required alanlarının tamamı tanımlı ve benzersiz olmalı
+  - validator reason code'ları benzersiz olmalı
+  - validator cost ve capacity reconciliation kuralları bulunmalı
+  - onaylı mevcut ve yeni dosyalar dışında dosya oluşmamalı
+  - implementation dependency database ve UI yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - onaylı dosya dışında değişiklik gereksinimi
+  - cost veya constraint anlamının mevcut contractlarla çelişmesi
+  - solver status'un yanlış başarı iddiası yaratması
+  - validator'ın solver model state'ine bağımlı hale gelmesi
+  - float cost ile kuruş reconciliation kaybı
+  - unassigned varlığına rağmen geçerli inputun infeasible olması
+  - blind replay evaluation kararının bu göreve taşınması
+  - uygulama kodu dependency solver veya veri gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  authorized_file_set: PASSED
+  forbidden_checkpoint_files_unchanged: PASSED
+  mathematical_variable_and_constraint_contract: PASSED
+  strategy_single_objective_difference: PASSED
+  integer_kurus_contract: PASSED
+  greedy_deterministic_order_contract: PASSED
+  structural_feasibility_witness: PASSED
+  solver_status_mapping_examples: PASSED
+  configured_gap_semantics: PASSED
+  solver_output_schema_completeness: PASSED
+  validator_independence_contract: PASSED
+  validator_reason_code_uniqueness: PASSED
+  cost_and_capacity_reconciliation_contract: PASSED
+  cross_document_consistency: PASSED
+  forbidden_paths_absent: PASSED
+  document_structure: PASSED

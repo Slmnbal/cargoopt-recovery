@@ -1,0 +1,591 @@
+schema_version: 1
+task_id: PH1-T03
+phase: PHASE_1
+status: IN_PROGRESS_HOSTED_CI
+planned_at: "2026-08-13"
+planning_source: explicit_user_request
+execution_approval_status: APPROVED
+execution_approved_at: "2026-08-13"
+execution_approval_source: explicit_user_command
+execution_approval_text: "PH1-T03 planını onaylıyorum; başlat."
+started_at: "2026-08-13"
+resumed_at: "2026-08-14"
+resume_source: explicit_user_request_and_github_connection
+target_repository: Slmnbal/cargoopt-recovery
+target_branch: main
+goal: >-
+  PH1-T02 foundation checkpoint'ini kaynak kodu veya dependency değiştirmeden
+  temiz bir Linux ortamında iki frozen exact sync ile yeniden kurmak; kalite,
+  build, security, adverse-status ve license kapılarını kanıtlamak; aynı
+  fail-closed kapıları minimal ve SHA-pinned GitHub Actions workflow'una taşımak;
+  gerçek hosted-run kanıtıyla Phase 1 exit raporunu üretmek.
+
+approval_gates:
+  ci_stack:
+    required: true
+    status: APPROVED
+    approved_at: "2026-08-13"
+    approval_source: explicit_user_command
+    approval_text: "PH1-T03 CI stack adayını onaylıyorum."
+    approval_scope: >-
+      Provider, runner, trigger, token permission, exact action release/SHA,
+      cache ve secret politikası.
+    candidate_document: docs/foundation/CI_STACK_DECISION.md
+    exact_next_approval_text: "PH1-T03 CI stack adayını onaylıyorum."
+    rule: >-
+      Genel bir başlatma komutu CI stack onayı sayılmaz; exact aday açıkça
+      onaylanmadan .github altında hiçbir dosya oluşturulamaz.
+  execution:
+    required: true
+    status: APPROVED
+    approved_at: "2026-08-13"
+    approval_source: explicit_user_command
+    approval_text: "PH1-T03 planını onaylıyorum; başlat."
+    depends_on: CI_STACK_APPROVED
+    dependency_status: SATISFIED
+    exact_next_approval_text_after_ci_approval: >-
+      PH1-T03 planını onaylıyorum; başlat.
+    rule: >-
+      CI stack onayı görevi yürütme onayı değildir. İki onay da kayıt altına
+      alınmadan local clean-room, audit, workflow veya external CI işi yapılamaz.
+  external_ci:
+    required: true
+    status: AUTHORIZED_PENDING_RUN
+    authorized_at: "2026-08-14"
+    authorization_source: explicit_user_command_and_connected_github_app
+    rule: >-
+      Uzak GitHub repository'sine yazma veya workflow çalıştırma, yalnız görev
+      yürütme onayından ayrıca doğan bir dış sistem yetkisi değildir. Repository
+      ve push/run yetkisi yoksa görev BLOCKED_EXTERNAL_CI_EVIDENCE durumunda durur.
+
+preconditions:
+  phase_1_status: ACTIVE
+  ph1_t01_status: COMPLETED
+  ph1_t02_status: COMPLETED
+  ph1_t02_local_validation: PASSED
+  ph1_t02_checkpoint:
+    path_outside_repository: CargoOpt_Recovery_PH1_T02_Completed.zip
+    sha256: 42013e718d7d07152de3364c6c8a713646f98a84f4bbc95cdf694a430446dd0d
+    integrity: VERIFIED
+  pyproject_sha256: db02c0b9ea47e128a595682da17c9176dac55b9052e900d5dc67084076bc9b6b
+  uv_lock_sha256: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+  project_runtime_dependencies: []
+  phase_2_to_phase_8_status: LOCKED
+  ci_stack_approval: SATISFIED
+  execution_approval: SATISFIED
+
+foundation_snapshot:
+  runtime:
+    implementation: CPython
+    version: 3.14.7
+    variant: standard_gil_enabled
+  package_manager:
+    name: uv
+    version: 0.12.3
+    role: external_bootstrap_tool_not_project_dependency
+  build_backend:
+    name: hatchling
+    version: 1.32.0
+  development_dependencies:
+    - ruff==0.16.3
+    - mypy==2.3.0
+    - pytest==9.1.1
+  canonical_index: https://pypi.org/simple
+  exclude_newer: "2026-08-13T23:59:59Z"
+  prerelease_policy: DISALLOW
+
+in_scope:
+  - PH1-T02 checkpoint ve current repository manifest/hashes preflight'i
+  - repository transient state'inden ayrılmış OS temporary clean-room snapshot'ı
+  - standard GIL-enabled CPython 3.14.7 ve uv 0.12.3 exact bootstrap doğrulaması
+  - iki ardışık frozen exact all-groups sync ve normalized environment idempotency karşılaştırması
+  - import tool-version format lint strict-type ve pytest gate'lerinin ayrı yürütülmesi
+  - repository dışındaki temporary path'te isolated wheel ve sdist build smoke
+  - wheel metadata ve isolated installed-wheel import doğrulaması
+  - uv audit ile project lock vulnerability deprecation ve quarantine kontrolü
+  - CycloneDX 1.5 project SBOM üretimi ve SHA-256 kaydı
+  - observed isolated build graph'ın temporary script lock ile ayrı audit edilmesi
+  - runtime package manager project graph build graph ve CI action'ları için full license inventory
+  - minimal SHA-pinned GitHub Actions foundation workflow'u
+  - local clean-room ve gerçek GitHub-hosted CI parity kanıtı
+  - compatibility matrix dependency catalog README task phase ve project durum güncellemeleri
+  - clean-room dependency-audit ve Phase 1 exit raporları
+  - transient artifact içermeyen doğrulanmış PH1-T03 checkpoint'i
+
+out_of_scope:
+  - src veya tests altında herhangi bir davranış assertion ya da dosya değişikliği
+  - pyproject.toml uv.lock .python-version veya .gitignore değişikliği
+  - yeni runtime development build audit license CI veya helper dependency eklemek
+  - pre-commit coverage badge Makefile task runner Docker container deployment veya release workflow
+  - artifact upload package publish deployment signing provenance attestation veya secret kullanımı
+  - Windows macOS ARM GPU matrix veya cross-platform destek iddiası
+  - GitHub branch-protection repository settings Dependabot ya da organization policy mutation'ı
+  - BTS data cargo domain ML OR solver validator API database UI RAG LLM veya Hugging Face işi
+  - Phase 2 ile Phase 8 için dependency path interface adapter TODO empty directory veya placeholder
+  - Phase 1'i kapatmak veya Phase 2'yi açmak
+  - security veya license bulgusunu ignore allowlist suppression override ya da sürüm değişikliğiyle çözmek
+
+planning_files_modified:
+  - docs/tasks/PH1-T03.yaml
+  - docs/phase-status.yaml
+  - PROJECT_SPEC.md
+  - docs/foundation/CI_STACK_DECISION.md
+  - docs/foundation/CLEAN_ENVIRONMENT_VERIFICATION.md
+
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - .github/workflows/foundation.yml
+  - README.md
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH1-T03.yaml
+  - docs/foundation/CI_STACK_DECISION.md
+  - docs/foundation/CLEAN_ENVIRONMENT_VERIFICATION.md
+  - docs/foundation/COMPATIBILITY_MATRIX.md
+  - docs/foundation/DEPENDENCY_CATALOG.yaml
+  - docs/foundation/CLEAN_ROOM_VERIFICATION_REPORT.md
+  - docs/foundation/DEPENDENCY_AUDIT_REPORT.md
+  - docs/foundation/PHASE_1_EXIT_REPORT.md
+
+files_forbidden:
+  - AGENTS.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - src/**
+  - tests/**
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-T01.yaml
+  - docs/tasks/PH1-T02.yaml
+  - docs/adr/**
+  - docs/governance/**
+  - docs/data/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - any .github file other than .github/workflows/foundation.yml
+  - Dockerfile
+  - docker-compose.yml
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+  - scripts/**
+
+transient_paths:
+  repository_paths_forbidden_at_checkpoint:
+    - .venv/**
+    - .ruff_cache/**
+    - .mypy_cache/**
+    - .pytest_cache/**
+    - __pycache__/**
+    - dist/**
+    - build/**
+    - "*.egg-info/**"
+    - foundation-sbom.cdx.json
+    - audit.json
+  allowed_outside_repository_during_execution:
+    - clean-room source snapshot
+    - clean-room .venv and tool caches
+    - wheel and sdist output
+    - isolated wheel-install environment
+    - project CycloneDX SBOM and audit JSON
+    - temporary PEP 723 build-backend script and script lock
+    - build-backend CycloneDX SBOM and audit JSON
+    - normalized package inventory and command logs
+  closeout_rule: MUST_BE_REMOVED_AFTER_REPORT_HASHES_AND_SUMMARIES_ARE_RECORDED
+
+ci_candidate:
+  decision_status: APPROVED
+  approved_at: "2026-08-13"
+  approval_source: explicit_user_command
+  approval_text: "PH1-T03 CI stack adayını onaylıyorum."
+  provider: GitHub Actions
+  workflow_path: .github/workflows/foundation.yml
+  workflow_name: Foundation
+  runner: ubuntu-24.04
+  architecture_claim: x86_64
+  triggers:
+    pull_request_to: [main]
+    push_to: [main]
+  forbidden_triggers:
+    - pull_request_target
+    - workflow_run
+    - schedule
+    - release
+    - deployment
+  permissions:
+    contents: read
+    all_unspecified: none
+  secrets: NONE
+  cache: DISABLED
+  artifact_upload: DISABLED
+  timeout_minutes: 15
+  actions:
+    - repository: actions/checkout
+      release: v7.0.1
+      full_commit_sha: 3d3c42e5aac5ba805825da76410c181273ba90b1
+      license_spdx: MIT
+    - repository: astral-sh/setup-uv
+      release: v10.0.0
+      full_commit_sha: ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d
+      license_spdx: MIT
+      inputs:
+        version: 0.12.3
+        python-version: 3.14.7
+        enable-cache: false
+  explicitly_rejected_actions:
+    - actions/setup-python
+    - actions/cache
+    - actions/upload-artifact
+  rejection_reason: >-
+    setup-uv exact uv ve exact Python kurulumunu karşılar; cache clean-room
+    kanıtını zayıflatır; permanent artifact upload Phase 1 için gerekli değildir.
+
+license_policy:
+  inventory_scope:
+    - CPython runtime
+    - uv bootstrap executable
+    - project direct and transitive locked packages for all markers
+    - isolated build backend and observed transitive packages
+    - GitHub Actions used by the workflow
+  acceptable_spdx_expressions:
+    - MIT
+    - Apache-2.0
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - PSF-2.0
+    - MPL-2.0
+    - MIT OR Apache-2.0
+    - Apache-2.0 OR BSD-2-Clause
+  mandatory_review:
+    - license expression from installed distribution metadata
+    - canonical project metadata or LICENSE file cross-check
+    - notice or source-disclosure obligation summary
+    - package version source and marker applicability
+  blockers:
+    - UNKNOWN or missing license after canonical-source cross-check
+    - proprietary noncommercial research-only SSPL BSL GPL or AGPL term
+    - unresolved license conflict or redistribution restriction
+    - source identity or exact version cannot be proven
+
+security_policy:
+  uv_malware_check: REQUIRED
+  project_audit_command: uv audit --frozen --output-format json
+  project_audit_scope: ALL_EXTRAS_AND_ALL_GROUPS_BY_DEFAULT
+  build_graph_audit: REQUIRED_SEPARATE_TEMPORARY_SCRIPT_LOCK
+  vulnerability_ignore_allowed: false
+  ignore_until_fixed_allowed: false
+  alternate_index_allowed: false
+  insecure_host_allowed: false
+  source_build_for_third_party_allowed: false
+  blocker_statuses:
+    - known_vulnerability
+    - deprecated
+    - quarantined
+    - malware_or_adverse_status
+    - yanked_or_unverifiable_distribution
+
+execution_sequence:
+  - step: 1
+    name: approval_and_repository_preflight
+    actions:
+      - verify CI stack approval and PH1-T03 execution approval are separate and both present
+      - verify active phase/task and all locked-phase invariants
+      - verify PH1-T02 checkpoint integrity current manifest and frozen file hashes
+      - verify no user change conflicts with files_allowed
+      - record whether a GitHub remote/default main branch and authorized hosted run are available
+    gate: ALL_PASS_OR_STOP
+  - step: 2
+    name: isolated_clean_room_snapshot
+    actions:
+      - create an OS temporary directory outside repository
+      - materialize only current repository files while excluding transient and VCS metadata
+      - record sorted relative-path manifest and SHA-256 values
+      - assert no secret user-specific absolute path or Phase 2+ implementation artifact exists
+      - use a task-specific uv cache under the temporary parent and no prior project .venv
+    gate: CLEAN_SNAPSHOT_CREATED_OR_STOP
+  - step: 3
+    name: exact_bootstrap_and_two_syncs
+    actions:
+      - verify uv executable equals 0.12.3 and record provenance
+      - install/find uv-managed standard GIL-enabled CPython exactly 3.14.7
+      - verify pyproject and lock starting hashes
+      - run first frozen exact all-groups sync with malware check enabled
+      - record normalized installed distribution inventory
+      - run second identical frozen exact all-groups sync
+      - record and compare normalized inventory plus metadata/lock hashes
+      - require uv sync --check and zero package add remove or update on second sync
+    gate: IDEMPOTENT_AND_HASH_STABLE_OR_STOP
+  - step: 4
+    name: quality_and_build_gates
+    actions:
+      - run package import and exact version smoke
+      - run Ruff format check and lint independently
+      - run mypy strict over src and tests
+      - run pytest with third-party plugin autoload disabled
+      - build wheel and sdist outside repository with uv build --no-sources
+      - inspect artifact name version Requires-Python and top-level package
+      - install wheel into a second isolated temporary environment and import it
+      - prove pyproject and lock hashes remain unchanged before and after build
+    gate: ALL_COMMANDS_EXIT_ZERO_WITHOUT_RULE_WEAKENING
+  - step: 5
+    name: dependency_security_license_and_sbom
+    actions:
+      - run project uv audit frozen JSON with no ignore
+      - export all-groups project CycloneDX 1.5 SBOM outside repository
+      - capture observed isolated Hatchling build graph from verbose build evidence
+      - reproduce that graph in a temporary PEP 723 script lock using Hatchling 1.32.0 and the frozen cutoff
+      - require temporary build graph and observed build graph to match
+      - audit and export CycloneDX for the temporary build graph
+      - build the complete runtime tool project build and CI-action license inventory
+      - cross-check every SPDX expression and obligation against canonical source
+      - record hashes and summaries; remove raw temporary artifacts at closeout
+    gate: ZERO_SECURITY_ADVERSE_OR_LICENSE_BLOCKER
+  - step: 6
+    name: minimal_ci_workflow
+    actions:
+      - re-verify exact CI candidate still matches approved release and SHA provenance
+      - create only .github/workflows/foundation.yml
+      - set top-level contents read permission and no secrets
+      - use only full-SHA checkout and setup-uv actions
+      - disable cache and artifact upload
+      - mirror exact runtime sync quality build audit and SBOM commands
+      - reject pull_request_target expressions from untrusted input and write permissions
+      - statically review workflow against approved candidate before external run
+    gate: EXACT_APPROVED_CI_FILE_ONLY
+  - step: 7
+    name: real_hosted_ci_evidence
+    actions:
+      - run the committed workflow on GitHub-hosted ubuntu-24.04 from the approved repository
+      - verify checkout setup runtime both syncs quality build audit and SBOM steps pass
+      - record repository commit SHA workflow run URL run ID attempt runner image and conclusion
+      - confirm the run used the full-SHA actions and no secret or write permission
+    gate: REAL_REMOTE_SUCCESS_REQUIRED_NOT_SIMULATED
+  - step: 8
+    name: reports_and_phase_1_exit_readiness
+    actions:
+      - create clean-room dependency-audit and Phase 1 exit reports
+      - update compatibility matrix dependency catalog README task phase and project status
+      - re-run local documentation YAML scope transient and conflict-marker checks
+      - create and integrity-test a checkpoint excluding all transient artifacts
+      - keep Phase 1 ACTIVE and Phase 2 through Phase 8 LOCKED
+    gate: READY_FOR_SEPARATE_PHASE_1_CLOSE_AND_PHASE_2_OPEN_APPROVAL
+
+acceptance_criteria:
+  - both CI stack and execution approvals are explicitly recorded before implementation
+  - only files in files_allowed are created or modified during execution
+  - pyproject.toml uv.lock source tests and dependency declarations are byte-identical to pre-task hashes
+  - uv is exactly 0.12.3 and Python is standard GIL-enabled CPython exactly 3.14.7
+  - clean-room starts without a project .venv or repository cache
+  - first and second sync are frozen exact all-groups and use canonical PyPI only
+  - second sync adds removes or updates zero packages
+  - normalized installed inventory and pyproject/lock hashes are identical across both syncs
+  - package import and version smoke pass
+  - Ruff format Ruff lint mypy strict and pytest pass as independent gates
+  - no skip xfail ignore suppression fix or quality-rule weakening is introduced
+  - wheel and sdist build outside repository and isolated wheel import pass
+  - no third-party source build or native compiler invocation occurs
+  - project and observed build graphs have zero vulnerability deprecation quarantine or adverse finding
+  - no audit ignore allowlist insecure host or alternate index is used
+  - CycloneDX 1.5 SBOMs are produced outside repository and their hashes are recorded
+  - every runtime tool project build and CI-action component has verified exact identity and license
+  - license policy has no unknown prohibited or unresolved entry
+  - CI workflow exactly matches the separately approved candidate
+  - all GitHub Actions references use full 40-character commit SHAs
+  - CI has only contents read permission no secrets no cache no artifact upload and no write operation
+  - an actual GitHub-hosted ubuntu-24.04 workflow run succeeds for the final committed state
+  - Windows macOS ARM and GPU remain explicitly unverified
+  - no Phase 2+ file dependency abstraction placeholder or behavior exists
+  - Phase 1 remains ACTIVE and Phase 2 through Phase 8 remain LOCKED after task completion
+  - checkpoint integrity and SHA-256 are recorded
+
+tests_required:
+  - safe-parse every repository YAML file
+  - parse pyproject.toml with standard-library tomllib
+  - compare pre-task and post-task sorted file manifests against files_allowed
+  - compare pre-task and post-task SHA-256 for pyproject.toml uv.lock src and tests
+  - verify exact runtime tool and action versions/SHAs
+  - verify full-SHA regex for every workflow uses reference
+  - verify workflow permission trigger cache secret and forbidden-event policy
+  - run uv lock --check without mutation
+  - run two frozen exact all-groups syncs and compare normalized inventories
+  - run uv sync --check after each sync
+  - run import and exact package-version smoke
+  - run ruff format --check separately
+  - run ruff check separately without fix
+  - run mypy src tests under strict committed configuration
+  - run pytest with PYTEST_DISABLE_PLUGIN_AUTOLOAD=1
+  - build outside repository with uv build --no-sources
+  - inspect wheel and sdist metadata and hashes
+  - install wheel into isolated environment and import package
+  - run uv audit --frozen --output-format json with no ignores
+  - run uv export --frozen --all-groups --format cyclonedx1.5 outside repository
+  - audit the observed isolated build graph separately
+  - validate complete license inventory and obligation fields
+  - verify actual remote CI conclusion equals success for final commit SHA
+  - verify no conflict marker unbalanced Markdown fence transient file or broken relative link
+  - integrity-test final checkpoint archive and recompute its SHA-256
+
+dependencies_allowed: false
+dependency_change_policy:
+  pyproject_change_allowed: false
+  uv_lock_change_allowed: false
+  new_project_dependency_allowed: false
+  new_external_audit_or_ci_tool_allowed: false
+  action_change_requires_new_ci_stack_approval: true
+migrations_allowed: false
+network_access:
+  allowed_after_all_task_approvals: true
+  allowed_hosts:
+    - pypi.org
+    - files.pythonhosted.org
+    - github.com
+    - api.github.com
+    - objects.githubusercontent.com
+    - astral.sh
+    - python.org
+  allowed_purposes:
+    - exact approved runtime and tool bootstrap
+    - canonical package sync audit and metadata verification
+    - approved GitHub Actions checkout and setup
+    - authorized hosted CI execution and evidence retrieval
+  external_write_requires_explicit_authority: true
+
+stop_conditions:
+  - PH1-T03 execution approval is absent
+  - recorded CI stack approval no longer exactly matches the planned stack
+  - approved CI release SHA runner trigger permission cache or secret policy would need to change
+  - current repository or PH1-T02 checkpoint no longer matches precondition hashes
+  - a user change conflicts with files_allowed
+  - uv 0.12.3 or standard GIL-enabled CPython 3.14.7 cannot be verified
+  - canonical source exact release SHA license or provenance cannot be verified
+  - frozen sync changes lock or needs an alternate index source build or compiler
+  - second frozen sync changes normalized environment inventory
+  - any import format lint type test or build gate fails
+  - passing requires rule test assertion type or audit weakening
+  - vulnerability deprecation quarantine malware yanked or other adverse status is found
+  - any audit ignore allowlist suppression insecure-host or override appears necessary
+  - observed build graph and temporary audited build graph do not match
+  - a license is missing unknown prohibited conflicting or operationally unacceptable
+  - a new dependency helper script action workflow or file outside allowlist appears necessary
+  - GitHub remote main branch write authorization or hosted-run evidence is unavailable
+  - final CI run does not correspond to the final reported commit SHA
+  - GitHub-hosted run fails is cancelled skipped or cannot prove exact action SHAs
+  - Phase 2+ implementation dependency abstraction TODO or placeholder appears
+  - Phase 1 close or Phase 2 transition would be required within this task
+
+failure_states:
+  local_or_audit_failure: BLOCKED_TECHNICAL_EVIDENCE
+  ci_stack_change_needed: BLOCKED_NEW_CI_APPROVAL
+  external_repository_unavailable: BLOCKED_EXTERNAL_CI_EVIDENCE
+  security_or_license_finding: BLOCKED_HUMAN_RISK_DECISION
+  scope_expansion_needed: BLOCKED_NEW_TASK_PLAN
+
+handoff:
+  current_pending_handoff: >-
+    Local clean-room, audit, build, license, SBOM ve workflow kapıları
+    tamamlandı. PH1-T03'ü ancak committed state'e ait gerçek GitHub-hosted
+    Foundation run sonucu success olduğunda kapat.
+  on_execution_success: >-
+    Mark PH1-T03 COMPLETED, keep Phase 1 ACTIVE, set its gate to
+    READY_FOR_HUMAN_APPROVAL, keep Phase 2 through Phase 8 LOCKED, and wait for
+    an explicit Phase 1 close plus Phase 2 open transition request.
+  on_execution_blocker: >-
+    Preserve the last verified gate and immutable evidence, record the exact
+    blocker, add no fallback or scope expansion, and return to human decision.
+
+planning_validation_results:
+  ph1_t02_completion_and_checkpoint_integrity: PASSED
+  current_metadata_and_lock_hash_alignment: PASSED
+  exact_ci_candidate_primary_source_research: PASSED
+  exact_action_full_sha_provenance: PASSED
+  clean_room_command_contract_corrected_for_uv_0_12_3: PASSED
+  two_separate_approval_gates_defined: PASSED
+  exact_ci_stack_approval_recorded: PASSED
+  execution_approval_status: APPROVED
+  external_ci_evidence_boundary_defined: PASSED
+  source_dependency_and_phase_lock_invariants: PASSED
+  implementation_or_ci_file_created: true
+  local_clean_room_or_audit_executed: true
+  remote_ci_executed: false
+
+execution_results:
+  approval_record:
+    status: PASSED
+    ci_stack_approval: APPROVED
+    task_execution_approval: APPROVED
+    approval_order: PASSED
+  repository_preflight:
+    status: PASSED
+    pre_execution_checkpoint_sha256: e248362a0714d8eff73d0bb7ef6f08a0e974162db1012c38a4657a89b0af3c8d
+    checkpoint_integrity: PASSED
+    current_repository_matches_approved_checkpoint: PASSED
+    pyproject_sha256: db02c0b9ea47e128a595682da17c9176dac55b9052e900d5dc67084076bc9b6b
+    uv_lock_sha256: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+    metadata_and_lock_hash_alignment: PASSED
+    active_phase_and_task_alignment: PASSED
+    phase_2_to_phase_8_lock_invariants: PASSED
+    target_repository: Slmnbal/cargoopt-recovery
+    repository_initial_state: EMPTY
+    default_main_branch_available: true
+    hosted_ci_run_authority_available: true
+    exact_uv_0_12_3_bootstrap_attempted: true
+    blocker: NONE
+  isolated_clean_room_snapshot:
+    status: PASSED
+    source_checkpoint_sha256: 42013e718d7d07152de3364c6c8a713646f98a84f4bbc95cdf694a430446dd0d
+    prior_project_venv_or_cache_used: false
+    alternate_index_or_secret_used: false
+  exact_bootstrap_and_two_syncs:
+    status: PASSED
+    uv_version: 0.12.3
+    python_version: 3.14.7
+    python_variant: standard_gil_enabled
+    installed_registry_packages: 12
+    installed_local_editable_projects: 1
+    first_sync_seconds: 6.001
+    second_sync_seconds: 3.451
+    second_sync_package_delta: 0
+    normalized_inventory_sha256: 2bdeac8aa53a65a1aab4fd98841a8686ac91298386bc5d97ef46a29146dbb21c
+    metadata_and_lock_hash_stability: PASSED
+  quality_and_build_gates:
+    status: PASSED
+    import: PASSED
+    ruff_format: PASSED
+    ruff_lint: PASSED
+    mypy_strict: PASSED
+    pytest: PASSED_1_TEST
+    wheel_sha256: ef587410c5c6b26c6c90c7734c6786c28b293629d233b63324cc14d2d1ebe840
+    sdist_sha256: 129657f9157d9c9b0a47e7eb29ff12c52da72ce9133ec4fd7852d55ad43e0211
+    isolated_wheel_import: PASSED
+    third_party_source_builds: 0
+    native_compiler_invocations: 0
+  dependency_security_license_and_sbom:
+    status: PASSED
+    project_audited_packages: 13
+    build_audited_packages: 6
+    vulnerabilities: 0
+    adverse_statuses: 0
+    project_sbom_components: 13
+    project_sbom_sha256: 3e4a2cc153fe58782e4847e4c712253f3052ea1e173de3f21d8c0f39690f2a44
+    build_sbom_components: 6
+    build_sbom_sha256: e7d98881183983b5781bf6e558e9c1d5b75d53c0ca32b0c9d9f6031b9d9981cb
+    license_inventory_components: 20
+    license_blockers: 0
+  minimal_ci_workflow:
+    status: CREATED_PENDING_HOSTED_RUN
+    workflow_path: .github/workflows/foundation.yml
+    approved_candidate_match: PASSED
+  real_hosted_ci_evidence:
+    status: PENDING_INITIAL_MAIN_PUSH
+  reports_and_phase_1_exit_readiness:
+    status: LOCAL_REPORTS_CREATED_HOSTED_EVIDENCE_PENDING
+
+blocker_resolution_requirements:
+  - RESOLVED — exact target is Slmnbal/cargoopt-recovery
+  - RESOLVED — repository initialization and push authority is explicit
+  - RESOLVED — default branch is main
+  - RESOLVED — GitHub Actions access is available
+  - PENDING — committed hosted workflow conclusion must equal success

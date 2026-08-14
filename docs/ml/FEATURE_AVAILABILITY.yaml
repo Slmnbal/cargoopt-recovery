@@ -1,0 +1,501 @@
+schema_version: 2
+contract_id: flight-feature-availability-v2
+feature_schema_version: flight-risk-features-v2
+label_schema_version: severe-disruption-label-v1
+status: ACCEPTED
+task_id: PH0-T03
+
+prediction_time:
+  mode: MULTI_HORIZON_LADDER
+  forecast_horizons_hours:
+    - 24
+    - 18
+    - 12
+    - 6
+  cutoff_formula: scheduled_departure_at_utc - lead_time_hours
+  cutoff_field: prediction_cutoff_at
+  cutoff_timezone: UTC
+  source_recovery_decision_horizon_hours: 6
+  candidate_selection_rule: MIN_AVAILABLE_HORIZON_GTE_TIME_TO_DEPARTURE
+  require_prediction_produced_at_or_before_recovery_decision: true
+  maximum_prediction_age_at_recovery_decision_hours: 6
+  label_availability_lag_hours: 24
+  label_availability_formula: scheduled_arrival_at_utc + 24h
+
+partition_contract:
+  TRAIN:
+    start: 2024-01-01
+    end: 2024-08-31
+    first_model_target_date: 2024-02-01
+  VALIDATION:
+    start: 2024-09-01
+    end: 2024-10-31
+  ML_TEST:
+    start: 2024-11-01
+    end: 2024-11-30
+  BLIND_REPLAY:
+    start: 2024-12-01
+    end: 2024-12-31
+
+source_field_policy:
+  allowed_primary_classes:
+    - IDENTITY
+    - FEATURE_SOURCE
+    - LABEL_OUTCOME
+    - AUDIT_ONLY
+    - REJECTED
+  unclassified_field_action: REJECT
+  schema_drift_action: FAIL_SNAPSHOT
+  direct_model_input_requires_derived_allowlist: true
+
+source_fields:
+  - name: FlightDate
+    primary_class: IDENTITY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - calendar_month
+      - day_of_week
+      - lead_time_hours
+    storage_layer: schedule
+
+  - name: Reporting_Airline
+    primary_class: AUDIT_ONLY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: schedule
+
+  - name: DOT_ID_Reporting_Airline
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - reporting_airline_id
+      - carrier_history_count_7d
+      - carrier_disruption_rate_7d
+      - carrier_history_count_30d
+      - carrier_disruption_rate_30d
+    storage_layer: schedule
+
+  - name: Flight_Number_Reporting_Airline
+    primary_class: IDENTITY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: schedule
+
+  - name: OriginAirportID
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - origin_airport_id
+      - route_id
+      - origin_history_count_7d
+      - origin_disruption_rate_7d
+      - origin_history_count_30d
+      - origin_disruption_rate_30d
+      - route_history_count_7d
+      - route_disruption_rate_7d
+      - route_history_count_30d
+      - route_disruption_rate_30d
+    storage_layer: schedule
+
+  - name: Origin
+    primary_class: AUDIT_ONLY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: schedule
+
+  - name: DestAirportID
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - destination_airport_id
+      - route_id
+      - destination_history_count_7d
+      - destination_disruption_rate_7d
+      - destination_history_count_30d
+      - destination_disruption_rate_30d
+      - route_history_count_7d
+      - route_disruption_rate_7d
+      - route_history_count_30d
+      - route_disruption_rate_30d
+    storage_layer: schedule
+
+  - name: Dest
+    primary_class: AUDIT_ONLY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: schedule
+
+  - name: CRSDepTime
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - scheduled_departure_hour
+      - scheduled_departure_block
+      - lead_time_hours
+    storage_layer: schedule
+
+  - name: CRSArrTime
+    primary_class: AUDIT_ONLY
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: schedule
+
+  - name: CRSElapsedTime
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - crs_elapsed_minutes
+    storage_layer: schedule
+
+  - name: Distance
+    primary_class: FEATURE_SOURCE
+    selected_for_ingestion: true
+    available_at_target_cutoff: true
+    direct_model_input: false
+    derived_features:
+      - distance_miles
+    storage_layer: schedule
+
+  - name: Cancelled
+    primary_class: LABEL_OUTCOME
+    selected_for_ingestion: true
+    available_at_target_cutoff: false
+    historical_use_requires_asof: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: outcome
+
+  - name: Diverted
+    primary_class: LABEL_OUTCOME
+    selected_for_ingestion: true
+    available_at_target_cutoff: false
+    historical_use_requires_asof: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: outcome
+
+  - name: ArrDelayMinutes
+    primary_class: LABEL_OUTCOME
+    selected_for_ingestion: true
+    available_at_target_cutoff: false
+    historical_use_requires_asof: true
+    direct_model_input: false
+    derived_features: []
+    storage_layer: outcome
+
+explicit_rejected_fields:
+  - name: Tail_Number
+    reason: assignment_at_T_minus_6_not_guaranteed_and_high_cardinality
+  - name: IATA_CODE_Reporting_Airline
+    reason: non_unique_code_and_redundant_with_DOT_ID
+  - name: DepTime
+    reason: actual_post_decision_event
+  - name: DepDelay
+    reason: target_flight_post_decision_outcome
+  - name: DepDelayMinutes
+    reason: target_flight_post_decision_outcome
+  - name: DepDel15
+    reason: target_flight_post_decision_outcome
+  - name: DepartureDelayGroups
+    reason: target_flight_post_decision_outcome
+  - name: TaxiOut
+    reason: actual_post_decision_event
+  - name: WheelsOff
+    reason: actual_post_decision_event
+  - name: WheelsOn
+    reason: actual_post_decision_event
+  - name: TaxiIn
+    reason: actual_post_decision_event
+  - name: ArrTime
+    reason: target_flight_post_decision_outcome
+  - name: ArrDelay
+    reason: target_flight_post_decision_outcome
+  - name: ArrDel15
+    reason: target_flight_post_decision_outcome
+  - name: ArrivalDelayGroups
+    reason: target_flight_post_decision_outcome
+  - name: CancellationCode
+    reason: cancellation_outcome_and_direct_label_leakage
+  - name: ActualElapsedTime
+    reason: actual_post_decision_event
+  - name: AirTime
+    reason: actual_post_decision_event
+  - name: CarrierDelay
+    reason: post_outcome_delay_cause
+  - name: WeatherDelay
+    reason: post_outcome_delay_cause
+  - name: NASDelay
+    reason: post_outcome_delay_cause
+  - name: SecurityDelay
+    reason: post_outcome_delay_cause
+  - name: LateAircraftDelay
+    reason: post_outcome_delay_cause
+  - name: FirstDepTime
+    reason: actual_post_decision_event
+  - name: TotalAddGTime
+    reason: actual_post_decision_event
+  - name: LongestAddGTime
+    reason: actual_post_decision_event
+  - name: DivAirportLandings
+    reason: diversion_outcome
+  - name: DivReachedDest
+    reason: diversion_outcome
+  - name: DivActualElapsedTime
+    reason: diversion_outcome
+  - name: DivArrDelay
+    reason: diversion_outcome
+  - name: DivDistance
+    reason: diversion_outcome
+
+rejected_field_patterns:
+  - pattern: "^Div[1-5].*$"
+    reason: diversion_path_outcome
+  - pattern: ".*DelayGroups$"
+    reason: post_outcome_delay_bucket
+  - pattern: ".*Delay$"
+    reason: unclassified_delay_outcome_or_cause
+
+historical_aggregation_policy:
+  windows_days:
+    - 7
+    - 30
+  label_field: severe_disruption
+  target_row_excluded: true
+  require_label_available_at_or_before_cutoff: true
+  require_scheduled_departure_before_cutoff: true
+  prior_strength: 20
+  prior_type: same_window_global_asof_rate
+  empty_global_history_action: TARGET_NOT_FEATURE_ELIGIBLE
+
+derived_features:
+  - name: lead_time_hours
+    dtype: int8
+    model_input: true
+    sources: [FlightDate, CRSDepTime]
+    technical_input: prediction_cutoff_at
+    allowed_values: [6, 12, 18, 24]
+    derivation: scheduled departure UTC minus prediction cutoff UTC in exact hours
+
+  - name: calendar_month
+    dtype: int8
+    model_input: true
+    sources: [FlightDate]
+    derivation: calendar month 1..12
+
+  - name: day_of_week
+    dtype: int8
+    model_input: true
+    sources: [FlightDate]
+    derivation: ISO weekday 1..7
+
+  - name: scheduled_departure_hour
+    dtype: int8
+    model_input: true
+    sources: [CRSDepTime]
+    derivation: normalized origin-local hour 0..23
+
+  - name: scheduled_departure_block
+    dtype: category
+    model_input: true
+    sources: [CRSDepTime]
+    derivation: NIGHT_00_06 MORNING_06_12 AFTERNOON_12_18 EVENING_18_24
+
+  - name: origin_airport_id
+    dtype: category
+    model_input: true
+    sources: [OriginAirportID]
+    derivation: canonical integer-as-category
+
+  - name: destination_airport_id
+    dtype: category
+    model_input: true
+    sources: [DestAirportID]
+    derivation: canonical integer-as-category
+
+  - name: route_id
+    dtype: category
+    model_input: true
+    sources: [OriginAirportID, DestAirportID]
+    derivation: OriginAirportID plus arrow plus DestAirportID
+
+  - name: reporting_airline_id
+    dtype: category
+    model_input: true
+    sources: [DOT_ID_Reporting_Airline]
+    derivation: canonical integer-as-category
+
+  - name: distance_miles
+    dtype: float32
+    model_input: true
+    sources: [Distance]
+    derivation: positive source value
+
+  - name: crs_elapsed_minutes
+    dtype: float32
+    model_input: true
+    sources: [CRSElapsedTime]
+    derivation: positive source value
+
+  - name: route_history_count_7d
+    dtype: int32
+    model_input: true
+    entity: route
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: route_disruption_rate_7d
+    dtype: float32
+    model_input: true
+    entity: route
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: route_history_count_30d
+    dtype: int32
+    model_input: true
+    entity: route
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: route_disruption_rate_30d
+    dtype: float32
+    model_input: true
+    entity: route
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: origin_history_count_7d
+    dtype: int32
+    model_input: true
+    entity: origin
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: origin_disruption_rate_7d
+    dtype: float32
+    model_input: true
+    entity: origin
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: origin_history_count_30d
+    dtype: int32
+    model_input: true
+    entity: origin
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: origin_disruption_rate_30d
+    dtype: float32
+    model_input: true
+    entity: origin
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: destination_history_count_7d
+    dtype: int32
+    model_input: true
+    entity: destination
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: destination_disruption_rate_7d
+    dtype: float32
+    model_input: true
+    entity: destination
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: destination_history_count_30d
+    dtype: int32
+    model_input: true
+    entity: destination
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: destination_disruption_rate_30d
+    dtype: float32
+    model_input: true
+    entity: destination
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: carrier_history_count_7d
+    dtype: int32
+    model_input: true
+    entity: carrier
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: carrier_disruption_rate_7d
+    dtype: float32
+    model_input: true
+    entity: carrier
+    window_days: 7
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+  - name: carrier_history_count_30d
+    dtype: int32
+    model_input: true
+    entity: carrier
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: eligible as-of history row count
+
+  - name: carrier_disruption_rate_30d
+    dtype: float32
+    model_input: true
+    entity: carrier
+    window_days: 30
+    historical_outcome_allowed: true
+    derivation: prior-smoothed severe disruption rate
+
+feature_matrix_policy:
+  row_identity:
+    - flight_instance_id
+    - lead_time_hours
+  same_flight_horizons_same_partition: true
+  allow_extra_columns: false
+  allow_missing_columns: false
+  allow_nan: false
+  allow_infinity: false
+  allow_target_outcome_columns: false
+  categorical_unknown_token: __UNKNOWN__
+  categorical_mapping_fit_partition: TRAIN
+  ordered_columns_equal_derived_feature_order: true

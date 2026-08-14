@@ -1,0 +1,43 @@
+schema_version: 1
+project: cargoopt-recovery
+updated_at: "2026-08-14"
+active_phase: PHASE_1
+active_task: PH1-T03
+phase_transition_requires_human_approval: true
+phases:
+  PHASE_0:
+    name: specification_and_governance
+    status: COMPLETED
+    gate: PASSED
+  PHASE_1:
+    name: repository_foundation
+    status: ACTIVE
+    gate: PH1_T03_HOSTED_CI_PENDING
+  PHASE_2:
+    name: data_and_domain
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_1
+  PHASE_3:
+    name: ml_risk_model
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_2
+  PHASE_4:
+    name: operations_research_engine
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_3
+  PHASE_5:
+    name: ml_or_blind_backtest
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_4
+  PHASE_6:
+    name: api_and_react_ui
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_5
+  PHASE_7:
+    name: core_hardening_and_portfolio_gate
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_6
+  PHASE_8:
+    name: rag_llm_ops_copilot
+    status: LOCKED
+    gate: BLOCKED_BY_PHASE_7_AND_HUMAN_APPROVAL

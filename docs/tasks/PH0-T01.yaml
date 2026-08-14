@@ -1,0 +1,74 @@
+schema_version: 1
+task_id: PH0-T01
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+approval_source: explicit_user_approval
+completed_at: "2026-08-13"
+goal: >-
+  CargoOpt Recovery kapsamını, karar sınırlarını ve Codex çalışma
+  kurallarını kesinleştirmek.
+in_scope:
+  - proje amacı ve başarı tanımı
+  - ML OR validator ve Copilot sorumluluk ayrımı
+  - sabit kapsam ve kapsam dışı özellikler
+  - T-6 tahmin anı
+  - diverted dahil ciddi aksama etiketi
+  - eğitim döneminden top-20 havalimanı seçimi
+  - zaman bölünmesi ve blind dönem politikası
+  - tek aktif faz kuralı
+  - Codex plan onayı ve faz geçiş protokolü
+  - değişiklik ve ADR politikası
+out_of_scope:
+  - Python uygulama kodu
+  - pyproject.toml ve bağımlılıklar
+  - FastAPI
+  - PostgreSQL ve migration
+  - veri indirme veya işleme
+  - ML veya Pyomo modeli
+  - React arayüzü
+  - Hugging Face modelleri
+  - pgvector ve Ollama
+files_allowed:
+  - AGENTS.md
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T01.yaml
+  - docs/adr/ADR-001-project-scope.md
+  - docs/adr/ADR-002-phase-governance.md
+files_forbidden:
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - yalnızca PHASE_0 ACTIVE olmalı
+  - PHASE_1 ile PHASE_8 LOCKED olmalı
+  - kapsam ve sorumluluklar çelişkisiz olmalı
+  - başlangıç kararları açık ve ölçülebilir olmalı
+  - gelecek faz hazırlığı açıkça yasaklanmalı
+  - Codex insan onayından önce implementation yapmamalı
+  - kapsam dışı dosya veya dependency bulunmamalı
+tests_required:
+  - YAML dosyaları güvenli parser ile parse edilebilmeli
+  - phase-status içinde tam bir ACTIVE faz bulunmalı
+  - PHASE_1 ile PHASE_8 status değeri LOCKED olmalı
+  - files_allowed dışındaki proje dosyaları bulunmamalı
+  - forbidden uygulama ve dependency yolları bulunmamalı
+  - dokümanlarda conflict marker bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - onaylı dosya listesi dışında değişiklik gereksinimi
+  - başlangıç kararları arasında çelişki
+  - uygulama kodu veya dependency gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  authorized_file_set: PASSED
+  forbidden_paths_absent: PASSED
+  conflict_markers_absent: PASSED
+  scope_and_document_consistency: PASSED

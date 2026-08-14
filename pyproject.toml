@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling==1.32.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cargoopt-recovery"
+version = "0.1.0"
+description = "Production-oriented ML and Operations Research decision-support portfolio project."
+readme = "README.md"
+requires-python = ">=3.14,<3.15"
+dependencies = []
+
+[dependency-groups]
+dev = [
+  "mypy==2.3.0",
+  "pytest==9.1.1",
+  "ruff==0.16.3",
+]
+
+[tool.uv]
+required-version = "==0.12.3"
+default-groups = ["dev"]
+exclude-newer = "2026-08-13T23:59:59Z"
+prerelease = "disallow"
+resolution = "highest"
+python-downloads = "manual"
+no-sources = true
+preview-features = ["malware-check"]
+no-build-package = [
+  "ast-serialize",
+  "colorama",
+  "hatchling",
+  "iniconfig",
+  "librt",
+  "mypy",
+  "mypy-extensions",
+  "packaging",
+  "pathspec",
+  "pluggy",
+  "pygments",
+  "pytest",
+  "ruff",
+  "tomlkit",
+  "trove-classifiers",
+  "typing-extensions",
+]
+
+[tool.uv.audit]
+malware-check = true
+ignore = []
+ignore-until-fixed = []
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cargoopt_recovery"]
+
+[tool.ruff]
+target-version = "py314"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "lf"
+
+[tool.mypy]
+python_version = "3.14"
+strict = true
+files = ["src", "tests"]
+warn_unreachable = true
+
+[tool.pytest.ini_options]
+minversion = "9.1.1"
+addopts = "--strict-config --strict-markers"
+testpaths = ["tests"]
+python_files = ["test_*.py"]

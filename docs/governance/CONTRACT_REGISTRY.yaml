@@ -1,0 +1,320 @@
+schema_version: 1
+registry_id: cargoopt-contract-registry-v1
+project: cargoopt-recovery
+snapshot_phase: PHASE_0
+snapshot_task: PH0-T06
+generated_at: "2026-08-13"
+registry_status: ACCEPTED
+accepted_at: "2026-08-13"
+accepted_by_transition: phase-0-to-1-transition-v1
+accepted_from_checkpoint_sha256: 7ce28d7fc7a7ab127084bd3e7617359c07c0fc859d74b86ae10f9c171403211a
+phase_transition_requires_human_approval: true
+
+lifecycle_status_enum:
+  - CANDIDATE_PENDING_PHASE_0_TRANSITION
+  - ACCEPTED
+  - SUPERSEDED
+  - RETIRED
+
+implementation_phase_enum:
+  - PHASE_0
+  - PHASE_1
+  - PHASE_2
+  - PHASE_3
+  - PHASE_4
+  - PHASE_5
+
+contracts:
+  - contract_id: bts-reporting-otp-contract-v1
+    artifact: docs/data/BTS_DATA_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: DATA_SOURCE
+    implementation_phase: PHASE_2
+    task_origin: PH0-T02
+    supersedes: null
+    normative_dependencies: []
+    informational_references: []
+
+  - contract_id: cargoopt-data-quality-v2
+    artifact: docs/data/DATA_QUALITY_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: DATA_QUALITY
+    implementation_phase: PHASE_2
+    task_origin: PH0-T03
+    supersedes: cargoopt-data-quality-v1
+    normative_dependencies:
+      - bts-reporting-otp-contract-v1
+    informational_references:
+      - flight-feature-availability-v2
+
+  - contract_id: cargo-domain-v1
+    artifact: docs/domain/CARGO_DOMAIN_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: CARGO_DOMAIN
+    implementation_phase: PHASE_2
+    task_origin: PH0-T03
+    supersedes: null
+    normative_dependencies:
+      - bts-reporting-otp-contract-v1
+    informational_references: []
+
+  - contract_id: synthetic-cargo-v1
+    artifact: docs/data/SYNTHETIC_CARGO_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: SYNTHETIC_GENERATOR
+    implementation_phase: PHASE_2
+    task_origin: PH0-T03
+    supersedes: null
+    normative_dependencies:
+      - cargo-domain-v1
+    informational_references:
+      - bts-reporting-otp-contract-v1
+
+  - contract_id: flight-feature-availability-v2
+    artifact: docs/ml/FEATURE_AVAILABILITY.yaml
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: FEATURE_PIPELINE
+    implementation_phase: PHASE_2
+    task_origin: PH0-T03
+    supersedes: flight-feature-availability-v1
+    normative_dependencies:
+      - bts-reporting-otp-contract-v1
+      - cargoopt-data-quality-v2
+    informational_references:
+      - severe-disruption-label-v1
+
+  - contract_id: flight-severe-disruption-prediction-v2
+    artifact: docs/ml/PREDICTION_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: ML_RISK_MODEL
+    implementation_phase: PHASE_3
+    task_origin: PH0-T03
+    supersedes: flight-severe-disruption-prediction-v1
+    normative_dependencies:
+      - cargoopt-data-quality-v2
+      - flight-feature-availability-v2
+    informational_references:
+      - flight-risk-features-v2
+      - severe-disruption-label-v1
+
+  - contract_id: cost-policy-try-v1
+    artifact: docs/or/COST_MODEL_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: COST_POLICY
+    implementation_phase: PHASE_4
+    task_origin: PH0-T03
+    supersedes: null
+    normative_dependencies:
+      - cargo-domain-v1
+      - flight-severe-disruption-prediction-v2
+    informational_references:
+      - synthetic-cargo-v1
+
+  - contract_id: or-input-v1
+    artifact: docs/or/OR_INPUT_SCHEMA.yaml
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: OR_INPUT_ASSEMBLY
+    implementation_phase: PHASE_4
+    task_origin: PH0-T03
+    supersedes: null
+    normative_dependencies:
+      - cargo-domain-v1
+      - synthetic-cargo-v1
+      - flight-severe-disruption-prediction-v2
+      - cost-policy-try-v1
+    informational_references: []
+
+  - contract_id: cargo-recovery-math-v1
+    artifact: docs/or/MATHEMATICAL_MODEL_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: OR_MODEL
+    implementation_phase: PHASE_4
+    task_origin: PH0-T04
+    supersedes: null
+    normative_dependencies:
+      - or-input-v1
+      - cost-policy-try-v1
+    informational_references: []
+
+  - contract_id: highs-execution-v1
+    artifact: docs/or/SOLVER_EXECUTION_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: SOLVER_ADAPTER
+    implementation_phase: PHASE_4
+    task_origin: PH0-T04
+    supersedes: null
+    normative_dependencies:
+      - cargo-recovery-math-v1
+    informational_references: []
+
+  - contract_id: or-output-v1
+    artifact: docs/or/OR_OUTPUT_SCHEMA.yaml
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: OR_OUTPUT
+    implementation_phase: PHASE_4
+    task_origin: PH0-T04
+    supersedes: null
+    normative_dependencies:
+      - or-input-v1
+      - cargo-recovery-math-v1
+      - highs-execution-v1
+      - cost-policy-try-v1
+    informational_references:
+      - plan-validator-v1
+
+  - contract_id: plan-validator-v1
+    artifact: docs/or/PLAN_VALIDATION_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: INDEPENDENT_VALIDATOR
+    implementation_phase: PHASE_4
+    task_origin: PH0-T04
+    supersedes: null
+    normative_dependencies:
+      - or-input-v1
+      - or-output-v1
+      - cost-policy-try-v1
+    informational_references:
+      - highs-execution-v1
+
+  - contract_id: blind-replay-v1
+    artifact: docs/evaluation/BLIND_REPLAY_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: BLIND_REPLAY
+    implementation_phase: PHASE_5
+    task_origin: PH0-T05
+    supersedes: null
+    normative_dependencies:
+      - bts-reporting-otp-contract-v1
+      - flight-severe-disruption-prediction-v2
+      - synthetic-cargo-v1
+      - or-output-v1
+      - plan-validator-v1
+    informational_references:
+      - cargoopt-data-quality-v2
+
+  - contract_id: evaluation-metrics-statistics-v1
+    artifact: docs/evaluation/METRICS_STATISTICS_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: EVALUATION_METRICS
+    implementation_phase: PHASE_5
+    task_origin: PH0-T05
+    supersedes: null
+    normative_dependencies:
+      - blind-replay-v1
+      - cost-policy-try-v1
+      - or-output-v1
+      - plan-validator-v1
+    informational_references: []
+
+  - contract_id: evaluation-release-gate-v1
+    artifact: docs/evaluation/RELEASE_GATE_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: POLICY_GATE
+    implementation_phase: PHASE_5
+    task_origin: PH0-T05
+    supersedes: null
+    normative_dependencies:
+      - blind-replay-v1
+      - evaluation-metrics-statistics-v1
+      - highs-execution-v1
+      - plan-validator-v1
+    informational_references: []
+
+  - contract_id: evaluation-output-v1
+    artifact: docs/evaluation/EVALUATION_OUTPUT_SCHEMA.yaml
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: EVALUATION_OUTPUT
+    implementation_phase: PHASE_5
+    task_origin: PH0-T05
+    supersedes: null
+    normative_dependencies:
+      - blind-replay-v1
+      - evaluation-metrics-statistics-v1
+      - evaluation-release-gate-v1
+      - or-input-v1
+      - or-output-v1
+      - plan-validator-v1
+    informational_references:
+      - flight-severe-disruption-prediction-v2
+      - cost-policy-try-v1
+
+  - contract_id: evaluation-sensitivity-v1
+    artifact: docs/evaluation/SENSITIVITY_ANALYSIS_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: SENSITIVITY_EVALUATION
+    implementation_phase: PHASE_5
+    task_origin: PH0-T06
+    supersedes: null
+    normative_dependencies:
+      - blind-replay-v1
+      - evaluation-metrics-statistics-v1
+      - cost-policy-try-v1
+      - cargo-recovery-math-v1
+      - highs-execution-v1
+      - plan-validator-v1
+    informational_references:
+      - evaluation-release-gate-v1
+
+  - contract_id: phase-1-entry-v1
+    artifact: docs/governance/PHASE_1_ENTRY_CONTRACT.md
+    source_header_status: ACCEPTED
+    lifecycle_status: ACCEPTED
+    owner_component: PHASE_GOVERNANCE
+    implementation_phase: PHASE_1
+    task_origin: PH0-T06
+    supersedes: null
+    normative_dependencies: []
+    informational_references: []
+
+declared_schema_and_label_identifiers:
+  - identifier: bts-flight-schema-v1
+    identifier_type: DATA_SCHEMA
+    owning_contract: bts-reporting-otp-contract-v1
+  - identifier: flight-risk-features-v2
+    identifier_type: FEATURE_SCHEMA
+    owning_contract: flight-feature-availability-v2
+  - identifier: severe-disruption-label-v1
+    identifier_type: LABEL_SCHEMA
+    owning_contract: flight-feature-availability-v2
+
+historical_identifiers:
+  - identifier: cargoopt-data-quality-v1
+    status: SUPERSEDED
+    superseded_by: cargoopt-data-quality-v2
+  - identifier: flight-feature-availability-v1
+    status: SUPERSEDED
+    superseded_by: flight-feature-availability-v2
+  - identifier: flight-risk-features-v1
+    status: SUPERSEDED
+    superseded_by: flight-risk-features-v2
+  - identifier: flight-severe-disruption-prediction-v1
+    status: SUPERSEDED
+    superseded_by: flight-severe-disruption-prediction-v2
+
+registry_invariants:
+  - contract_id_unique
+  - artifact_path_unique_and_exists
+  - owner_component_exactly_one_per_contract
+  - implementation_phase_valid
+  - normative_dependency_ids_resolve
+  - normative_dependency_graph_acyclic
+  - informational_reference_ids_resolve_to_contract_or_declared_identifier
+  - supersedes_resolves_to_historical_identifier_when_non_null
+  - accepted_status_requires_recorded_transition_approval

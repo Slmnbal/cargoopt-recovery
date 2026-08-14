@@ -1,0 +1,236 @@
+name: Foundation
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  foundation:
+    name: Deterministic foundation gate
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    env:
+      PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
+      UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
+      UV_PYTHON_INSTALL_DIR: ${{ runner.temp }}/uv-python
+    steps:
+      - name: Checkout without persisted credentials
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install exact uv and Python
+        uses: astral-sh/setup-uv@ae62891fec2bb8e7d6c99fc78c9fec3a63790f8d # v10.0.0
+        with:
+          version: "0.12.3"
+          python-version: "3.14.7"
+          enable-cache: false
+
+      - name: Verify runner and exact toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(uname -s)" = "Linux"
+          test "$(uname -m)" = "x86_64"
+          test "$(uv --version)" = "uv 0.12.3"
+          uv python find 3.14.7 --managed-python
+          uv run --python 3.14.7 --managed-python --no-project python - <<'PY'
+          import platform
+          import sys
+          import sysconfig
+
+          assert platform.python_implementation() == "CPython"
+          assert platform.machine() == "x86_64"
+          assert sys.version_info[:3] == (3, 14, 7)
+          assert sysconfig.get_config_var("Py_GIL_DISABLED") in (None, 0)
+          print(sys.version)
+          PY
+
+      - name: Verify lock and record immutable hashes
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pyproject.toml uv.lock | tee "$RUNNER_TEMP/hashes-before.txt"
+          uv lock --check --python 3.14.7 --managed-python
+
+      - name: First frozen exact sync
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv sync --frozen --all-groups --python 3.14.7 --managed-python
+          uv sync --check --all-groups --python 3.14.7 --managed-python
+          uv pip freeze --python .venv/bin/python --exclude-editable | LC_ALL=C sort \
+            > "$RUNNER_TEMP/inventory-1.txt"
+          test "$(wc -l < "$RUNNER_TEMP/inventory-1.txt")" -eq 12
+
+      - name: Second frozen exact sync and idempotency
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv sync --frozen --all-groups --python 3.14.7 --managed-python
+          uv sync --check --all-groups --python 3.14.7 --managed-python
+          uv pip freeze --python .venv/bin/python --exclude-editable | LC_ALL=C sort \
+            > "$RUNNER_TEMP/inventory-2.txt"
+          cmp "$RUNNER_TEMP/inventory-1.txt" "$RUNNER_TEMP/inventory-2.txt"
+          sha256sum pyproject.toml uv.lock | tee "$RUNNER_TEMP/hashes-after-sync.txt"
+          cmp "$RUNNER_TEMP/hashes-before.txt" "$RUNNER_TEMP/hashes-after-sync.txt"
+
+      - name: Import and exact tool versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv run --frozen --no-sync python - <<'PY'
+          import cargoopt_recovery
+
+          assert cargoopt_recovery.__version__ == "0.1.0"
+          PY
+          test "$(uv run --frozen --no-sync ruff --version)" = "ruff 0.16.3"
+          uv run --frozen --no-sync mypy --version | grep -Fx "mypy 2.3.0 (compiled: yes)"
+          uv run --frozen --no-sync pytest --version | grep -Fx "pytest 9.1.1"
+
+      - name: Ruff format
+        run: uv run --frozen --no-sync ruff format --check .
+
+      - name: Ruff lint
+        run: uv run --frozen --no-sync ruff check .
+
+      - name: Mypy strict
+        run: uv run --frozen --no-sync mypy src tests
+
+      - name: Pytest
+        run: uv run --frozen --no-sync pytest -q
+
+      - name: Build wheel and sdist outside repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_output="$RUNNER_TEMP/build-output"
+          mkdir -p "$build_output"
+          uv lock --check --python 3.14.7 --managed-python
+          uv build --no-sources --python 3.14.7 --managed-python --out-dir "$build_output"
+          test "$(find "$build_output" -maxdepth 1 -name '*.whl' -type f | wc -l)" -eq 1
+          test "$(find "$build_output" -maxdepth 1 -name '*.tar.gz' -type f | wc -l)" -eq 1
+          sha256sum "$build_output"/*
+          python - "$build_output" <<'PY'
+          import email
+          import pathlib
+          import sys
+          import zipfile
+
+          root = pathlib.Path(sys.argv[1])
+          wheel = next(root.glob("*.whl"))
+          with zipfile.ZipFile(wheel) as archive:
+              metadata_path = next(
+                  name for name in archive.namelist() if name.endswith(".dist-info/METADATA")
+              )
+              metadata = email.message_from_bytes(archive.read(metadata_path))
+              assert "cargoopt_recovery/__init__.py" in archive.namelist()
+          assert metadata["Name"] == "cargoopt-recovery"
+          assert metadata["Version"] == "0.1.0"
+          assert metadata["Requires-Python"] == "<3.15,>=3.14"
+          PY
+          uv venv --python 3.14.7 --managed-python "$RUNNER_TEMP/wheel-venv"
+          uv pip install --python "$RUNNER_TEMP/wheel-venv/bin/python" --no-deps \
+            "$build_output"/*.whl
+          "$RUNNER_TEMP/wheel-venv/bin/python" - <<'PY'
+          import cargoopt_recovery
+
+          assert cargoopt_recovery.__version__ == "0.1.0"
+          PY
+          uv lock --check --python 3.14.7 --managed-python
+
+      - name: Audit project graph and export CycloneDX 1.5
+        shell: bash
+        run: |
+          set -euo pipefail
+          uv tree --frozen > "$RUNNER_TEMP/project-tree.txt"
+          uv audit --frozen --output-format json > "$RUNNER_TEMP/project-audit.json"
+          uv export --frozen --all-groups --format cyclonedx1.5 \
+            --output-file "$RUNNER_TEMP/project-sbom.cdx.json"
+          python - "$RUNNER_TEMP/project-audit.json" "$RUNNER_TEMP/project-sbom.cdx.json" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          audit = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          sbom = json.loads(pathlib.Path(sys.argv[2]).read_text())
+          assert audit["summary"] == {
+              "audited_packages": 13,
+              "vulnerabilities": 0,
+              "adverse_statuses": 0,
+          }
+          assert audit["vulnerabilities"] == []
+          assert audit["adverse_statuses"] == []
+          assert len(sbom["components"]) == 13
+          assert sbom["specVersion"] == "1.5"
+          PY
+          sha256sum "$RUNNER_TEMP/project-audit.json" "$RUNNER_TEMP/project-sbom.cdx.json"
+
+      - name: Audit isolated build graph and export CycloneDX 1.5
+        shell: bash
+        run: |
+          set -euo pipefail
+          build_script="$RUNNER_TEMP/build-audit.py"
+          printf '%s\n' \
+            '# /// script' \
+            '# requires-python = "==3.14.*"' \
+            '# dependencies = ["hatchling==1.32.0"]' \
+            '# exclude-newer = "2026-08-13T23:59:59Z"' \
+            '# ///' \
+            > "$build_script"
+          uv lock --script "$build_script" --python 3.14.7 --managed-python
+          uv tree --script "$build_script" --frozen > "$RUNNER_TEMP/build-tree.txt"
+          uv audit --script "$build_script" --frozen --output-format json \
+            > "$RUNNER_TEMP/build-audit.json"
+          uv export --script "$build_script" --frozen --format cyclonedx1.5 \
+            --output-file "$RUNNER_TEMP/build-sbom.cdx.json"
+          python - "$RUNNER_TEMP/build-audit.json" "$RUNNER_TEMP/build-sbom.cdx.json" <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          expected = {
+              "hatchling",
+              "packaging",
+              "pathspec",
+              "pluggy",
+              "tomlkit",
+              "trove-classifiers",
+          }
+          audit = json.loads(pathlib.Path(sys.argv[1]).read_text())
+          sbom = json.loads(pathlib.Path(sys.argv[2]).read_text())
+          assert audit["summary"] == {
+              "audited_packages": 6,
+              "vulnerabilities": 0,
+              "adverse_statuses": 0,
+          }
+          assert audit["vulnerabilities"] == []
+          assert audit["adverse_statuses"] == []
+          assert {item["name"] for item in sbom["components"]} == expected
+          assert sbom["specVersion"] == "1.5"
+          PY
+          sha256sum "$RUNNER_TEMP/build-audit.json" "$RUNNER_TEMP/build-sbom.cdx.json"
+
+      - name: Final repository integrity and scope gate
+        shell: bash
+        run: |
+          set -euo pipefail
+          sha256sum pyproject.toml uv.lock | tee "$RUNNER_TEMP/hashes-final.txt"
+          cmp "$RUNNER_TEMP/hashes-before.txt" "$RUNNER_TEMP/hashes-final.txt"
+          test -z "$(find . -path './.git' -prune -o \
+            \( -name dist -o -name build -o -name '*.egg-info' \) -print)"
+          test ! -e foundation-sbom.cdx.json
+          test ! -e audit.json
+          test ! -e Dockerfile
+          test ! -e docker-compose.yml
+          test ! -d frontend
+          test ! -d migrations
+          test ! -d knowledge
+          test ! -d scripts
+          ! grep -R --line-number -E '^<{7}|^={7}|^>{7}' \
+            --exclude-dir=.git --exclude-dir=.venv .

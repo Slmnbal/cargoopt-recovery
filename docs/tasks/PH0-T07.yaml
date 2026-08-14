@@ -1,0 +1,132 @@
+schema_version: 1
+task_id: PH0-T07
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_phase_transition_approval
+approval_text: "Phase 0’ı kapat ve Phase 1’i aç."
+goal: >-
+  Doğrulanmış PH0-T06 checkpoint'ini ve açık insan onayını atomic transition
+  kaydına bağlayarak Phase 0'ı COMPLETED/PASSED, Phase 1'i ACTIVE/NOT_READY
+  yapmak, Phase 0 contract lifecycle'larını ACCEPTED durumuna geçirmek ve
+  ayrıca uygulama yetkisi vermeden PH1-T01 görev sözleşmesini aktif etmektir.
+in_scope:
+  - PH0-T06 checkpoint hash ve archive integrity precondition doğrulaması
+  - explicit phase transition approval kaydı
+  - PHASE_0 status COMPLETED ve gate PASSED
+  - PHASE_1 status ACTIVE ve gate NOT_READY
+  - PHASE_2 ile PHASE_8 status LOCKED korunması
+  - active_phase PHASE_1 ve active_task PH1-T01
+  - 18 registry contract lifecycle status ACCEPTED
+  - 18 source contract header status mekanik final hizalaması
+  - PH1-T01 runtime dependency karar görev sözleşmesinin ACTIVE oluşturulması
+  - atomic transition record ve checkpoint üretimi
+out_of_scope:
+  - PH1-T01 official-source araştırmasını yürütmek
+  - Python package manager veya dependency sürümü seçmek
+  - internet araştırması ya da package metadata sorgusu
+  - pyproject.toml uv.lock source test veya CI oluşturmak
+  - BTS verisi model solver database API UI Docker veya RAG işi
+  - PHASE_2 ile PHASE_8 implementation ya da placeholder
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/governance/CONTRACT_REGISTRY.yaml
+  - docs/governance/PHASE_1_ENTRY_CONTRACT.md
+  - docs/governance/PHASE_0_TO_1_TRANSITION.md
+  - docs/tasks/PH0-T07.yaml
+  - docs/tasks/PH1-T01.yaml
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/SYNTHETIC_CARGO_CONTRACT.md
+  - docs/domain/CARGO_DOMAIN_CONTRACT.md
+  - docs/ml/FEATURE_AVAILABILITY.yaml
+  - docs/ml/PREDICTION_CONTRACT.md
+  - docs/or/COST_MODEL_CONTRACT.md
+  - docs/or/OR_INPUT_SCHEMA.yaml
+  - docs/or/MATHEMATICAL_MODEL_CONTRACT.md
+  - docs/or/SOLVER_EXECUTION_CONTRACT.md
+  - docs/or/OR_OUTPUT_SCHEMA.yaml
+  - docs/or/PLAN_VALIDATION_CONTRACT.md
+  - docs/evaluation/BLIND_REPLAY_CONTRACT.md
+  - docs/evaluation/METRICS_STATISTICS_CONTRACT.md
+  - docs/evaluation/RELEASE_GATE_CONTRACT.md
+  - docs/evaluation/EVALUATION_OUTPUT_SCHEMA.yaml
+  - docs/evaluation/SENSITIVITY_ANALYSIS_CONTRACT.md
+files_forbidden:
+  - AGENTS.md
+  - docs/governance/PHASE_0_EXIT_AUDIT.md
+  - docs/tasks/PH0-T01.yaml
+  - docs/tasks/PH0-T02.yaml
+  - docs/tasks/PH0-T03.yaml
+  - docs/tasks/PH0-T04.yaml
+  - docs/tasks/PH0-T05.yaml
+  - docs/tasks/PH0-T06.yaml
+  - docs/adr/**
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - PH0-T01 ile PH0-T06 COMPLETED ve validation sonuçları PASSED olmalı
+  - PH0-T06 checkpoint exact SHA-256 ve arşiv bütünlüğü doğrulanmalı
+  - açık phase transition onayı transition kaydında bulunmalı
+  - transition sonrası tam bir ACTIVE faz bulunmalı ve PHASE_1 olmalı
+  - PHASE_0 COMPLETED/PASSED ve PHASE_1 ACTIVE/NOT_READY olmalı
+  - PHASE_2 ile PHASE_8 LOCKED kalmalı
+  - active_task PH1-T01 olmalı
+  - PH0-T07 COMPLETED ve PH1-T01 ACTIVE olmalı
+  - registry 18 contract için lifecycle ACCEPTED olmalı
+  - source header status değerleri 18 contract için ACCEPTED ile eşleşmeli
+  - contract ID path dependency ve owner içeriği status dışında değişmemeli
+  - PH1-T01 dependency eklemeyen research-only görev olmalı
+  - kapsam dışı implementation dependency ya da artifact oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - transition precondition checklist'in tamamı PASS olmalı
+  - phase state exact truth table ile eşleşmeli
+  - active phase ve task referansları tutarlı olmalı
+  - PH0 task dizisi PH0-T01..PH0-T07 ardışık ve COMPLETED olmalı
+  - PH1-T01 ACTIVE ve execution_requires_separate_human_approval true olmalı
+  - registry contract count 18 ve lifecycle ACCEPTED olmalı
+  - registry status ile source header status exact hizalanmalı
+  - registry reference graph çözülmüş ve acyclic kalmalı
+  - status-only contract değişiklikleri semantic body hash'lerini değiştirmemeli
+  - önceki checkpoint'teki izinli dosyalar dışındaki dosyalar byte-identical kalmalı
+  - forbidden implementation yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - PH0-T06 checkpoint hash veya arşiv bütünlüğü doğrulanamazsa
+  - Phase 0 exit audit açık blocker içerirse
+  - registry reference veya DAG kontrolü bozulursa
+  - contract gövdesinde status dışı semantic değişiklik gerekirse
+  - aynı anda iki ACTIVE faz veya dangling active_task oluşursa
+  - PH1-T01 araştırma veya dependency seçimine bu görevde başlamak gerekirse
+  - onaylı files_allowed dışında değişiklik gerekirse
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  ph0_t06_checkpoint_sha256: PASSED
+  ph0_t06_archive_integrity: PASSED
+  phase_0_exit_preconditions: PASSED
+  explicit_transition_approval_record: PASSED
+  atomic_phase_state_truth_table: PASSED
+  active_phase_and_task_reference_integrity: PASSED
+  ph0_task_sequence_and_completion: PASSED
+  ph1_t01_activation_boundary: PASSED
+  registry_18_contract_lifecycle_acceptance: PASSED
+  source_header_registry_status_alignment: PASSED
+  contract_status_only_semantic_body_equality: PASSED
+  registry_reference_resolution_and_acyclic_graph: PASSED
+  phase_2_to_phase_8_lock_invariants: PASSED
+  authorized_file_set: PASSED
+  forbidden_checkpoint_files_unchanged: PASSED
+  forbidden_implementation_paths_absent: PASSED
+  document_structure: PASSED
+  checkpoint_archive_integrity: PASSED

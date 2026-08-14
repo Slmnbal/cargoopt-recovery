@@ -1,0 +1,138 @@
+schema_version: 1
+task_id: PH0-T03
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_user_approval
+scope_amendment:
+  approved_at: "2026-08-13"
+  approval_source: explicit_user_approval
+  reason: >-
+    Uçuş-başı T-6 prediction ile kaynak uçuş T-6 anından başlayan
+    24 saatlik candidate penceresi arasında gelecekte üretilmiş prediction
+    kullanma riski bulundu. Tek multi-horizon model ve as-of seçim kuralı
+    ile point-in-time leakage kapatılacak.
+goal: >-
+  Sentetik kargo, recovery case, aday uçuş kapasitesi, TRY maliyet modeli
+  ve OR girdi sınırlarını uygulama kodundan önce kesinleştirmek.
+in_scope:
+  - tek kaynak uçuş ve tek destinasyonlu recovery case tanımı
+  - ana merkez ve en fazla 10 destinasyon seçim anlamı
+  - 24 saatlik recovery penceresi
+  - STANDARD EXPRESS ve PHARMA gönderi sözleşmesi
+  - ağırlık hacim hazır olma SLA ve cold-chain alanları
+  - 50 ile 500 arasında deterministik gönderi üretim sözleşmesi
+  - en fazla 30 doğrudan alternatif uçuş
+  - sentetik ağırlık ve hacim kapasitesi sözleşmesi
+  - SHA-256 tabanlı stateless deterministic sampling
+  - nominal 2024 TRY maliyet katsayıları
+  - risk-blind ve ML-informed objective katsayıları
+  - immutable prediction batch bağlantısı
+  - T-24 T-18 T-12 T-6 multi-horizon tahmin ladder sözleşmesi
+  - tek modele lead_time_hours feature eklenmesi
+  - recovery karar anında latest-available as-of prediction seçimi
+  - OR input schema ve fail-closed doğrulama kuralları
+  - gerçek outcome alanlarının generator ve objective dışında tutulması
+out_of_scope:
+  - Python uygulama veya test kodu
+  - sentetik veri üretmek
+  - BTS verisi indirmek veya işlemek
+  - pyproject.toml veya dependency
+  - Pyomo modeli veya HiGHS kurulumu
+  - solver ayarı veya optimizasyon çalıştırmak
+  - database veya migration
+  - model eğitimi veya MLflow run
+  - backtest case seçimi ve istatistiksel değerlendirme
+  - API frontend RAG LLM veya Hugging Face
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T03.yaml
+  - docs/domain/CARGO_DOMAIN_CONTRACT.md
+  - docs/data/SYNTHETIC_CARGO_CONTRACT.md
+  - docs/or/COST_MODEL_CONTRACT.md
+  - docs/or/OR_INPUT_SCHEMA.yaml
+  - docs/adr/ADR-004-synthetic-cargo-and-cost-contract.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/ml/PREDICTION_CONTRACT.md
+  - docs/ml/FEATURE_AVAILABILITY.yaml
+  - docs/adr/ADR-003-ml-data-and-prediction-contract.md
+  - docs/adr/ADR-005-multi-horizon-asof-prediction.md
+files_forbidden:
+  - AGENTS.md
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - bir recovery case tam bir kaynak uçuş ve tam bir destinasyon içermeli
+  - recovery penceresi prediction cutoff anından başlayan 24 saat olmalı
+  - her gönderi tam bir uçuşa atanmalı veya UNASSIGNED kalmalı
+  - split shipment yasak olmalı
+  - PHARMA yalnızca cold-chain uyumlu uçuşa atanabilmeli
+  - gönderi ve kapasite birimleri kg ve m3 olmalı
+  - bütün zamanlar UTC ve timezone-aware olmalı
+  - para birimi TRY ve cost basis SYNTHETIC_NOMINAL_2024 olmalı
+  - maliyetlerin gerçek Turkish Cargo maliyeti olmadığı açık olmalı
+  - unassigned penalty her sınıfın maksimum assignment maliyetinden büyük olmalı
+  - ML-informed objective yalnızca immutable prediction batch olasılığını eklemeli
+  - tahmin ufukları yalnızca 24 18 12 ve 6 saat olmalı
+  - candidate prediction karar anından sonra üretilmiş olamamalı
+  - candidate için karar anında kullanılabilir en yakın horizon seçilmeli
+  - aynı uçuşun bütün horizon satırları aynı zaman partition'ında kalmalı
+  - generator ML olasılığı veya gerçekleşmiş outcome okuyamamalı
+  - aynı seed config ve case key aynı canonical çıktıyı üretmeli
+  - PHASE_1 ile PHASE_8 kilitli kalmalı
+  - kapsam dışı dosya dependency veya implementation oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - tam bir ACTIVE faz bulunmalı ve bu PHASE_0 olmalı
+  - OR schema required alanları benzersiz ve tanımlı olmalı
+  - cargo enum değerleri belgeler ve schema arasında eşleşmeli
+  - shipment count minimum maximum ve default sınır içinde olmalı
+  - candidate flight maksimumu 30 ve recovery window 24 olmalı
+  - cargo sınıf oranları tam 1.0 olmalı
+  - cost currency basis ve katsayıları belgeler ve schema arasında eşleşmeli
+  - unassigned dominance eşitsizliği üç cargo sınıfı için geçmeli
+  - forbidden outcome ve prediction alanları generator input listesinde bulunmamalı
+  - risk-blind ve ML-informed formülleri tek kontrollü fark taşımalı
+  - multi-horizon feature schema tam 27 benzersiz model input içermeli
+  - lead_time_hours yalnızca 6 12 18 veya 24 olmalı
+  - selected horizon ceiling kuralı sınır örneklerinde doğrulanmalı
+  - produced_at UTC zamanı recovery decision zamanını aşmamalı
+  - onaylı mevcut ve yeni dosyalar dışında dosya oluşmamalı
+  - uygulama dependency database ve UI yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - onaylı dosya dışında değişiklik gereksinimi
+  - para birimi veya katsayıların gerçek şirket verisi gibi sunulma riski
+  - unassigned penalty dominance kuralının sağlanamaması
+  - generator girdisine ML skoru veya outcome ekleme gereksinimi
+  - recovery kararından sonra üretilmiş prediction kullanma gereksinimi
+  - recovery penceresi veya eligibility anlamında çelişki
+  - PH0-T01 PH0-T02 ya da kabul edilmiş ADR ile çelişki
+  - uygulama kodu dependency veri indirme veya solver gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  authorized_file_set: PASSED
+  cargo_domain_contract: PASSED
+  synthetic_generator_determinism_contract: PASSED
+  generator_leakage_denylist: PASSED
+  multi_horizon_timing_contract: PASSED
+  forecast_boundary_cases: PASSED
+  feature_schema_27_columns: PASSED
+  or_input_schema_completeness: PASSED
+  try_cost_policy_consistency: PASSED
+  unassigned_dominance: PASSED
+  cross_document_consistency: PASSED
+  forbidden_paths_absent: PASSED
+  document_structure: PASSED

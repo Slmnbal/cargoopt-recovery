@@ -1,0 +1,134 @@
+schema_version: 1
+task_id: PH0-T06
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_user_approval
+goal: >-
+  Phase 0 kapsam kararlarını contract ve ADR düzeyinde çapraz denetlemek,
+  eksik sensitivity analysis sınırını primary blind sonucu değiştirmeyecek
+  biçimde kapatmak ve Phase 1 geçişini yalnızca ayrı insan onayına sunulabilir
+  hale getiren ölçülebilir bir exit/entry kapısı üretmek.
+in_scope:
+  - PH0-T01 ile PH0-T05 görev sonuçlarının exit audit'i
+  - proje kapsamı contract ADR task ve faz durumunun traceability denetimi
+  - contract kimliği sürümü sahipliği uygulama fazı ve dependency registry
+  - contract dependency graph için cycle ve unresolved reference kontrolü
+  - scope-limited one-factor-at-a-time sensitivity analysis sözleşmesi
+  - sensitivity planning ile outcome evaluation rol ayrımı
+  - sensitivity sonucunun primary blind release kararını değiştirmeme kuralı
+  - Phase 1 entry precondition allowed scope exit criteria ve stop conditions
+  - Phase 0 gate için READY_FOR_HUMAN_APPROVAL veya BLOCKED kararı
+  - phase transition için ayrı açık insan onayı zorunluluğu
+out_of_scope:
+  - Phase 0 durumunu COMPLETED yapmak veya Phase 1 kilidini açmak
+  - Python runtime veya dependency sürümü seçmek
+  - pyproject.toml uv.lock source test CI veya repository scaffold oluşturmak
+  - BTS verisi indirmek sentetik veri üretmek model eğitmek veya solver çalıştırmak
+  - sensitivity scenario'larını execute etmek veya outcome açmak
+  - database migration API frontend Docker ya da deployment
+  - Phase 2 ile Phase 8 implementation veya placeholder hazırlığı
+  - RAG LLM Hugging Face pgvector veya Ollama
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T06.yaml
+  - docs/governance/PHASE_0_EXIT_AUDIT.md
+  - docs/governance/CONTRACT_REGISTRY.yaml
+  - docs/governance/PHASE_1_ENTRY_CONTRACT.md
+  - docs/evaluation/SENSITIVITY_ANALYSIS_CONTRACT.md
+  - docs/adr/ADR-008-phase0-exit-and-sensitivity-boundary.md
+files_forbidden:
+  - AGENTS.md
+  - docs/tasks/PH0-T01.yaml
+  - docs/tasks/PH0-T02.yaml
+  - docs/tasks/PH0-T03.yaml
+  - docs/tasks/PH0-T04.yaml
+  - docs/tasks/PH0-T05.yaml
+  - docs/adr/ADR-001-project-scope.md
+  - docs/adr/ADR-002-phase-governance.md
+  - docs/adr/ADR-003-ml-data-and-prediction-contract.md
+  - docs/adr/ADR-004-synthetic-cargo-and-cost-contract.md
+  - docs/adr/ADR-005-multi-horizon-asof-prediction.md
+  - docs/adr/ADR-006-or-solver-validator-contract.md
+  - docs/adr/ADR-007-blind-replay-and-evaluation.md
+  - docs/data/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/BLIND_REPLAY_CONTRACT.md
+  - docs/evaluation/METRICS_STATISTICS_CONTRACT.md
+  - docs/evaluation/EVALUATION_OUTPUT_SCHEMA.yaml
+  - docs/evaluation/RELEASE_GATE_CONTRACT.md
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - PH0-T01 ile PH0-T05 tamamlanmış ve validation sonuçları kayıtlı olmalı
+  - Phase 0 contract kimlikleri benzersiz ve artifact path'leri mevcut olmalı
+  - registry dependency referansları çözülmeli ve graph cycle içermemeli
+  - her contract tek owner component ve implementation phase taşımalı
+  - proje kapsamındaki her Phase 0 kararı en az bir normative artifact'e izlenebilmeli
+  - sensitivity exact dört non-baseline OFAT scenario ile sınırlandırılmalı
+  - sensitivity yalnız triggered primary cohort üzerinde iki MILP'i karşılaştırmalı
+  - sensitivity planner outcome okuyamamalı ve scenario planları outcome join'den önce dondurulmalı
+  - sensitivity primary run status policy decision CI veya gate'i değiştirememeli
+  - Phase 1 entry contract yalnız repository foundation kapsamını açmalı
+  - dependency seçimi official source compatibility license ve clean sync kanıtı gerektirmeli
+  - exit audit blocker varsa gate BLOCKED aksi halde READY_FOR_HUMAN_APPROVAL olmalı
+  - Phase 1 bütün task boyunca LOCKED kalmalı
+  - phase transition ayrı açık insan onayı olmadan gerçekleşmemeli
+  - kapsam dışı dosya dependency implementation veya artifact oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - tam bir ACTIVE faz bulunmalı ve bu PHASE_0 olmalı
+  - görev kapanışında active_task null ve PHASE_0 gate READY_FOR_HUMAN_APPROVAL olmalı
+  - PHASE_1 ile PHASE_8 status LOCKED kalmalı
+  - PH0 task ID'leri benzersiz ardışık ve PH0-T01..PH0-T06 COMPLETED olmalı
+  - contract registry ID ve artifact path'leri benzersiz olmalı
+  - registry dependency key'leri çözülmeli ve directed graph acyclic olmalı
+  - registry source header ID'leriyle exact eşleşmeli
+  - sensitivity scenario ID factor multiplier ve count exact olmalı
+  - sensitivity base dışı dört scenario ve joint grid yasağı doğrulanmalı
+  - sensitivity output primary release mapping alanı içermemeli
+  - Phase 1 entry gate dependency ve clean-room test koşullarını içermeli
+  - exit audit traceability satırları benzersiz olmalı ve açık blocker kalmamalı
+  - önceki checkpoint'teki izinli mevcut dosyalar dışındaki dosyalar byte-identical kalmalı
+  - implementation dependency database UI ve locked-phase yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - unresolved contract reference veya dependency cycle bulunması
+  - label cost constraint split blind veya release kuralları arasında çelişki bulunması
+  - sensitivity'nin primary sonucu gate'i veya policy kararını değiştirmesi
+  - sensitivity planner'a outcome erişimi gerekmesi
+  - Phase 1 için current dependency version varsayımı yapılması
+  - Phase 1 kilidini bu görev içinde açma gereksinimi
+  - onaylı dosya dışında değişiklik dependency implementation veri veya solver gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  task_sequence_and_completion_registry: PASSED
+  authorized_file_set: PASSED
+  forbidden_checkpoint_files_unchanged: PASSED
+  contract_id_and_artifact_path_uniqueness: PASSED
+  contract_reference_resolution: PASSED
+  normative_dependency_graph_acyclic: PASSED
+  contract_owner_and_implementation_phase_completeness: PASSED
+  source_header_contract_id_alignment: PASSED
+  scope_and_invariant_traceability: PASSED
+  sensitivity_exact_ofat_scenario_catalog: PASSED
+  sensitivity_outcome_isolation_and_primary_policy_immutability: PASSED
+  phase_1_dependency_first_entry_contract: PASSED
+  phase_1_to_phase_8_lock_invariants: PASSED
+  open_blocker_count_zero: PASSED
+  forbidden_paths_absent: PASSED
+  document_structure: PASSED
+  checkpoint_archive_integrity: PASSED

@@ -1,0 +1,102 @@
+schema_version: 1
+task_id: PH0-T02
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_user_approval
+scope_amendment:
+  approved_at: "2026-08-13"
+  reason: >-
+    PROJECT_SPEC.md içindeki eski aktif görev bilgisini PH0-T02 ile
+    tutarlı hale getirmek.
+goal: >-
+  BTS uçuş verisi, T-6 tahmin zamanı, ciddi aksama etiketi,
+  feature availability, leakage ve veri kalite sözleşmelerini
+  uygulama kodundan önce kesinleştirmek.
+in_scope:
+  - BTS kaynak ve kapsam sözleşmesi
+  - indirilecek BTS alanlarının kapalı listesi
+  - alanların tekil kullanım sınıflandırması
+  - doğal uçuş anahtarı ve duplicate politikası
+  - T-6 prediction cutoff ve saat dilimi politikası
+  - severe_disruption label sözleşmesi
+  - feature şeması ve 7/30 günlük as-of rolling hesaplar
+  - leakage denylist ve unclassified-field fail-closed kuralı
+  - eksik değer ve karantina politikası
+  - top-20 havalimanı seçim algoritması
+  - train validation test blind replay bölünmesi
+  - raw processed feature outcome katmanları
+  - veri kalite eşikleri ve snapshot manifesti
+out_of_scope:
+  - BTS verisini indirmek
+  - Python uygulama veya test kodu
+  - pyproject.toml veya dependency
+  - database veya migration
+  - model eğitimi veya MLflow run
+  - sentetik cargo generator implementation
+  - Pyomo veya HiGHS
+  - API ve frontend
+  - Hugging Face pgvector veya Ollama
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T02.yaml
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/ml/PREDICTION_CONTRACT.md
+  - docs/ml/FEATURE_AVAILABILITY.yaml
+  - docs/adr/ADR-003-ml-data-and-prediction-contract.md
+files_forbidden:
+  - AGENTS.md
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - resmî BTS kaynağı ve tablo kimliği açık olmalı
+  - indirilecek her BTS alanı tam bir primary_class taşımalı
+  - unlisted BTS alanları varsayılan olarak reddedilmeli
+  - T-6 cutoff zaman dilimi ve availability kuralı ölçülebilir olmalı
+  - label cancelled diverted ve 60 dakika gecikmeyi kapsamalı
+  - feature şeması yalnızca karar anında kullanılabilir alanlardan oluşmalı
+  - rolling feature aynı satırın veya geleceğin sonucunu kullanamamalı
+  - zaman bölünmesi ve blind kullanım yasağı açık olmalı
+  - eksik değer duplicate ve karantina davranışı fail-closed olmalı
+  - PHASE_1 ile PHASE_8 kilitli kalmalı
+  - kapsam dışı dosya veya dependency oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - tam bir ACTIVE faz bulunmalı ve bu PHASE_0 olmalı
+  - source field sınıfları izinli enum içinde ve tekil olmalı
+  - feature adları benzersiz olmalı
+  - doğrudan feature kaynakları label veya denylist alanı içermemeli
+  - rolling label kaynağı yalnızca historical as-of availability ile kullanılmalı
+  - outcome alanları model_input false olmalı
+  - default unclassified policy REJECT olmalı
+  - T-6 ve zaman split sınırları belgeler arasında eşleşmeli
+  - onaylı mevcut ve yeni dosyalar dışında dosya oluşmamalı
+  - uygulama dependency database ve UI yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - onaylı dosya dışında değişiklik gereksinimi
+  - BTS alan anlamının resmî kaynaktan doğrulanamaması
+  - T-6 availability kuralında gelecek bilgisi riski
+  - label veya split sözleşmesinin PH0-T01 ile çelişmesi
+  - uygulama kodu dependency veya veri indirme gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  source_field_contract: PASSED
+  feature_schema_contract: PASSED
+  leakage_contract: PASSED
+  cross_document_consistency: PASSED
+  authorized_file_set: PASSED
+  forbidden_paths_absent: PASSED
+  document_structure: PASSED

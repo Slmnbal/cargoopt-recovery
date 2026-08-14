@@ -1,0 +1,125 @@
+schema_version: 1
+task_id: PH0-T05
+phase: PHASE_0
+status: COMPLETED
+approved_at: "2026-08-13"
+completed_at: "2026-08-13"
+approval_source: explicit_user_approval
+goal: >-
+  Aralık 2024 blind replay roster'ını outcome görmeden dondurmak, aynı
+  recovery case üzerinde greedy, risk-blind MILP ve ML-informed MILP
+  stratejilerinin gerçekleşen sentetik maliyetini paired biçimde ölçmek ve
+  ML-informed politikanın benimsenme kararını önceden kayıtlı istatistiksel
+  kapılara bağlamak.
+in_scope:
+  - outcome-blind source case roster ve destinasyon kotası
+  - deterministic SHA-256 case sıralama ve seçim kuralı
+  - point-in-time walk-forward feature outcome erişim sınırı
+  - prediction OR input plan execution validation ve değerlendirme artifact freeze
+  - full outcome reveal öncesi üç stratejinin çalıştırılma zorunluluğu
+  - source severe disruption sonrası triggered cohort tanımı
+  - exogenous alert koşullu karar katkısı iddia sınırı
+  - candidate outcome ile realized synthetic TRY cost hesabı
+  - paired case completeness ve missingness politikası
+  - source FlightDate cluster bootstrap prosedürü
+  - primary ve secondary metric tanımları
+  - experiment integrity evidence ve policy release kapıları
+  - evaluation run output schema ve karar status enum'ları
+out_of_scope:
+  - Python evaluation veya bootstrap implementation
+  - BTS verisi indirmek ya da Aralık outcome açmak
+  - feature prediction generator model veya solver çalıştırmak
+  - model fit calibration tuning veya threshold seçimi
+  - cost capacity veya farklı senaryo sensitivity grid'i tanımlamak
+  - database migration API frontend veya dashboard
+  - pyproject.toml uv.lock veya dependency değişikliği
+  - Phase 1 ile Phase 8 implementation hazırlığı
+  - RAG LLM Hugging Face pgvector veya Ollama
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH0-T05.yaml
+  - docs/evaluation/BLIND_REPLAY_CONTRACT.md
+  - docs/evaluation/METRICS_STATISTICS_CONTRACT.md
+  - docs/evaluation/EVALUATION_OUTPUT_SCHEMA.yaml
+  - docs/evaluation/RELEASE_GATE_CONTRACT.md
+  - docs/adr/ADR-007-blind-replay-and-evaluation.md
+files_forbidden:
+  - AGENTS.md
+  - docs/tasks/PH0-T01.yaml
+  - docs/tasks/PH0-T02.yaml
+  - docs/tasks/PH0-T03.yaml
+  - docs/tasks/PH0-T04.yaml
+  - docs/data/**
+  - docs/ml/**
+  - docs/or/**
+  - pyproject.toml
+  - uv.lock
+  - docker-compose.yml
+  - src/**
+  - tests/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - roster yalnızca schedule ve pre-outcome eligibility ile seçilmeli
+  - roster toplamda en fazla 300 ve destinasyon başına en fazla 30 case içermeli
+  - roster sıralaması exact deterministic SHA-256 materyaliyle tanımlanmalı
+  - walk-forward as-of history ile evaluation outcome reveal yetkileri ayrılmalı
+  - her roster case için üç strateji full outcome reveal öncesi tamamlanmalı
+  - triggered cohort yalnızca reveal sonrası source severe disruption ile kurulmalı
+  - alert model precision recall veya end-to-end trigger başarısı iddia edilmemeli
+  - realized cost cost-policy-try-v1 ile integer kuruş olarak yeniden hesaplanmalı
+  - primary karşılaştırma ML-informed eksi risk-blind paired maliyet farkı olmalı
+  - bootstrap source FlightDate cluster ile 10000 tekrar ve seed 20240831 kullanmalı
+  - positive release için örnek büyüklüğü kapsama optimalite etki ve CI kapıları birlikte geçmeli
+  - yetersiz nötr veya negatif sonuç proje başarısızlığı olarak etiketlenmemeli
+  - invalid experiment ile insufficient evidence birbirinden ayrılmalı
+  - PHASE_1 ile PHASE_8 kilitli kalmalı
+  - kapsam dışı dosya dependency implementation veya outcome artifact oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - tam bir ACTIVE faz bulunmalı ve bu PHASE_0 olmalı
+  - roster hash material ve no-backfill kuralı exact tanımlı olmalı
+  - evaluation runner ile as-of feature builder outcome yetkileri çelişmemeli
+  - freeze manifest bütün pre-reveal artifact ailelerini kapsamalı
+  - post-reveal tuning ve primary rerun yasak olmalı
+  - üç strateji ve pairing denominator kuralları belgeler arasında eşleşmeli
+  - realized cost formülü COST_MODEL_CONTRACT ile birebir eşleşmeli
+  - primary difference işaret yönü ve relative improvement formülü exact olmalı
+  - bootstrap draw quantile ve cluster ağırlıklandırma algoritması deterministic olmalı
+  - output schema required alanları benzersiz ve contractlarla uyumlu olmalı
+  - release kapısı bütün eşikleri aynı denominator semantiğiyle tanımlamalı
+  - invalid neutral negative insufficient ve adopt kararları tutarlı olmalı
+  - onaylı mevcut ve yeni dosyalar dışında dosya oluşmamalı
+  - implementation dependency database UI ve locked-phase yolları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+stop_conditions:
+  - roster seçiminin source veya candidate outcome'a bağlı hale gelmesi
+  - Aralık outcome'unun freeze ve reveal kapısından önce evaluation runner'a açılması
+  - as-of feature builder'ın availability kuralını aşması
+  - üç stratejinin farklı case input shipment candidate veya cost snapshot kullanması
+  - realized cost'un dondurulmuş cost policy'den ayrışması
+  - missing case'in sessizce denominator dışına atılması
+  - sonuç görüldükten sonra threshold bootstrap maliyet veya model değiştirilmesi
+  - değerlendirme iddiasının alert prediction ya da nedensel etkiye genişletilmesi
+  - onaylı dosya dışında değişiklik dependency implementation veri veya solver gereksinimi
+  - mevcut kullanıcı dosyalarıyla çakışma
+validation_results:
+  yaml_and_phase_invariants: PASSED
+  authorized_file_set: PASSED
+  forbidden_checkpoint_files_unchanged: PASSED
+  roster_hash_quota_and_no_backfill_contract: PASSED
+  point_in_time_access_role_separation: PASSED
+  pre_reveal_freeze_and_reveal_contract: PASSED
+  three_strategy_input_and_pairing_contract: PASSED
+  realized_integer_kurus_cost_contract: PASSED
+  primary_difference_and_relative_improvement_contract: PASSED
+  cluster_bootstrap_determinism_and_r7_quantile: PASSED
+  release_boundary_and_status_precedence: PASSED
+  output_schema_completeness_and_gate_catalog: PASSED
+  cross_document_consistency: PASSED
+  forbidden_paths_absent: PASSED
+  document_structure: PASSED

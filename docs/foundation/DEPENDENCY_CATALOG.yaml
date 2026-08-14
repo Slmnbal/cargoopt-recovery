@@ -1,0 +1,404 @@
+schema_version: 1
+catalog_id: cargoopt-foundation-dependencies-v1
+task_id: PH1-T01
+researched_at: "2026-08-13"
+updated_by_task: PH1-T03
+updated_at: "2026-08-14"
+status: CLEAN_ROOM_AUDIT_AND_LICENSE_LOCAL_PASS_HOSTED_CI_PENDING
+source_policy: OFFICIAL_PRIMARY_ONLY
+installation_or_resolution_performed: true
+project_environment_sync_performed: true
+approval_record:
+  approved_at: "2026-08-13"
+  approval_status: APPROVED
+  approval_source: explicit_user_exact_toolchain_approval
+  scope: EXACT_COMPONENTS_AND_VERSIONS_IN_THIS_CATALOG
+  execution_authorized: true
+  execution_approved_at: "2026-08-13"
+  execution_source: explicit_user_command
+  execution_gate: PH1_T02_ACTIVE
+project_runtime_direct_dependencies: []
+estimated_lock_impact:
+  basis: canonical_project_metadata_before_resolution
+  linux_cp314_unique_direct_packages: 4
+  linux_cp314_unique_transitive_packages: 11
+  windows_cp314_additional_marker_packages: 1
+  project_package_entry_additional: 1
+  confidence: ESTIMATE_ONLY
+  acceptance_rule: PH1_T02_LOCK_AND_PH1_T03_AUDIT_MUST_REPLACE_ESTIMATE_WITH_OBSERVED_GRAPH
+observed_project_lock_graph:
+  observed_at: "2026-08-13"
+  resolver: uv 0.12.3
+  interpreter: standard GIL-enabled CPython 3.14.7
+  project_lock_sha256: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+  total_package_entries: 14
+  project_editable_entries: 1
+  canonical_registry_entries: 13
+  direct_development_packages: [mypy, pytest, ruff]
+  universal_transitive_packages:
+    - ast-serialize
+    - colorama
+    - iniconfig
+    - librt
+    - mypy-extensions
+    - packaging
+    - pathspec
+    - pluggy
+    - pygments
+    - typing-extensions
+  linux_cp314_active_transitive_count: 9
+  windows_cp314_additional_marker_packages: [colorama]
+  source_types: [canonical_pypi_registry, local_project_editable]
+  git_url_path_or_alternate_index_packages: []
+  prerelease_packages: []
+  resolver_yanked_warnings: []
+  linux_x86_64_cp314_compatible_wheel_coverage: PASSED
+  unexpected_packages: []
+  unexpected_native_compiler_requirement: false
+  lock_check_hash_stability: PASSED
+  build_system_note: >-
+    PEP 517 build dependency Hatchling ve kendi transitifleri project uv.lock
+    graph'ına dahil değildir; exact Hatchling 1.32.0 isolated build smoke
+    sırasında ayrıca doğrulanacaktır.
+observed_linux_local_environment:
+  observed_at: "2026-08-13"
+  platform: linux_x86_64_cpu_only
+  interpreter: standard GIL-enabled CPython 3.14.7
+  frozen_exact_sync: PASSED
+  installed_package_entries: 13
+  local_project_editable_build: PASSED
+  installed_registry_packages:
+    - ast-serialize==0.8.0
+    - iniconfig==2.3.0
+    - librt==0.15.0
+    - mypy==2.3.0
+    - mypy-extensions==1.1.0
+    - packaging==26.3
+    - pathspec==1.1.1
+    - pluggy==1.6.0
+    - pygments==2.20.0
+    - pytest==9.1.1
+    - ruff==0.16.3
+    - typing-extensions==4.16.0
+  windows_marker_package_not_installed_on_linux: [colorama==0.4.6]
+  third_party_source_builds: 0
+  native_compiler_invocations: 0
+  malware_check_configuration_enabled: true
+  executable_vulnerability_and_license_audit: PASSED_PH1_T03
+security_policy:
+  current_assessment: PROJECT_AND_BUILD_GRAPH_AUDIT_PASSED_ZERO_FINDINGS
+  limitation: >-
+    Bu sonuç 2026-08-14 local audit snapshot'ına aittir; dependency değişikliği
+    veya sonraki güvenlik verisi yeni audit gerektirir.
+  mandatory_next_gate:
+    - hosted Foundation workflow conclusion equals success
+
+observed_ph1_t03_audit:
+  observed_at: "2026-08-14"
+  project_graph:
+    audited_packages: 13
+    vulnerabilities: 0
+    adverse_statuses: 0
+    audit_json_sha256: 23651c21394194aeea9ad52c0020de94bc83fe588e157fd36c437c745a16bba5
+    cyclonedx_1_5_components: 13
+    sbom_sha256: 3e4a2cc153fe58782e4847e4c712253f3052ea1e173de3f21d8c0f39690f2a44
+  isolated_build_graph:
+    exact_packages:
+      - hatchling==1.32.0
+      - packaging==26.3
+      - pathspec==1.1.1
+      - pluggy==1.6.0
+      - tomlkit==0.15.1
+      - trove-classifiers==2026.6.1.19
+    audited_packages: 6
+    vulnerabilities: 0
+    adverse_statuses: 0
+    audit_json_sha256: c567df537dc6254202f3f16bb96852eeaed45a44f8520ee0d92f20f3cb050425
+    cyclonedx_1_5_components: 6
+    sbom_sha256: e7d98881183983b5781bf6e558e9c1d5b75d53c0ca32b0c9d9f6031b9d9981cb
+  license_inventory:
+    components: 20
+    unknown_or_prohibited: 0
+    decision: PASSED
+
+components:
+  - id: runtime-cpython
+    kind: runtime
+    package_name: CPython
+    exact_version: 3.14.7
+    declaration:
+      python_version_file: "3.14.7"
+      requires_python: ">=3.14,<3.15"
+      build_variant: standard_gil_enabled
+    purpose: Projenin tek Python runtime ve ABI hattını tanımlar.
+    alternatives:
+      - candidate: CPython 3.13
+        disposition: REJECTED
+        reason: Foundation araçlarının tamamı 3.14'ü destekliyor ve 3.14 Ekim 2030'a kadar güvenlik ufku sunuyor.
+      - candidate: CPython 3.15
+        disposition: REJECTED
+        reason: Araştırma tarihinde pre-release.
+      - candidate: free_threaded_3.14t
+        disposition: REJECTED
+        reason: Foundation aşamasında gereksiz ABI varyasyonu.
+    license_spdx: PSF-2.0
+    maintenance:
+      release_date: "2026-08-05"
+      lifecycle: BUGFIX_STABLE
+      security_until: "2030-10"
+      deprecated: false
+      yanked: false
+      prerelease: false
+    compatibility:
+      supported_os_target: [linux_x86_64, windows_x86_64]
+      primary_reference: linux_x86_64_cpu_only
+    security:
+      authority: Python_Security_Response_Team
+      release_channel: python.org
+      executable_audit: NOT_APPLICABLE_TO_UV_PROJECT_LOCK
+    transitive_impact:
+      project_lock_packages: 0
+      native_build_required: false
+    determinism: Exact patch pin; patch change requires approved task and clean-room rerun.
+    removal_cost: HIGH_RUNTIME_MIGRATION
+    official_sources:
+      - url: https://www.python.org/downloads/release/python-3147/
+        accessed_at: "2026-08-13"
+        claim: exact maintenance release and artifacts
+      - url: https://devguide.python.org/versions/
+        accessed_at: "2026-08-13"
+        claim: branch status and lifecycle
+      - url: https://peps.python.org/pep-0745/
+        accessed_at: "2026-08-13"
+        claim: release schedule and support horizon
+
+  - id: package-manager-uv
+    kind: external_tool
+    package_name: uv
+    exact_version: 0.12.3
+    declaration:
+      project_dependency: false
+      bootstrap_version_check: uv --version equals 0.12.3
+    purpose: Python yönetimi, virtual environment, universal lock, frozen sync, build ve security audit'i tek araçta yürütür.
+    alternatives:
+      - candidate: pip_venv_pip_tools
+        disposition: REJECTED
+        reason: Aynı deterministic workflow için üç araç ve birden çok sürüm yüzeyi gerekir.
+      - candidate: Poetry_or_PDM
+        disposition: REJECTED
+        reason: Foundation ihtiyacından geniş orchestration ve daha yüksek removal cost.
+    license_spdx: MIT OR Apache-2.0
+    maintenance:
+      release_date: "2026-08-07"
+      lifecycle: PRODUCTION_STABLE
+      deprecated: false
+      yanked: false
+      prerelease: false
+    compatibility:
+      requires_python_if_installed_from_pypi: ">=3.8"
+      python_classifiers_include: ["3.14"]
+      os: [linux, windows, macos]
+    security:
+      trusted_publishing: true
+      built_in_control: uv audit using known vulnerability and adverse status data
+      mandatory_result: PASSED_PH1_T03_ZERO_FINDINGS
+    transitive_impact:
+      project_lock_packages: 0
+      python_transitives: 0
+      native_artifact: rust_standalone_binary
+      local_rust_build_expected: false
+    determinism: Universal lock plus lock-check and frozen exact sync.
+    removal_cost: HIGH_WORKFLOW_AND_LOCK_MIGRATION
+    official_sources:
+      - url: https://pypi.org/project/uv/
+        accessed_at: "2026-08-13"
+        claim: exact version release license and compatibility metadata
+      - url: https://docs.astral.sh/uv/concepts/projects/sync/
+        accessed_at: "2026-08-13"
+        claim: lock check frozen and exact sync behavior
+      - url: https://docs.astral.sh/uv/reference/cli/
+        accessed_at: "2026-08-13"
+        claim: command and audit behavior
+
+  - id: build-backend-hatchling
+    kind: build_dependency
+    package_name: hatchling
+    exact_version: 1.32.0
+    declaration: hatchling==1.32.0
+    purpose: Minimal src-layout package için PEP 517 build backend sağlar.
+    alternatives:
+      - candidate: setuptools
+        disposition: REJECTED
+        reason: Extension veya legacy compatibility ihtiyacı yok; daha geniş build yüzeyi gereksiz.
+      - candidate: Hatch_CLI
+        disposition: REJECTED
+        reason: uv'nin project ve environment yönetimini tekrarlar.
+    license_spdx: MIT
+    maintenance:
+      release_date: "2026-08-11"
+      lifecycle: PRODUCTION_STABLE
+      deprecated: false
+      yanked: false
+      prerelease: false
+      provenance_attestation: true
+    compatibility:
+      requires_python: ">=3.10"
+      python_classifiers_include: ["3.14"]
+      os: OS_INDEPENDENT
+    security:
+      security_policy_url: https://github.com/pypa/hatch/security/policy
+      mandatory_result: PASSED_PH1_T03_ZERO_FINDINGS
+    transitive_impact:
+      estimate_for_python_3_14:
+        unconditional: [packaging, pathspec, pluggy, tomlkit, trove-classifiers]
+        excluded_by_marker: [tomli]
+        direct_transitive_count: 5
+      native_build_expected: false
+      verification: MUST_MATCH_UV_LOCK
+    determinism: Exact build-system pin and PEP 517 isolated build.
+    removal_cost: MEDIUM_BUILD_METADATA_CHANGE
+    official_sources:
+      - url: https://pypi.org/project/hatchling/
+        accessed_at: "2026-08-13"
+        claim: exact version release license and Python support
+      - url: https://github.com/pypa/hatch/blob/master/backend/pyproject.toml
+        accessed_at: "2026-08-13"
+        claim: canonical direct dependency markers
+      - url: https://peps.python.org/pep-0517/
+        accessed_at: "2026-08-13"
+        claim: isolated backend contract
+
+  - id: dev-ruff
+    kind: development_dependency
+    group: dev
+    package_name: ruff
+    exact_version: 0.16.3
+    declaration: ruff==0.16.3
+    purpose: Format check, lint ve import ordering'i tek gate'te sağlar.
+    alternatives:
+      - candidate: Black_plus_isort_plus_Flake8
+        disposition: REJECTED
+        reason: Üç dependency ve tekrarlanan config yüzeyi oluşturur.
+    license_spdx: MIT
+    maintenance:
+      release_date: "2026-08-13"
+      lifecycle: PRODUCTION_STABLE
+      deprecated: false
+      yanked: false
+      prerelease: false
+    compatibility:
+      requires_python: ">=3.7"
+      explicit_python_3_14_compatibility: true
+      os: [linux, windows, macos]
+    security:
+      security_policy_url: https://github.com/astral-sh/ruff/security/policy
+      mandatory_result: PASSED_PH1_T03_ZERO_FINDINGS
+    transitive_impact:
+      python_transitives: 0
+      native_artifact: rust_platform_wheel
+      local_rust_build_expected: false
+    determinism: Exact dev pin; formatter and lint commands are separately gated.
+    removal_cost: MEDIUM_FORMAT_AND_LINT_CONFIG_MIGRATION
+    official_sources:
+      - url: https://pypi.org/project/ruff/
+        accessed_at: "2026-08-13"
+        claim: exact release license and Python requirement
+      - url: https://github.com/astral-sh/ruff
+        accessed_at: "2026-08-13"
+        claim: Python 3.14 compatibility and combined roles
+
+  - id: dev-mypy
+    kind: development_dependency
+    group: dev
+    package_name: mypy
+    exact_version: 2.3.0
+    declaration: mypy==2.3.0
+    purpose: Python source ve test paketleri için strict static type gate sağlar.
+    alternatives:
+      - candidate: Pyright_or_ty
+        disposition: REJECTED
+        reason: İkinci checker aktif requirement değildir ve semantik/config tekrarına yol açar.
+      - candidate: no_static_checker
+        disposition: REJECTED
+        reason: Phase 1 giriş sözleşmesinin bağımsız type-check gate'ini karşılamaz.
+    license_spdx: MIT
+    maintenance:
+      release_date: "2026-07-13"
+      lifecycle: PRODUCTION_STABLE
+      deprecated: false
+      yanked: false
+      prerelease: false
+    compatibility:
+      requires_python: ">=3.10"
+      python_classifiers_include: ["3.14"]
+      cp314_wheels_published: true
+    security:
+      security_policy_url: https://github.com/python/mypy/security/policy
+      mandatory_result: PASSED_PH1_T03_ZERO_FINDINGS
+    transitive_impact:
+      estimate_for_cpython_3_14:
+        included: [typing_extensions, mypy_extensions, pathspec, librt, ast-serialize]
+        excluded_by_marker: [tomli]
+        direct_transitive_count: 5
+      native_artifact: cp314_platform_wheel_available
+      local_compiler_expected: false
+      verification: MUST_MATCH_UV_LOCK
+    determinism: Exact dev pin; strict config is repository-owned.
+    removal_cost: HIGH_TYPE_GATE_AND_ANNOTATION_POLICY_MIGRATION
+    official_sources:
+      - url: https://pypi.org/project/mypy/
+        accessed_at: "2026-08-13"
+        claim: exact release license Python support and cp314 wheels
+      - url: https://github.com/python/mypy/blob/master/pyproject.toml
+        accessed_at: "2026-08-13"
+        claim: canonical direct dependency markers
+
+  - id: dev-pytest
+    kind: development_dependency
+    group: dev
+    package_name: pytest
+    exact_version: 9.1.1
+    declaration: pytest==9.1.1
+    purpose: Minimal import smoke ve unit test discovery/execution gate'ini sağlar.
+    alternatives:
+      - candidate: unittest
+        disposition: REJECTED
+        reason: Dependency-free olsa da fixture parametrization ve okunabilir test ergonomisi için daha fazla proje boilerplate'i gerekir.
+      - candidate: pytest_plus_plugins
+        disposition: REJECTED
+        reason: Phase 1 requirement'ı plugin veya coverage threshold istemiyor.
+    license_spdx: MIT
+    maintenance:
+      release_date: "2026-06-19"
+      lifecycle: MATURE
+      deprecated: false
+      yanked: false
+      prerelease: false
+      provenance_attestation: true
+    compatibility:
+      requires_python: ">=3.10"
+      python_classifiers_include: ["3.14"]
+      os: [linux, windows, posix]
+    security:
+      security_policy_url: https://github.com/pytest-dev/pytest/security/policy
+      mandatory_result: PASSED_PH1_T03_ZERO_FINDINGS
+    transitive_impact:
+      estimate_for_linux_python_3_14:
+        included: [iniconfig, packaging, pluggy, pygments]
+        excluded_by_marker: [colorama, exceptiongroup, tomli]
+        direct_transitive_count: 4
+      windows_additional_marker: [colorama]
+      native_build_expected: false
+      verification: MUST_MATCH_UV_LOCK
+    determinism: Exact dev pin; plugin auto-loading is disabled in controlled verification unless explicitly approved.
+    removal_cost: MEDIUM_TEST_SUITE_MIGRATION
+    official_sources:
+      - url: https://pypi.org/project/pytest/
+        accessed_at: "2026-08-13"
+        claim: exact release license and Python requirement
+      - url: https://github.com/pytest-dev/pytest/blob/main/pyproject.toml
+        accessed_at: "2026-08-13"
+        claim: canonical dependency markers and Python 3.14 classifier
+
+future_phase_dependency_entries: []
+future_phase_dependency_selection: FORBIDDEN_UNTIL_RELEVANT_PHASE_AND_SEPARATE_APPROVAL

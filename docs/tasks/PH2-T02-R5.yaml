@@ -1,0 +1,149 @@
+schema_version: 1
+task_id: PH2-T02-R5
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T15:51:37Z"
+approved_at: "2026-08-15T15:51:37Z"
+approval_source: explicit_user_command
+approval_text: "artık bunu bitirelim"
+approval_scope_note: >-
+  R4'te POST'u durduran exact-15 dışı checked kontrolü önce read-only ve
+  sanitize edilmiş metadata ile tanımla; yalnız mekanik olarak güvenli semantik
+  kanıtlanırsa ayrı bounded header-only Extract görevine geç.
+task_type: HOSTED_READ_ONLY_SELECTED_CONTROL_DISCOVERY
+goal: >-
+  R4'te CHECKED_CONTROL_OUTSIDE_EXACT_15 üreten kontrolün hidden/cookie/body
+  değeri açığa çıkmadan public form name id type safe value following token ve
+  label metadata'sını belirlemek; mapped exact-15 field kontrollerinden yapısal
+  olarak ayrıştığını kanıtlamak ve sonraki bounded Extract sözleşmesine exact
+  kanıt sağlamak.
+preconditions:
+  ph2_t02_r4_status: BLOCKED
+  ph2_t02_r4_result: CONTRACT_SOURCE_MISMATCH
+  ph2_t02_r4_reason_code: CHECKED_CONTROL_OUTSIDE_EXACT_15
+  ph2_t02_r4_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  ph2_t02_r4_post_count: 0
+  ph2_t02_r4_temporary_zip_count: 0
+  ph2_t02_r4_data_rows_read: 0
+  ph2_t02_r4_cleanup: PASSED
+  ph2_t02_r4_final_commit: 03bef801df649c4a85015371fc3c40e768ddfb83
+  ph2_t02_r4_final_foundation_run: 31893342515
+  phase_3_to_phase_8_status: LOCKED
+in_scope:
+  - fresh selected-field form GET
+  - exact R2-compatible form fingerprint equality
+  - exact 15 field control mapping and selected form identity
+  - checked checkbox/radio controls outside mapped exact 15
+  - safe public type name id truncated value following token and label metadata
+  - mapped field control-name set and structural same-name comparison
+  - one canonical sanitized result JSON
+  - temporary workflow cleanup and Foundation evidence
+out_of_scope:
+  - POST ZIP CSV header data row or dataset access
+  - hidden values cookie values HTML body or label markup logging
+  - control semantics inferred without explicit safe metadata evidence
+  - dependency checkout action cache artifact secret OIDC environment
+  - source test config data lock migration product implementation or PH2-T03
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R5.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R5.md
+  - .github/workflows/ph2-t02-r5-control-discovery.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r5-control-discovery.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+hosted_execution_contract:
+  runner: ubuntu-24.04
+  workflow_path: .github/workflows/ph2-t02-r5-control-discovery.yml
+  permissions: EMPTY_OBJECT
+  checkout: FORBIDDEN
+  actions_uses: FORBIDDEN
+  dependencies: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  runtime: SYSTEM_CPYTHON_STANDARD_LIBRARY_ONLY
+  timeout_minutes: 8
+  sanitized_log_prefix: PH2_T02_R5_RESULT_JSON=
+network_policy:
+  methods: [GET]
+  schemes: [https]
+  hosts: [www.transtats.bts.gov, transtats.bts.gov]
+  max_requests: 3
+  max_redirects: 2
+  retries: 0
+  minimum_interval_seconds: 1
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  max_response_bytes: 8388608
+closed_results:
+  CONTROL_IDENTIFIED:
+    next_gate: PH2_T02_R5_CONTROL_IDENTIFIED_READY_FOR_BOUNDED_EXTRACT
+  CONTROL_NOT_UNAMBIGUOUS:
+    next_gate: PH2_T02_R5_CLOSED_CONTRACT_REQUIRES_HUMAN_DECISION
+  UPSTREAM_UNAVAILABLE:
+    next_gate: PH2_T02_R5_CLOSED_UPSTREAM_REQUIRES_HUMAN_DECISION
+  PROBE_SECURITY_ABORTED:
+    next_gate: PH2_T02_R5_CLOSED_SECURITY_REQUIRES_HUMAN_DECISION
+acceptance_criteria:
+  - approval and exact scope are committed before hosted GET
+  - fresh fingerprint equals immutable R2/R4 hash
+  - exact 15 mapped controls remain one-to-one in one form
+  - every outside checked control is represented only by allowlisted safe fields
+  - no hidden cookie HTML or response body content is logged
+  - POST ZIP CSV header and data row counts remain zero
+  - workflow is absent at final main and PH2-T03 remains absent
+  - hosted Discovery and Foundation runs pass with zero artifacts
+tests_required:
+  - all YAML parses
+  - workflow structure and standard-library AST scan passes
+  - parser fingerprint compatibility and hidden-value redaction self-tests pass
+  - result JSON schema and forbidden-content scan passes offline
+  - immutable foundation dependency lock source tests and R4 report retain hashes
+  - result and final Foundation runs pass with zero artifacts
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: false
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - fresh fingerprint differs from immutable hash
+  - exact-15 mapping changes or selected form becomes ambiguous
+  - outside checked control cannot be expressed with safe public metadata
+  - POST ZIP CSV header data row dependency source test or PH2-T03 is required
+validation_results:
+  bootstrap_commit: PENDING
+  discovery_workflow_run: PENDING
+  discovery_workflow_job: PENDING
+  discovery_workflow_conclusion: PENDING
+  foundation_run: PENDING
+  foundation_job: PENDING
+  foundation_conclusion: PENDING
+  workflow_artifact_count: PENDING
+  foundation_artifact_count: PENDING
+  result: PENDING
+  outside_checked_control_count: PENDING
+  post_count: 0
+  temporary_zip_count: 0
+  header_records_read: 0
+  data_rows_read: 0
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

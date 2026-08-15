@@ -1,0 +1,221 @@
+schema_version: 1
+task_id: PH2-T02-R2
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T14:40:32Z"
+approved_at: "2026-08-15T14:40:32Z"
+approval_source: explicit_user_command_with_immediate_conversation_reference
+approval_text: "onaylıyorum başlat"
+approval_resolves_previous_proposal: >-
+  PH2-T02-R2 için catalog.data.gov ve usa.gov resmî haklar kaynaklarını
+  allowlist'e eklemeyi, form parser düzeltmesini ve yalnız read-only güvenli
+  Discovery retry'sini onaylıyorum.
+task_type: HOSTED_READ_ONLY_FORM_AND_RIGHTS_DISCOVERY
+goal: >-
+  PH2-T02-R1'de 200 dönen selected-field sayfasını hidden değerleri veya HTML
+  body'yi loglamadan daha doğru parse etmek; resmî Data.gov metadata kaydı,
+  TranStats distribution bağlantısı ve USA.gov government-works lisans zincirini
+  doğrulamak; yalnız exact mekanik kapılar geçerse extract planlamasına hazır
+  sonucu üretmek.
+preconditions:
+  phase_1_status: COMPLETED
+  phase_2_status: ACTIVE
+  ph2_t02_status: BLOCKED
+  ph2_t02_r1_status: BLOCKED
+  ph2_t02_r1_result: PROBE_SECURITY_ABORTED
+  ph2_t02_r1_extract: NOT_RUN
+  ph2_t02_r1_temporary_workflow_absent: true
+  ph2_t02_r1_final_commit: 0425799c231f4552354982d9ef28eebb31fb358d
+  ph2_t02_r1_final_foundation_run: 31890217802
+  current_user_security_decision: APPROVED_OFFICIAL_HOST_EXTENSION_AND_FORM_PARSER_FIX
+  phase_3_to_phase_8_status: LOCKED
+normative_inputs:
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md
+  - docs/tasks/PH2-T02.yaml
+  - docs/tasks/PH2-T02-R1.yaml
+expected_selected_columns_exact_order:
+  - FlightDate
+  - Reporting_Airline
+  - DOT_ID_Reporting_Airline
+  - Flight_Number_Reporting_Airline
+  - OriginAirportID
+  - Origin
+  - DestAirportID
+  - Dest
+  - CRSDepTime
+  - CRSArrTime
+  - CRSElapsedTime
+  - Distance
+  - Cancelled
+  - Diverted
+  - ArrDelayMinutes
+in_scope:
+  - yalnız GitHub-hosted ubuntu-24.04 üzerinde read-only Discovery
+  - selected-field HTML kontrol yapısının global ve form-scoped güvenli parse edilmesi
+  - invalid action adayının request yapılmadan hash ve reason code ile reddedilmesi
+  - exact 2024 January ve ordered 15-field control mapping kanıtı
+  - canonical form fingerprint; hidden değerler fingerprint materyaline girmez
+  - catalog.data.gov CKAN metadata kaydının access level publisher description distribution ve license alanları
+  - USA.gov government-works lisans hedefinin HTTPS allowlist ve response metadata kontrolü
+  - Data.gov distribution ile TranStats resmî host ilişkisinin mekanik doğrulanması
+  - raw redistribution kapalıyken local analysis with attribution kararı
+  - sanitize edilmiş tek JSON result; HTML/JSON body loglanmaz
+  - geçici workflow'un result commit'inde silinmesi
+out_of_scope:
+  - POST veya selected-field download çağrısı
+  - ZIP CSV header veya data row indirmek okumak açmak
+  - PREZIP artifact veya full-width projection
+  - browser/manual interaction login CAPTCHA cookie export
+  - dependency checkout action cache artifact secret OIDC environment
+  - source test config data lock migration veya product implementation
+  - PH2-T03 veya sonraki faz için dosya placeholder ya da dependency
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R2.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R2.md
+  - .github/workflows/ph2-t02-r2-discovery.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r2-discovery.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md
+hosted_execution_contract:
+  platform: GitHub Actions
+  runner: ubuntu-24.04
+  workflow_path: .github/workflows/ph2-t02-r2-discovery.yml
+  trigger: PUSH_TO_MAIN_WHEN_EXACT_WORKFLOW_PATH_CHANGES
+  permissions: EMPTY_OBJECT
+  checkout: FORBIDDEN
+  actions_uses: FORBIDDEN
+  dependencies: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  runtime: PREINSTALLED_SYSTEM_CPYTHON_STANDARD_LIBRARY_ONLY
+  timeout_minutes: 10
+  concurrency: 1
+  sanitized_log_prefix: PH2_T02_R2_RESULT_JSON=
+network_policy:
+  schemes: [https]
+  hosts:
+    - www.transtats.bts.gov
+    - transtats.bts.gov
+    - catalog.data.gov
+    - data.gov
+    - www.data.gov
+    - usa.gov
+    - www.usa.gov
+  fixed_urls:
+    - https://www.transtats.bts.gov/DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ
+    - https://catalog.data.gov/api/3/action/package_show?id=bts-flight-data
+    - https://catalog.data.gov/api/3/action/package_show?id=u-s-marketing-air-carriers-on-time-performance
+    - https://www.usa.gov/government-works
+  methods: [GET]
+  max_requests: 6
+  max_redirects: 2
+  minimum_interval_seconds: 1
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  retries: 0
+  max_response_bytes_each: 8388608
+form_parser_contract:
+  controls_are_collected_globally_and_per_form: true
+  adjacent_text_allowed_only_for_checkbox_radio_and_option_mapping: true
+  hidden_raw_values: FORBIDDEN
+  hidden_names: ALLOWED
+  hidden_presence: ALLOWED
+  invalid_action_request: FORBIDDEN
+  valid_action_requires_https_allowlisted_host: true
+  exact_field_match_normalization: ASCII_ALNUM_CASE_INSENSITIVE
+  year_match: EXACT_2024
+  month_match: EXACT_JANUARY_OR_1
+  default_extra_selected_fields: FORBIDDEN
+  form_contract_fingerprint_excludes_hidden_values: true
+rights_contract:
+  ready_requires_all:
+    - Data.gov metadata success is true
+    - access level is public
+    - publisher or metadata description identifies Bureau of Transportation Statistics
+    - description identifies carrier monthly on-time performance
+    - at least one distribution access URL resolves to an allowlisted TranStats host
+    - license URL resolves through HTTPS only to USA.gov government-works
+    - raw redistribution remains disabled by project policy
+    - attribution remains mandatory
+  marketing_aggregate_record_role: corroboration_only
+  generic_bts_flight_record_role: primary_catalog_bridge
+  raw_redistribution_enabled: false
+closed_results:
+  DISCOVERY_READY_FOR_EXTRACT_PLANNING:
+    requires:
+      - form and rights contracts both pass
+    next_gate: PH2_T02_R2_RESULT_READY_FOR_EXTRACT_PLANNING_DECISION
+  CONTRACT_SOURCE_MISMATCH:
+    examples:
+      - exact form mapping is ambiguous
+      - action is not a safe HTTPS endpoint
+      - manual browser state is required
+  RIGHTS_UNRESOLVED:
+    examples:
+      - catalog record does not map BTS flight data to TranStats
+      - license chain is missing or not government works
+  UPSTREAM_UNAVAILABLE:
+    examples:
+      - bounded official GET does not return usable response
+  PROBE_SECURITY_ABORTED:
+    examples:
+      - scheme host request redirect byte or time limit fails
+      - sanitized output would expose forbidden content
+acceptance_criteria:
+  - task approval is committed before hosted network starts
+  - workflow uses permissions empty object and no uses step
+  - only four fixed official GET targets are requested
+  - request and redirect limits are enforced before every request
+  - no HTML JSON cookie hidden value or response body is logged
+  - exact field/year/month mapping and form fingerprint are deterministic
+  - rights mapping is derived only from parsed official metadata fields
+  - Extract remains NOT_RUN and data_rows_read remains 0
+  - temporary workflow is absent at final main
+  - final report records real closed result and hosted evidence
+  - PH2-T03 remains absent
+tests_required:
+  - all YAML parses
+  - workflow structure and forbidden-key scan passes
+  - inline Python AST parses and imports only standard library
+  - sanitized result JSON schema and redaction checks pass offline
+  - request redirect host scheme timeout and count invariants pass
+  - immutable foundation lock source tests and prior reports retain hashes
+  - result and closeout Foundation runs pass with zero artifacts
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: false
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - any non-approved host scheme or method is required
+  - response body or sensitive state would need to be logged
+  - form or rights mapping cannot be proven mechanically
+  - POST ZIP CSV header or row access becomes necessary
+  - task allowlist must expand
+  - dependency source test data config migration or PH2-T03 work is required
+validation_results: null

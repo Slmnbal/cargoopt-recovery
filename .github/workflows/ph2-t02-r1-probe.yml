@@ -1,0 +1,593 @@
+name: PH2-T02-R1 Source Probe
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ph2-t02-r1-probe.yml
+
+permissions: {}
+
+concurrency:
+  group: ph2-t02-r1-source-probe
+  cancel-in-progress: false
+
+jobs:
+  discovery:
+    name: Bounded official-source discovery
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - name: Run standard-library discovery probe
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import http.client
+          import json
+          import platform
+          import re
+          import ssl
+          import sys
+          import time
+          from html.parser import HTMLParser
+          from typing import Any
+          from urllib.parse import urljoin, urlsplit
+
+
+          PREFIX = "PH2_T02_R1_RESULT_JSON="
+          MAX_REQUESTS = 7
+          MAX_REDIRECTS = 5
+          MAX_PAGE_BYTES = 8 * 1024 * 1024
+          CONNECT_TIMEOUT_SECONDS = 10
+          READ_TIMEOUT_SECONDS = 60
+          MIN_INTERVAL_SECONDS = 1.0
+          ALLOWED_HOSTS = {
+              "transtats.bts.gov",
+              "www.transtats.bts.gov",
+              "bts.gov",
+              "www.bts.gov",
+              "ntl.bts.gov",
+              "transportation.gov",
+              "www.transportation.gov",
+          }
+          ENTRY_URLS = [
+              ("profile", "https://transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD"),
+              ("fields", "https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ"),
+              (
+                  "selected_form",
+                  "https://www.transtats.bts.gov/"
+                  "DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ",
+              ),
+              ("prezip", "https://transtats.bts.gov/PREZIP/"),
+              ("rights", "https://ntl.bts.gov/ntl/public-access/managing-rights"),
+          ]
+          EXPECTED_FIELDS = [
+              "FlightDate",
+              "Reporting_Airline",
+              "DOT_ID_Reporting_Airline",
+              "Flight_Number_Reporting_Airline",
+              "OriginAirportID",
+              "Origin",
+              "DestAirportID",
+              "Dest",
+              "CRSDepTime",
+              "CRSArrTime",
+              "CRSElapsedTime",
+              "Distance",
+              "Cancelled",
+              "Diverted",
+              "ArrDelayMinutes",
+          ]
+
+
+          def canonical(value: Any) -> bytes:
+              return json.dumps(
+                  value,
+                  ensure_ascii=False,
+                  sort_keys=True,
+                  separators=(",", ":"),
+              ).encode("utf-8")
+
+
+          def digest_bytes(value: bytes) -> str:
+              return hashlib.sha256(value).hexdigest()
+
+
+          def validate_url(url: str) -> tuple[str, str]:
+              parsed = urlsplit(url)
+              host = (parsed.hostname or "").lower()
+              if parsed.scheme != "https" or host not in ALLOWED_HOSTS:
+                  raise RuntimeError("URL_POLICY_VIOLATION")
+              if parsed.username or parsed.password or parsed.fragment:
+                  raise RuntimeError("URL_CREDENTIAL_OR_FRAGMENT_FORBIDDEN")
+              return host, parsed.path or "/"
+
+
+          class ProbeClient:
+              def __init__(self) -> None:
+                  self.request_count = 0
+                  self.redirect_count = 0
+                  self.last_request_at: float | None = None
+                  self.context = ssl.create_default_context()
+
+              def _wait(self) -> None:
+                  now = time.monotonic()
+                  if self.last_request_at is not None:
+                      remaining = MIN_INTERVAL_SECONDS - (now - self.last_request_at)
+                      if remaining > 0:
+                          time.sleep(remaining)
+
+              def get(self, requested_url: str) -> tuple[dict[str, Any], bytes]:
+                  current = requested_url
+                  chain: list[dict[str, Any]] = []
+                  started = time.monotonic()
+                  while True:
+                      if self.request_count >= MAX_REQUESTS:
+                          raise RuntimeError("REQUEST_BUDGET_EXCEEDED")
+                      host, _ = validate_url(current)
+                      parsed = urlsplit(current)
+                      target = parsed.path or "/"
+                      if parsed.query:
+                          target += "?" + parsed.query
+                      self._wait()
+                      self.request_count += 1
+                      self.last_request_at = time.monotonic()
+                      connection = http.client.HTTPSConnection(
+                          host,
+                          port=parsed.port or 443,
+                          timeout=CONNECT_TIMEOUT_SECONDS,
+                          context=self.context,
+                      )
+                      try:
+                          connection.request(
+                              "GET",
+                              target,
+                              headers={
+                                  "Accept": "text/html,application/xhtml+xml",
+                                  "Accept-Encoding": "identity",
+                                  "User-Agent": "CargoOptRecovery-PH2-T02-R1/1.0",
+                              },
+                          )
+                          response = connection.getresponse()
+                          if connection.sock is not None:
+                              connection.sock.settimeout(READ_TIMEOUT_SECONDS)
+                          status = response.status
+                          location = response.getheader("Location")
+                          if status in {301, 302, 303, 307, 308}:
+                              if not location:
+                                  raise RuntimeError("REDIRECT_WITHOUT_LOCATION")
+                              self.redirect_count += 1
+                              if self.redirect_count > MAX_REDIRECTS:
+                                  raise RuntimeError("REDIRECT_BUDGET_EXCEEDED")
+                              next_url = urljoin(current, location)
+                              next_host, _ = validate_url(next_url)
+                              chain.append(
+                                  {
+                                      "from": current,
+                                      "host": host,
+                                      "status": status,
+                                      "to": next_url,
+                                      "to_host": next_host,
+                                  }
+                              )
+                              response.read()
+                              current = next_url
+                              continue
+
+                          body = bytearray()
+                          while True:
+                              chunk = response.read(65536)
+                              if not chunk:
+                                  break
+                              body.extend(chunk)
+                              if len(body) > MAX_PAGE_BYTES:
+                                  raise RuntimeError("PAGE_BYTE_LIMIT_EXCEEDED")
+                          raw = bytes(body)
+                          cookie_names = []
+                          for cookie_header in response.headers.get_all("Set-Cookie", []):
+                              name = cookie_header.split(";", 1)[0].split("=", 1)[0].strip()
+                              if name and re.fullmatch(r"[A-Za-z0-9_.-]{1,128}", name):
+                                  cookie_names.append(name)
+                          metadata = {
+                              "requested_url": requested_url,
+                              "final_url": current,
+                              "status": status,
+                              "content_type": response.getheader("Content-Type"),
+                              "content_length": response.getheader("Content-Length"),
+                              "etag": response.getheader("ETag"),
+                              "last_modified": response.getheader("Last-Modified"),
+                              "byte_count": len(raw),
+                              "sha256": digest_bytes(raw),
+                              "set_cookie_names": sorted(set(cookie_names)),
+                              "redirects": chain,
+                              "elapsed_ms": round((time.monotonic() - started) * 1000),
+                          }
+                          return metadata, raw
+                      finally:
+                          connection.close()
+
+
+          class FormParser(HTMLParser):
+              def __init__(self) -> None:
+                  super().__init__(convert_charrefs=True)
+                  self.forms: list[dict[str, Any]] = []
+                  self.current_form: dict[str, Any] | None = None
+                  self.current_select: dict[str, Any] | None = None
+                  self.current_option: dict[str, Any] | None = None
+                  self.current_label_for: str | None = None
+                  self.label_text: dict[str, str] = {}
+                  self.links: list[dict[str, str]] = []
+                  self.current_link: dict[str, str] | None = None
+                  self.text_parts: list[str] = []
+
+              @staticmethod
+              def attrs_dict(attrs: list[tuple[str, str | None]]) -> dict[str, str]:
+                  return {key.lower(): value or "" for key, value in attrs}
+
+              def handle_starttag(
+                  self, tag: str, attrs: list[tuple[str, str | None]]
+              ) -> None:
+                  tag = tag.lower()
+                  values = self.attrs_dict(attrs)
+                  if tag == "form":
+                      self.current_form = {
+                          "action": values.get("action", ""),
+                          "method": values.get("method", "get").upper(),
+                          "id": values.get("id", ""),
+                          "name": values.get("name", ""),
+                          "controls": [],
+                      }
+                      self.forms.append(self.current_form)
+                  elif tag in {"input", "button", "textarea"} and self.current_form:
+                      control_type = values.get("type", tag).lower()
+                      control: dict[str, Any] = {
+                          "tag": tag,
+                          "type": control_type,
+                          "name": values.get("name", ""),
+                          "id": values.get("id", ""),
+                          "checked": "checked" in values,
+                          "disabled": "disabled" in values,
+                      }
+                      raw_value = values.get("value", "")
+                      if control_type == "hidden":
+                          control["value_sha256"] = digest_bytes(raw_value.encode("utf-8"))
+                      elif control_type in {"checkbox", "radio", "submit", "button"}:
+                          control["value"] = raw_value[:256]
+                      self.current_form["controls"].append(control)
+                  elif tag == "select" and self.current_form:
+                      self.current_select = {
+                          "tag": "select",
+                          "type": "select",
+                          "name": values.get("name", ""),
+                          "id": values.get("id", ""),
+                          "disabled": "disabled" in values,
+                          "options": [],
+                      }
+                      self.current_form["controls"].append(self.current_select)
+                  elif tag == "option" and self.current_select is not None:
+                      self.current_option = {
+                          "value": values.get("value", "")[:256],
+                          "label": "",
+                          "selected": "selected" in values,
+                          "disabled": "disabled" in values,
+                      }
+                      self.current_select["options"].append(self.current_option)
+                  elif tag == "label":
+                      self.current_label_for = values.get("for") or None
+                  elif tag == "a" and values.get("href"):
+                      self.current_link = {"href": values["href"], "label": ""}
+                      self.links.append(self.current_link)
+
+              def handle_endtag(self, tag: str) -> None:
+                  tag = tag.lower()
+                  if tag == "form":
+                      self.current_form = None
+                  elif tag == "select":
+                      self.current_select = None
+                  elif tag == "option":
+                      self.current_option = None
+                  elif tag == "label":
+                      self.current_label_for = None
+                  elif tag == "a":
+                      self.current_link = None
+
+              def handle_data(self, data: str) -> None:
+                  compact = " ".join(data.split())
+                  if not compact:
+                      return
+                  self.text_parts.append(compact)
+                  if self.current_option is not None:
+                      self.current_option["label"] = (
+                          self.current_option["label"] + " " + compact
+                      ).strip()[:256]
+                  if self.current_label_for:
+                      existing = self.label_text.get(self.current_label_for, "")
+                      self.label_text[self.current_label_for] = (
+                          existing + " " + compact
+                      ).strip()[:256]
+                  if self.current_link is not None:
+                      self.current_link["label"] = (
+                          self.current_link["label"] + " " + compact
+                      ).strip()[:256]
+
+
+          def decode_page(raw: bytes, content_type: str | None) -> str:
+              match = re.search(r"charset=([A-Za-z0-9._-]+)", content_type or "", re.I)
+              charset = match.group(1) if match else "utf-8"
+              try:
+                  return raw.decode(charset, errors="replace")
+              except LookupError:
+                  return raw.decode("utf-8", errors="replace")
+
+
+          def safe_control(control: dict[str, Any]) -> dict[str, Any]:
+              result = {
+                  key: control[key]
+                  for key in ("tag", "type", "name", "id", "checked", "disabled")
+                  if key in control
+              }
+              if control.get("type") == "hidden":
+                  result["value_present"] = bool(control.get("value_sha256"))
+              elif "value" in control:
+                  result["value"] = control["value"]
+              if "options" in control:
+                  result["options"] = control["options"]
+              return result
+
+
+          def candidates(control: dict[str, Any], labels: dict[str, str]) -> set[str]:
+              values = {
+                  str(control.get("name", "")),
+                  str(control.get("id", "")),
+                  str(control.get("value", "")),
+              }
+              control_id = str(control.get("id", ""))
+              if control_id in labels:
+                  values.add(labels[control_id])
+              for option in control.get("options", []):
+                  values.add(str(option.get("value", "")))
+                  values.add(str(option.get("label", "")))
+              return {value.strip() for value in values if value.strip()}
+
+
+          def normalized(value: str) -> str:
+              return re.sub(r"[^a-z0-9]", "", value.lower())
+
+
+          started = time.monotonic()
+          client = ProbeClient()
+          pages: list[dict[str, Any]] = []
+          parsed_pages: dict[str, FormParser] = {}
+          bodies: dict[str, str] = {}
+          result: dict[str, Any]
+          try:
+              for page_id, url in ENTRY_URLS:
+                  metadata, raw = client.get(url)
+                  pages.append({"id": page_id, **metadata})
+                  text_page = decode_page(raw, metadata.get("content_type"))
+                  parser = FormParser()
+                  parser.feed(text_page)
+                  parsed_pages[page_id] = parser
+                  bodies[page_id] = " ".join(parser.text_parts)
+
+              form_parser = parsed_pages["selected_form"]
+              selected_page = next(page for page in pages if page["id"] == "selected_form")
+              scored_forms = []
+              for form in form_parser.forms:
+                  joined = {
+                      normalized(value)
+                      for control in form["controls"]
+                      for value in candidates(control, form_parser.label_text)
+                  }
+                  score = sum(normalized(field) in joined for field in EXPECTED_FIELDS)
+                  scored_forms.append((score, form))
+              selected_form = max(scored_forms, key=lambda item: item[0])[1] if scored_forms else None
+
+              field_resolution: dict[str, list[dict[str, str]]] = {}
+              year_matches: list[dict[str, str]] = []
+              month_matches: list[dict[str, str]] = []
+              default_selected_extra: list[str] = []
+              safe_form: dict[str, Any] | None = None
+              action_url: str | None = None
+              contract_sha256: str | None = None
+              if selected_form is not None:
+                  action_url = urljoin(
+                      selected_page["final_url"], selected_form.get("action") or ""
+                  )
+                  validate_url(action_url)
+                  controls = selected_form["controls"]
+                  for field in EXPECTED_FIELDS:
+                      wanted = normalized(field)
+                      matches = []
+                      for control in controls:
+                          if wanted in {normalized(value) for value in candidates(control, form_parser.label_text)}:
+                              matches.append(
+                                  {
+                                      "name": str(control.get("name", "")),
+                                      "id": str(control.get("id", "")),
+                                      "type": str(control.get("type", "")),
+                                      "value": str(control.get("value", ""))[:256],
+                                  }
+                              )
+                      field_resolution[field] = matches
+                  for control in controls:
+                      for option in control.get("options", []):
+                          option_values = {
+                              normalized(str(option.get("value", ""))),
+                              normalized(str(option.get("label", ""))),
+                          }
+                          descriptor = {
+                              "control_name": str(control.get("name", "")),
+                              "control_id": str(control.get("id", "")),
+                              "value": str(option.get("value", "")),
+                              "label": str(option.get("label", "")),
+                          }
+                          if "2024" in option_values:
+                              year_matches.append(descriptor)
+                          if option_values.intersection({"1", "01", "january", "jan"}):
+                              month_matches.append(descriptor)
+                      if control.get("checked"):
+                          raw_default = str(control.get("value", ""))
+                          if raw_default and normalized(raw_default) not in {
+                              normalized(field) for field in EXPECTED_FIELDS
+                          }:
+                              default_selected_extra.append(raw_default[:256])
+
+                  contract_material = {
+                      "action": action_url,
+                      "method": selected_form.get("method", "GET"),
+                      "id": selected_form.get("id", ""),
+                      "name": selected_form.get("name", ""),
+                      "controls": [safe_control(control) for control in controls],
+                  }
+                  contract_sha256 = digest_bytes(canonical(contract_material))
+                  safe_form = contract_material
+
+              combined_text = " ".join(bodies.values()).lower()
+              exact_dataset_named = (
+                  "reporting carrier on-time performance" in combined_text
+                  or "airline on-time performance" in combined_text
+              )
+              reuse_signal = any(
+                  phrase in combined_text
+                  for phrase in (
+                      "public domain",
+                      "may be reproduced",
+                      "may be reused",
+                      "freely reuse",
+                      "freely used",
+                  )
+              )
+              attribution_signal = any(
+                  phrase in combined_text
+                  for phrase in ("attribution", "attribute", "credit the source", "cite")
+              )
+              rights_verified = exact_dataset_named and reuse_signal and attribution_signal
+              rights_status = (
+                  "VERIFIED_LOCAL_ANALYSIS_WITH_ATTRIBUTION_RAW_REDISTRIBUTION_DISABLED"
+                  if rights_verified
+                  else "RIGHTS_UNRESOLVED"
+              )
+
+              form_text = bodies.get("selected_form", "").lower()
+              interaction_flags = {
+                  "authentication": any(word in form_text for word in ("sign in", "log in", "login")),
+                  "captcha": "captcha" in form_text,
+                  "manual_interaction": any(
+                      phrase in form_text for phrase in ("manual verification", "human verification")
+                  ),
+                  "internal_error": "internal error" in form_text,
+                  "password_control": bool(
+                      selected_form
+                      and any(control.get("type") == "password" for control in selected_form["controls"])
+                  ),
+              }
+              field_mapping_exact = all(
+                  len(field_resolution.get(field, [])) == 1 for field in EXPECTED_FIELDS
+              )
+              form_ready = bool(
+                  selected_form
+                  and selected_page["status"] == 200
+                  and selected_form.get("method") in {"GET", "POST"}
+                  and len(year_matches) == 1
+                  and len(month_matches) == 1
+                  and field_mapping_exact
+                  and not default_selected_extra
+                  and not any(interaction_flags.values())
+              )
+              all_pages_ok = all(page["status"] == 200 for page in pages)
+              if not all_pages_ok:
+                  closed_result = "UPSTREAM_UNAVAILABLE"
+                  reason_code = "OFFICIAL_DISCOVERY_GET_NOT_200"
+              elif not form_ready:
+                  closed_result = "CONTRACT_SOURCE_MISMATCH"
+                  reason_code = "SELECTED_FIELD_FORM_NOT_EXACTLY_SCRIPTABLE"
+              elif not rights_verified:
+                  closed_result = "RIGHTS_UNRESOLVED"
+                  reason_code = "EXACT_DATASET_LOCAL_ANALYSIS_TERMS_NOT_ESTABLISHED"
+              else:
+                  closed_result = "READY_FOR_EXTRACT"
+                  reason_code = "ALL_DISCOVERY_GATES_PASSED"
+
+              result = {
+                  "schema_version": 1,
+                  "mode": "DISCOVERY",
+                  "result": closed_result,
+                  "reason_code": reason_code,
+                  "runtime": {
+                      "implementation": platform.python_implementation(),
+                      "python": platform.python_version(),
+                      "os": platform.system(),
+                      "architecture": platform.machine(),
+                  },
+                  "request_policy": {
+                      "method": "GET_ONLY",
+                      "count": client.request_count,
+                      "max": MAX_REQUESTS,
+                      "redirect_count": client.redirect_count,
+                      "redirect_max": MAX_REDIRECTS,
+                      "minimum_interval_seconds": MIN_INTERVAL_SECONDS,
+                      "connect_timeout_seconds": CONNECT_TIMEOUT_SECONDS,
+                      "read_timeout_seconds": READ_TIMEOUT_SECONDS,
+                      "elapsed_ms": round((time.monotonic() - started) * 1000),
+                  },
+                  "pages": pages,
+                  "form": {
+                      "found": selected_form is not None,
+                      "action": action_url,
+                      "method": selected_form.get("method") if selected_form else None,
+                      "contract_sha256": contract_sha256,
+                      "safe_contract": safe_form,
+                      "year_2024_matches": year_matches,
+                      "january_matches": month_matches,
+                      "field_resolution": field_resolution,
+                      "field_mapping_exact": field_mapping_exact,
+                      "default_selected_extra": sorted(default_selected_extra),
+                      "interaction_flags": interaction_flags,
+                  },
+                  "rights": {
+                      "status": rights_status,
+                      "exact_dataset_named": exact_dataset_named,
+                      "reuse_signal": reuse_signal,
+                      "attribution_signal": attribution_signal,
+                      "raw_redistribution_enabled": False,
+                      "source_ids": ["profile", "fields", "selected_form", "rights"],
+                  },
+                  "extract": "NOT_RUN",
+                  "artifact_count": 0,
+                  "data_rows_read": 0,
+                  "automatic_retry_count": 0,
+              }
+          except Exception as error:
+              result = {
+                  "schema_version": 1,
+                  "mode": "DISCOVERY",
+                  "result": "PROBE_SECURITY_ABORTED",
+                  "reason_code": type(error).__name__ + ":" + str(error)[:160],
+                  "runtime": {
+                      "implementation": platform.python_implementation(),
+                      "python": platform.python_version(),
+                      "os": platform.system(),
+                      "architecture": platform.machine(),
+                  },
+                  "request_policy": {
+                      "method": "GET_ONLY",
+                      "count": client.request_count,
+                      "max": MAX_REQUESTS,
+                      "redirect_count": client.redirect_count,
+                      "redirect_max": MAX_REDIRECTS,
+                      "elapsed_ms": round((time.monotonic() - started) * 1000),
+                  },
+                  "pages": pages,
+                  "extract": "NOT_RUN",
+                  "artifact_count": 0,
+                  "data_rows_read": 0,
+                  "automatic_retry_count": 0,
+              }
+
+          print(PREFIX + canonical(result).decode("utf-8"))
+          PY

@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.10.5` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R1_AWAITING_APPROVAL` |
+| Belge sürümü | `0.10.6` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R1_DISCOVERY_RUNNING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02-R1` — iki aşamalı hosted retry planı, yürütme onayı bekliyor |
+| Aktif görev | `PH2-T02-R1` — iki aşamalı hosted retry, Discovery yürütülüyor |
 
 ## 1. Tek cümlelik tanım
 

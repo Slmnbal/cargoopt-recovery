@@ -1,18 +1,20 @@
 schema_version: 1
 task_id: PH2-T02-R1
 phase: PHASE_2
-status: PLANNED
+status: IN_PROGRESS
 planned_at: "2026-08-15T14:00:41Z"
 planning_approval_source: explicit_user_command
 planning_approval_text: >-
   PH2-T02 PROBE_SECURITY_ABORTED sonucunu kabul ediyorum; güvenli retry
   görevini planla.
 execution_requires_separate_human_approval: true
-execution_approval_status: AWAITING_EXPLICIT_APPROVAL
-execution_approval_source: null
-execution_approved_at: null
-exact_next_approval_text: >-
-  PH2-T02-R1 güvenli hosted retry planını onaylıyorum; başlat.
+execution_approval_status: APPROVED
+execution_approval_source: explicit_user_command
+execution_approved_at: "2026-08-15T14:21:59Z"
+execution_approval_text: >-
+  projeye tam anlamyla başlayana kadar devam et onaylama süreçlerini otomatik
+  yap
+exact_next_approval_text: null
 task_type: HOSTED_TWO_STAGE_SOURCE_COMPATIBILITY_RETRY_ONLY
 goal: >-
   PH2-T02'de Work Mode direct-network katmanının ispatlayamadığı transport
@@ -34,7 +36,7 @@ preconditions:
   plan_base_foundation_run: 31888412912
   plan_base_foundation_conclusion: success
   phase_3_to_phase_8_status: LOCKED
-  execution_approval: REQUIRED_NOT_YET_GRANTED
+  execution_approval: GRANTED_BY_CURRENT_USER_COMMAND
 normative_inputs:
   - docs/governance/PHASE_2_ENTRY_CONTRACT.md
   - docs/data/BTS_DATA_CONTRACT.md

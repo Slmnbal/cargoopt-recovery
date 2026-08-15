@@ -327,4 +327,13 @@ validation_results:
   temporary_cleanup_guard: PASSED
   authorized_file_set: PASSED
   yaml_and_markdown_structure: PASSED
-  hosted_foundation_ci: PENDING_RESULT_COMMIT
+  hosted_foundation_ci: PASSED
+hosted_validation_evidence:
+  workflow: Foundation
+  run_id: 31888347851
+  job_id: 95020802321
+  commit_sha: 4619dbda56a78f6deed74e21fa1602006590ecf6
+  conclusion: success
+  primary_steps: 17
+  primary_steps_passed: 17
+  artifacts: 0

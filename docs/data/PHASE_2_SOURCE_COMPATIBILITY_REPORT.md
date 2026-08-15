@@ -158,3 +158,18 @@ governance kararı kendiliğinden başlatılamaz. Güvenli retry için en az:
 
 gerekir. Bu koşullar oluşmadan full-width PREZIP projection, mirror, manuel
 browser, dependency kurulumu veya 12 aylık acquisition yapılmaz.
+
+## 9. Repository ve hosted doğrulama
+
+| Kontrol | Sonuç |
+|---|---|
+| Result commit | `4619dbda56a78f6deed74e21fa1602006590ecf6` |
+| Değişen repository dosyaları | Yalnız task exact allowlist'indeki 4 dosya |
+| Foundation run | `31888347851` |
+| Foundation job | `95020802321` |
+| Ana adımlar | `17 / 17 PASSED` |
+| Workflow sonucu | `success` |
+| Workflow artifact | `0` |
+
+Bu hosted success yalnız repository bütünlüğünü doğrular; source compatibility
+probe'unun `PROBE_SECURITY_ABORTED` sonucunu `SOURCE_COMPATIBLE` yapmaz.

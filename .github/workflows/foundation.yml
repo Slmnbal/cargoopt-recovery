@@ -71,7 +71,7 @@ jobs:
           uv sync --check --all-groups --python 3.14.7 --managed-python
           uv pip freeze --python .venv/bin/python --exclude-editable | LC_ALL=C sort \
             > "$RUNNER_TEMP/inventory-1.txt"
-          test "$(wc -l < "$RUNNER_TEMP/inventory-1.txt")" -eq 12
+          test "$(wc -l < "$RUNNER_TEMP/inventory-1.txt")" -eq 17
 
       - name: Second frozen exact sync and idempotency
         shell: bash
@@ -165,13 +165,13 @@ jobs:
           audit = json.loads(pathlib.Path(sys.argv[1]).read_text())
           sbom = json.loads(pathlib.Path(sys.argv[2]).read_text())
           assert audit["summary"] == {
-              "audited_packages": 13,
+              "audited_packages": 18,
               "vulnerabilities": 0,
               "adverse_statuses": 0,
           }
           assert audit["vulnerabilities"] == []
           assert audit["adverse_statuses"] == []
-          assert len(sbom["components"]) == 13
+          assert len(sbom["components"]) == 18
           assert sbom["specVersion"] == "1.5"
           PY
           sha256sum "$RUNNER_TEMP/project-audit.json" "$RUNNER_TEMP/project-sbom.cdx.json"

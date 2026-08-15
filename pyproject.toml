@@ -8,27 +8,37 @@ version = "0.1.0"
 description = "Production-oriented ML and Operations Research decision-support portfolio project."
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
-dependencies = []
+dependencies = [
+  "airportsdata==20260803",
+  "duckdb==1.5.5",
+  "tzdata==2026.3",
+]
 
 [dependency-groups]
 dev = [
+  "hypothesis==6.165.9",
   "mypy==2.3.0",
   "pytest==9.1.1",
   "ruff==0.16.3",
+  "sortedcontainers==2.4.0",
 ]
 
 [tool.uv]
 required-version = "==0.12.3"
 default-groups = ["dev"]
 exclude-newer = "2026-08-13T23:59:59Z"
+exclude-newer-package = { hypothesis = "2026-08-15T23:59:59Z" }
 prerelease = "disallow"
 resolution = "highest"
 python-downloads = "manual"
 no-sources = true
 preview-features = ["malware-check"]
 no-build-package = [
+  "airportsdata",
   "ast-serialize",
   "colorama",
+  "duckdb",
+  "hypothesis",
   "hatchling",
   "iniconfig",
   "librt",
@@ -40,7 +50,9 @@ no-build-package = [
   "pygments",
   "pytest",
   "ruff",
+  "sortedcontainers",
   "tomlkit",
+  "tzdata",
   "trove-classifiers",
   "typing-extensions",
 ]

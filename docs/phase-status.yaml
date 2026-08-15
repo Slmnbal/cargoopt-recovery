@@ -16,7 +16,7 @@ phases:
   PHASE_2:
     name: data_and_domain
     status: ACTIVE
-  gate: PH2_T03_EXECUTION_IN_PROGRESS
+  gate: PH2_T03_RESULT_CANDIDATE_AWAITING_HOSTED_FOUNDATION
   PHASE_3:
     name: ml_risk_model
     status: LOCKED

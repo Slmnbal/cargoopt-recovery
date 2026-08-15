@@ -334,9 +334,40 @@ validation_results:
   planning_scope: PASSED
   ph2_t02_source_compatible_precondition: PASSED
   baseline_main_foundation: PASSED
-  exact_dependency_delta: PLANNED_NOT_EXECUTED
-  package_specific_cutoff_conflict: RESOLVED_IN_PLAN_NOT_APPLIED
-  dependency_resolution: AUTHORIZED_NOT_YET_RUN
-  repository_mutation: EXECUTION_PREFLIGHT_ONLY
+  exact_dependency_delta: PASSED_EXACT_FIVE_ONLY
+  package_specific_cutoff_conflict: PASSED_HYPOTHESIS_ONLY
+  dependency_resolution: PASSED
+  existing_external_package_semantics: PASSED_ALL_13_UNCHANGED
+  clean_room_frozen_sync: PASSED_TWO_IDENTICAL_INVENTORIES
+  direct_import_and_version: PASSED
+  license_gate: PASSED
+  yanked_gate: PASSED_ZERO
+  vulnerability_gate: PASSED_ZERO
+  adverse_status_gate: PASSED_ZERO
+  sbom_gate: PASSED_18_COMPONENTS_CYCLONEDX_1_5
+  repository_mutation: VERIFIED_CANDIDATE_PROMOTED_AWAITING_HOSTED_FOUNDATION
   data_rows_read: 0
   data_downloads: 0
+
+candidate_evidence:
+  resolver_commit: 6c88ac79a839844c55bacf502af8507f207917c7
+  resolver_run: 31897450532
+  resolver_job: 95042846510
+  resolver_conclusion: success
+  resolver_steps_passed: 11
+  cleanup_step: success
+  resolver_artifacts: 0
+  baseline_foundation_run: 31897450556
+  baseline_foundation_conclusion: success
+  baseline_foundation_artifacts: 0
+  external_lock_packages_before: 13
+  external_lock_packages_after: 18
+  linux_installed_inventory_count: 17
+  linux_inventory_sha256: c439a8a7aeaef5ee2f881c3dbe0aef711fa6eacea4c24c553b5e762fcb523ec5
+  audited_packages: 18
+  vulnerabilities: 0
+  adverse_statuses: 0
+  sbom_components: 18
+  pyproject_sha256: d355df0f044febbad6bf54dbc7af6b03fa14cc5a1aee9660e4e9b3ba15475722
+  uv_lock_sha256: af33afda49ad0f295a9f76de42c4b3a48cd0c4e39c73a4fda9d2626e0a17acd7
+  final_hosted_foundation: PENDING_RESULT_COMMIT

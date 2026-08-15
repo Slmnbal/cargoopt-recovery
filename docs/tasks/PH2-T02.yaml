@@ -18,9 +18,16 @@ result_status: PROBE_SECURITY_ABORTED
 result_reason_code: EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT
 result_report: docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
 result_approval_required: true
-result_approval_status: AWAITING_HUMAN_DECISION
-next_task_planning_status: FORBIDDEN_PENDING_HUMAN_DECISION
-exact_next_approval_text: null
+result_approval_status: APPROVED_FOR_SAFE_RETRY_PLANNING
+result_approval_source: explicit_user_command
+result_approved_at: "2026-08-15T14:00:41Z"
+result_approval_text: >-
+  PH2-T02 PROBE_SECURITY_ABORTED sonucunu kabul ediyorum; güvenli retry
+  görevini planla.
+next_task_planning_status: PH2_T02_R1_PLANNED_AWAITING_EXECUTION_APPROVAL
+retry_task: PH2-T02-R1
+exact_next_approval_text: >-
+  PH2-T02-R1 güvenli hosted retry planını onaylıyorum; başlat.
 task_type: OFFICIAL_SOURCE_COMPATIBILITY_PROBE_ONLY
 goal: >-
   Resmî BTS Reporting Carrier On-Time Performance kaynağında Ocak 2024 için

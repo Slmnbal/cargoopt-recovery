@@ -1,0 +1,418 @@
+schema_version: 1
+task_id: PH2-T02-R1
+phase: PHASE_2
+status: PLANNED
+planned_at: "2026-08-15T14:00:41Z"
+planning_approval_source: explicit_user_command
+planning_approval_text: >-
+  PH2-T02 PROBE_SECURITY_ABORTED sonucunu kabul ediyorum; güvenli retry
+  görevini planla.
+execution_requires_separate_human_approval: true
+execution_approval_status: AWAITING_EXPLICIT_APPROVAL
+execution_approval_source: null
+execution_approved_at: null
+exact_next_approval_text: >-
+  PH2-T02-R1 güvenli hosted retry planını onaylıyorum; başlat.
+task_type: HOSTED_TWO_STAGE_SOURCE_COMPATIBILITY_RETRY_ONLY
+goal: >-
+  PH2-T02'de Work Mode direct-network katmanının ispatlayamadığı transport
+  kontrollerini GitHub-hosted ubuntu-24.04 üzerinde third-party action,
+  checkout, secret, dependency ve artifact kullanmadan; önce discovery, yalnız
+  bütün kapılar geçerse exact-15 extract aşamasıyla tekrar çalıştırmak ve tek
+  bir fail-closed source/right/header sonucu üretmek.
+preconditions:
+  phase_1_status: COMPLETED
+  phase_1_gate: PASSED
+  phase_2_status: ACTIVE
+  phase_2_gate_at_planning: PH2_T02_PROBE_SECURITY_ABORTED_REQUIRES_HUMAN_DECISION
+  ph2_t02_status: BLOCKED
+  ph2_t02_result: PROBE_SECURITY_ABORTED
+  ph2_t02_result_reason: EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT
+  ph2_t02_result_approval: SATISFIED_FOR_SAFE_RETRY_PLANNING
+  ph2_t02_report: docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  plan_base_commit: cd3c2a9701c0d600c621bf6a69a8c45e28dcf58b
+  plan_base_foundation_run: 31888412912
+  plan_base_foundation_conclusion: success
+  phase_3_to_phase_8_status: LOCKED
+  execution_approval: REQUIRED_NOT_YET_GRANTED
+normative_inputs:
+  - docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/tasks/PH2-T02.yaml
+expected_selected_columns_exact_order:
+  - FlightDate
+  - Reporting_Airline
+  - DOT_ID_Reporting_Airline
+  - Flight_Number_Reporting_Airline
+  - OriginAirportID
+  - Origin
+  - DestAirportID
+  - Dest
+  - CRSDepTime
+  - CRSArrTime
+  - CRSElapsedTime
+  - Distance
+  - Cancelled
+  - Diverted
+  - ArrDelayMinutes
+planning_boundary:
+  planning_only: true
+  network_requests: 0
+  workflow_created: false
+  retry_report_placeholder_created: false
+  dependency_or_lock_mutation: false
+  source_test_config_or_data_mutation: false
+in_scope:
+  - PH2-T02 fail-closed sonucunun retry precondition'ı olarak kaydedilmesi
+  - yalnız GitHub-hosted ubuntu-24.04 runner üzerinde iki aşamalı probe
+  - discovery ve extract'in ayrı push-triggered workflow run'ları olması
+  - geçici workflow içinde yalnız Python standard library inline kodu
+  - discovery aşamasında resmî profile field dictionary PREZIP rights ve selected-field form GET'leri
+  - form action method control names option mapping ve token-name fingerprint'inin secret-free canonical kaydı
+  - exact 2024 January ve exact ordered 15-field request descriptor'ının discovery sonucundan mekanik çıkarılması
+  - discovery form contract'ı değişmediyse extract aşamasında fresh session ile en fazla bir POST veya GET
+  - en fazla bir geçici selected-field ZIP'in runner temporary dizinine streaming indirilmesi
+  - response redirect header byte count SHA-256 ZIP member ve header-only exact equality kanıtı
+  - official rights kanıtının local analysis attribution ve raw redistribution kararından ayrı değerlendirilmesi
+  - geçici workflow'un result commit'inden önce repository'den silinmesi
+  - result report task phase project status ve hosted CI kanıtının kalıcılaştırılması
+out_of_scope:
+  - Work Mode direct network web retrieval browser automation veya manual browser kullanmak
+  - PREZIP full-width artifact'i indirip kod içinde 15 kolona project etmek
+  - 2024 Şubat-Aralık verisini istemek indirmek veya incelemek
+  - Ocak CSV'den data row okumak parse etmek saymak örneklemek veya saklamak
+  - raw ZIP CSV HTML cookie token viewstate eventvalidation veya anti-CSRF değerini loglamak commit etmek ya da artifact yapmak
+  - GitHub Actions artifact cache environment secret OIDC deployment veya writable token kullanmak
+  - checkout setup-python setup-uv veya başka first/third-party action kullanmak
+  - package kurmak lock çözmek source test config data cache migration veya product acquisition client yazmak
+  - mevcut Foundation workflow'unu değiştirmek
+  - PH2-T03 task dependency scaffold placeholder adapter interface veya TODO oluşturmak
+  - Phase 3 model Phase 4 OR Phase 5 replay Phase 6 API/UI Phase 7 hardening Phase 8 RAG/LLM işi
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R1.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md
+  - .github/workflows/ph2-t02-r1-probe.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r1-probe.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/workflows/foundation.yml
+  - .github/workflows/**
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-*.yaml
+  - docs/tasks/PH2-T01.yaml
+  - docs/tasks/PH2-T02.yaml
+  - docs/tasks/PH2-T03.yaml
+  - docs/tasks/PH2-T04.yaml
+  - docs/tasks/PH2-T05.yaml
+  - docs/tasks/PH2-T06.yaml
+  - docs/tasks/PH2-T07.yaml
+  - docs/tasks/PH2-T08.yaml
+  - docs/tasks/PH2-T09.yaml
+  - docs/tasks/PH2-T10.yaml
+  - docs/tasks/PH2-T11.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/SYNTHETIC_CARGO_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+  - docs/governance/**
+  - docs/adr/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+allowlist_precedence_rule: >-
+  .github/workflows/ph2-t02-r1-probe.yml files_allowed içindeki tek workflow
+  istisnasıdır; .github/workflows/** yasağı diğer bütün workflow yollarına
+  uygulanır.
+hosted_execution_contract:
+  platform: GitHub Actions
+  runner: ubuntu-24.04
+  trigger: PUSH_TO_MAIN_WHEN_EXACT_TEMPORARY_WORKFLOW_PATH_CHANGES
+  workflow_name: PH2-T02-R1 Source Probe
+  workflow_path: .github/workflows/ph2-t02-r1-probe.yml
+  workflow_permissions: EMPTY_OBJECT_NO_TOKEN_SCOPE
+  timeout_minutes: 12
+  job_concurrency: 1
+  cancel_in_progress: false
+  checkout: FORBIDDEN
+  actions_uses_steps: FORBIDDEN
+  dependencies: FORBIDDEN
+  cache: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  oidc: FORBIDDEN
+  environment: FORBIDDEN
+  runtime: PREINSTALLED_SYSTEM_PYTHON_STANDARD_LIBRARY_ONLY
+  runtime_minimum: CPython_3_12
+  runtime_version_must_be_logged: true
+  code_location: INLINE_IN_TEMPORARY_WORKFLOW_ONLY
+  sanitized_log_prefix: PH2_T02_R1_RESULT_JSON=
+  workflow_run_rerun: FORBIDDEN_WITHOUT_NEW_HUMAN_DECISION
+network_policy:
+  normative_probe_route: GITHUB_HOSTED_RUNNER_ONLY
+  work_mode_direct_network: FORBIDDEN
+  web_or_browser_retrieval: FORBIDDEN
+  environment_proxies: DISABLED_IN_PYTHON_OPENER
+  tls_verification: REQUIRED_DEFAULT_TRUST_STORE
+  schemes: [https]
+  hosts:
+    - transtats.bts.gov
+    - www.transtats.bts.gov
+    - bts.gov
+    - www.bts.gov
+    - ntl.bts.gov
+    - transportation.gov
+    - www.transportation.gov
+  fixed_entry_urls:
+    - https://www.transtats.bts.gov/ontime/
+    - https://transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD
+    - https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ
+    - https://www.transtats.bts.gov/DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ
+    - https://transtats.bts.gov/PREZIP/
+    - https://ntl.bts.gov/ntl/public-access/managing-rights
+  methods:
+    GET: ALLOWED
+    POST: ALLOWED_ONLY_IN_EXTRACT_TO_DISCOVERED_EXACT_FORM_ACTION
+    HEAD: NOT_REQUIRED
+  max_total_requests_across_both_runs: 12
+  discovery_max_requests: 7
+  extract_max_requests: 5
+  minimum_interval_seconds: 1
+  max_redirects_per_run: 5
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  max_execution_seconds_per_run: 600
+  discovery_retries:
+    max_global_additional_get_attempts: 1
+    statuses: [429, 500, 502, 503, 504]
+  extract_retries:
+    fresh_form_get_additional_attempts: 1
+    post_automatic_retry: false
+  redirect_rule: REVALIDATE_HTTPS_AND_HOST_AND_COUNT_EVERY_REDIRECT
+  platform_control_plane_note: >-
+    GitHub runner provisioning ve log control-plane trafiği probe script'i
+    tarafından başlatılmaz ve BTS request bütçesine dahil değildir; probe
+    workflow'u checkout veya action download yapmaz.
+discovery_stage:
+  mode: DISCOVERY
+  mutations: GET_ONLY
+  required_outputs:
+    - runner OS architecture and exact Python version
+    - request count elapsed time and redirect chains
+    - per-page requested URL final URL status content type length ETag Last-Modified byte count and SHA-256
+    - selected form action method and HTTPS allowlist result
+    - control tag type name id and non-secret option mapping
+    - hidden control names and value SHA-256 only with no raw values
+    - authentication CAPTCHA manual interaction and reusable-state requirements
+    - exact 2024 January option resolution
+    - exact ordered 15-field control resolution
+    - canonical form contract SHA-256 excluding ephemeral token values
+    - official rights source decision
+  ready_for_extract_requires_all:
+    - every response and redirect remains on allowlisted HTTPS hosts
+    - selected-field form is public and no login CAPTCHA browser or user cookie is required
+    - action method and all required controls are unambiguous
+    - year 2024 month January and every exact field map one-to-one
+    - no extra selected field is required or default-selected
+    - rights status is VERIFIED_LOCAL_ANALYSIS_WITH_ATTRIBUTION_RAW_REDISTRIBUTION_DISABLED
+  otherwise: EMIT_ONE_CLOSED_RESULT_AND_SKIP_EXTRACT
+discovery_review_gate:
+  automatic_progression: false
+  required_review:
+    - fetch workflow run job and sanitized log by exact head SHA
+    - validate result JSON schema offline
+    - verify request count and redirects against policy
+    - recompute canonical form contract fingerprint
+    - verify no hidden cookie token anti-CSRF or absolute temp path value appears
+    - verify concurrent probe jobs did not occur
+  extract_workflow_update_allowed_only_if: discovery_stage.ready_for_extract_requires_all
+  separate_human_approval_between_stages: false
+  rationale: >-
+    İnsan yürütme onayı iki aşamalı state machine'i birlikte kapsar; discovery
+    başarısızsa extract oluşturulmaz. Extract geçişi yalnız önceden tanımlanmış
+    mekanik kapılara bağlıdır ve scope genişletmez.
+extract_stage:
+  mode: EXTRACT
+  preconditions:
+    - discovery workflow and Foundation workflow both concluded success
+    - sanitized discovery result status is READY_FOR_EXTRACT
+    - embedded discovery form contract SHA-256 matches reviewed value
+  sequence:
+    - open a fresh in-memory cookie jar and fetch selected-field form
+    - recompute non-secret form contract and require exact discovery fingerprint equality
+    - resolve fresh hidden values only in memory without logging
+    - construct fixed 2024 January exact ordered 15-field request
+    - compute a canonical request fingerprint excluding cookie and hidden values
+    - send one non-retried POST or GET only to the discovered official action
+    - stream at most one ZIP into runner temporary storage with SHA-256 and byte cap
+    - validate one regular unencrypted CSV member and declared expanded size
+    - read at most BOM plus one CSV header line and zero data rows
+    - compare parsed header to exact ordered 15 fields without trim rename reorder projection or coercion
+    - delete temporary bytes in finally and assert path absence
+  fresh_form_structure_change: CONTRACT_SOURCE_MISMATCH
+  post_retry: FORBIDDEN
+bounded_artifact_policy:
+  target_period: "2024-01"
+  max_artifact_count: 1
+  max_compressed_bytes: 268435456
+  max_archive_members: 1
+  max_declared_uncompressed_member_bytes: 2147483648
+  max_header_read_bytes: 1048576
+  data_rows_read: 0
+  expected_member_type: SINGLE_REGULAR_UNENCRYPTED_CSV
+  expected_content_types:
+    - application/zip
+    - application/x-zip-compressed
+    - application/octet-stream
+  storage: RUNNER_TEMPORARY_DIRECTORY_ONLY
+  persistent_raw_or_csv_bytes: FORBIDDEN
+  cleanup: REQUIRED_ON_SUCCESS_FAILURE_AND_INTERRUPTION
+  cleanup_evidence: TEMPORARY_PATH_ABSENT_AND_ONLY_HASHED_PATH_FINGERPRINT_LOGGED
+sanitized_output_policy:
+  format: SINGLE_LINE_CANONICAL_JSON
+  encoding: UTF-8
+  canonicalization: SORTED_KEYS_COMPACT_SEPARATORS
+  allowed:
+    - closed result status and reason code
+    - URLs statuses safe response headers byte counts and SHA-256
+    - redirect metadata on allowlisted hosts
+    - form method action control names types ids option names and non-secret values
+    - hidden field names and one-way value hashes
+    - request fingerprint without ephemeral values
+    - archive member metadata and exact parsed header names
+    - request counters durations runtime version and cleanup booleans
+  forbidden:
+    - HTML body or page excerpt
+    - cookie value or full cookie header
+    - hidden viewstate eventvalidation CSRF or token raw value
+    - ZIP CSV or data row bytes
+    - runner absolute temporary path
+    - GitHub token environment or context dump
+closed_results:
+  SOURCE_COMPATIBLE:
+    requires:
+      - discovery and extract success contracts both pass
+      - exact header equality is true
+      - rights status supports local analysis with attribution
+      - raw redistribution remains disabled
+      - cleanup and all request limits pass
+    next_gate: PH2_T02_R1_RESULT_READY_FOR_HUMAN_APPROVAL
+  CONTRACT_SOURCE_MISMATCH:
+    examples:
+      - form or exact mapping is ambiguous
+      - structure changes between discovery and extract
+      - selected output header is not exact ordered 15
+      - manual browser CAPTCHA login or reusable user state is required
+  RIGHTS_UNRESOLVED:
+    examples:
+      - official source does not establish local analysis terms
+      - only general CC-BY encouragement is found
+  UPSTREAM_UNAVAILABLE:
+    examples:
+      - bounded official GET attempts cannot obtain the form or source pages
+  PROBE_SECURITY_ABORTED:
+    examples:
+      - runner workflow uses an action checkout secret artifact cache or dependency
+      - redirect host scheme request byte member time or concurrency limit fails
+      - sanitized output leaks a forbidden value
+      - unexpected script or platform failure prevents protocol evidence
+result_and_cleanup_sequence:
+  - emit one closed result from the approved set
+  - fetch exact probe run logs and verify sanitized JSON offline
+  - remove temporary workflow in the next repository commit
+  - assert temporary workflow path absent on final main
+  - create PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md only after a real closed result
+  - update PH2-T02-R1 task phase and project status without creating PH2-T03
+  - run hosted Foundation on result commit
+  - record result commit run evidence and verify final closeout commit Foundation success
+success_phase_result:
+  phase_2_status: ACTIVE
+  phase_2_gate: PH2_T02_R1_RESULT_READY_FOR_HUMAN_APPROVAL
+  active_task: null
+  next_task_rule: PH2_T03_MAY_ONLY_BE_PLANNED_AFTER_SEPARATE_RESULT_APPROVAL
+failure_phase_result:
+  phase_2_status: ACTIVE
+  phase_2_gate: PH2_T02_R1_CLOSED_FAILURE_REQUIRES_HUMAN_DECISION
+  active_task: null
+  next_task_rule: PH2_T03_FORBIDDEN
+acceptance_criteria:
+  - exact execution approval task içinde bootstrap commit'inden önce kaydedilmeli
+  - plan base main commit ve hosted Foundation success yeniden doğrulanmalı
+  - temporary workflow exact path dışında hiçbir workflow değişmemeli
+  - temporary workflow permissions empty object checkout actions uses secrets cache artifact ve dependency içermemeli
+  - discovery ve extract ayrı run olmalı ve extract discovery review gate geçmeden oluşturulmamalı
+  - normative probe request'leri yalnız hosted runner'dan official HTTPS allowlist'e gitmeli
+  - toplam request sayısı iki run toplamında en fazla 12 olmalı
+  - selected request fixed January 2024 ve exact ordered 15 field olmalı
+  - en fazla bir temporary artifact ve sıfır data row olmalı
+  - response archive header rights request ve cleanup kanıtı sanitized JSON'da bulunmalı
+  - tek closed result üretilmeli ve success kanıtlanmadan SOURCE_COMPATIBLE seçilmemeli
+  - workflow result report yazılmadan önce repository'den silinmeli
+  - final main'de workflow script data artifact cache dependency PH2-T03 veya Phase 3+ placeholder kalmamalı
+  - final repository diff'i yalnız kalıcı files_allowed dokümanlarında olmalı
+tests_required:
+  - bütün repository YAML dosyaları safe parser ile parse edilebilmeli
+  - temporary workflow YAML structure ve forbidden-key scan geçmeli
+  - workflow yalnız exact push branch path runner timeout permission ve concurrency contract'ını taşımalı
+  - inline Python ast parse ve standard-library import allowlist kontrolü geçmeli
+  - discovery ve extract JSON schema canonicalization fingerprint ve redaction validator'ları offline geçmeli
+  - request redirect host scheme method count retry interval timeout ve duration invariants geçmeli
+  - ZIP single regular unencrypted CSV member declared size compressed size and header-read caps geçmeli
+  - parsed header exact ordered 15 equality veya explicit NOT_RUN closed failure bulunmalı
+  - data_rows_read değeri exact 0 olmalı
+  - temporary cleanup path absence success failure ve interruption yollarında true olmalı
+  - pyproject uv.lock Foundation workflow source tests configs contracts ve prior PH2-T02 report byte-identical kalmalı
+  - final main'de retry workflow path scripts data configs artifacts PH2-T03 ve Phase 3+ dosyaları bulunmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+  - result commit ve final closeout commit hosted Foundation workflow'unda success olmalı
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+temporary_workflow_allowed_after_execution_approval: true
+temporary_workflow_required_absent_at_final: true
+network_allowed_before_execution_approval: false
+network_allowed_after_execution_approval: HOSTED_RUNNER_ONLY_WITH_TWO_STAGE_POLICY
+data_download_allowed_before_execution_approval: false
+data_download_allowed_after_execution_approval: EXTRACT_STAGE_SINGLE_TEMPORARY_ARTIFACT_ONLY
+persistent_data_allowed: false
+retry_report_placeholder_allowed_during_planning: false
+automatic_retry_or_rerun_allowed: false
+stop_conditions:
+  - exact execution approval verilmemişse
+  - plan base commit veya hosted Foundation success değişmiş ya da doğrulanamıyorsa
+  - temporary workflow exact allowlist dışında repository mutation gerektiriyorsa
+  - workflow checkout action dependency secret cache artifact OIDC environment veya writable permission gerektiriyorsa
+  - official source dışında host scheme method veya manual browser gerekirse
+  - discovery form field year month rights veya action mapping'i ambiguous ise
+  - discovery review gate geçmeden extract gerekirse
+  - form contract discovery ile extract arasında değişirse
+  - toplam request redirect timeout retry interval duration byte member veya header sınırı aşılırsa
+  - raw page cookie token hidden value ZIP CSV row veya absolute path loglanacaksa
+  - temporary workflow cleanup commit'inde silinemiyorsa
+  - dependency lock source test config data migration product code PH2-T03 veya Phase 3+ hazırlığı gerekirse
+validation_results: null

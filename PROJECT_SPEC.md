@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.11.8` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R6_BOUNDED_EXTRACT_RUNNING` |
+| Belge sürümü | `0.11.9` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R7_TRANSPORT_EXTRACT_RUNNING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02-R6` — exact-four default alan exclusion ile bounded exact-15 Extract |
+| Aktif görev | `PH2-T02-R7` — browser-equivalent transport ile son bounded exact-15 Extract |
 
 ## 1. Tek cümlelik tanım
 
@@ -315,7 +315,8 @@ gerektirir.
 - Sonuçlanan görev: `PH2-T02-R3 — COMPLETED/RIGHTS_READY_FOR_EXTRACT_PLANNING`
 - Sonuçlanan görev: `PH2-T02-R4 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; fresh fingerprint exact, exact-15 dışı seçili kontrol nedeniyle POST `0`, ZIP `0`, row `0`, cleanup `PASSED`
 - Sonuçlanan görev: `PH2-T02-R5 — BLOCKED/CONTROL_NOT_UNAMBIGUOUS`; tek kontrol varsayımı yerine dört bağımsız default field checkbox'ı güvenli metadata ile exact tanımlandı
-- Aktif görev: `PH2-T02-R6 — IN_PROGRESS`; exact-four seti browser-equivalent unchecked yapılarak January 2024 exact-15 header doğrulanıyor
+- Sonuçlanan görev: `PH2-T02-R6 — BLOCKED/PROBE_SECURITY_ABORTED`; exact-four ve exact-15 kapıları geçti, POST `1`, response header öncesi transport exception, ZIP `0`, row `0`, cleanup `PASSED`
+- Aktif görev: `PH2-T02-R7 — IN_PROGRESS`; aynı immutable payload browser-equivalent same-origin transport header'larıyla son kez deneniyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -323,7 +324,7 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: R6 exact ordered header ve mandatory cleanup sonucu
+- Sıradaki kapı: R7 exact ordered header veya açık transport/upstream kapanış sonucu
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`

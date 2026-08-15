@@ -1,0 +1,152 @@
+schema_version: 1
+task_id: PH2-T02-R7
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T16:01:48Z"
+approved_at: "2026-08-15T16:01:48Z"
+approval_source: explicit_user_command
+approval_text: "artık bunu bitirelim"
+task_type: HOSTED_BROWSER_EQUIVALENT_TRANSPORT_BOUNDED_EXTRACT
+goal: >-
+  R6'nın immutable form ve payload sözleşmesini değiştirmeden, aynı-origin
+  browser navigation HTTP header'larıyla tek bounded POST yapmak; transport
+  hatasını mesaj loglamadan sınıflandırmak veya tek ZIP içindeki exact ordered
+  header'ı zero-row sınırında doğrulayıp mandatory cleanup ile source kapısını
+  sonuçlandırmak.
+preconditions:
+  ph2_t02_r6_result: PROBE_SECURITY_ABORTED
+  ph2_t02_r6_reason_code: UNEXPECTED_INTERNAL_EXCEPTION
+  ph2_t02_r6_form_contract_exact: true
+  ph2_t02_r6_exact_default_excluded_control_count: 4
+  ph2_t02_r6_exact_field_count: 15
+  ph2_t02_r6_submission_contract_sha256: 2a0b2c2b5e4b1e538faa1bdd3a7629ed5147c158216ff3aa57f17f81ead42f2a
+  ph2_t02_r6_zip_count: 0
+  ph2_t02_r6_data_rows_read: 0
+  ph2_t02_r6_cleanup: PASSED
+in_scope:
+  - every R6 form payload archive header and cleanup invariant unchanged
+  - POST Origin and Referer fixed to allowlisted TranStats origin/form URL
+  - same-origin navigation fetch metadata and browser-compatible Accept headers
+  - Connection close with fresh HTTPS connection per request
+  - message-free allowlisted transport exception classification
+  - exactly one new POST attempt with no retry
+  - temporary workflow cleanup report and Foundation evidence
+out_of_scope:
+  - payload field hidden value selector month or submit semantic changes
+  - data row read persistence redistribution or PH2-T03
+  - dependency curl browser automation checkout action secret artifact cache
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R7.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R7.md
+  - .github/workflows/ph2-t02-r7-extract.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r7-extract.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+hosted_execution_contract:
+  runner: ubuntu-24.04
+  workflow_path: .github/workflows/ph2-t02-r7-extract.yml
+  permissions: EMPTY_OBJECT
+  checkout: FORBIDDEN
+  actions_uses: FORBIDDEN
+  dependencies: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  runtime: SYSTEM_CPYTHON_STANDARD_LIBRARY_ONLY
+  timeout_minutes: 12
+  sanitized_log_prefix: PH2_T02_R7_RESULT_JSON=
+network_policy:
+  methods: [GET, POST]
+  schemes: [https]
+  hosts: [www.transtats.bts.gov, transtats.bts.gov]
+  max_requests: 5
+  max_redirects: 3
+  post_count_max: 1
+  retries: 0
+  automatic_reruns: 0
+transport_delta_from_r6:
+  payload_contract_change: false
+  post_headers:
+    Origin: https://www.transtats.bts.gov
+    Referer: EXACT_FRESH_FORM_URL
+    Sec-Fetch-Site: same-origin
+    Sec-Fetch-Mode: navigate
+    Sec-Fetch-Dest: document
+    Upgrade-Insecure-Requests: "1"
+  connection: close
+  exception_messages_logged: false
+closed_results:
+  SOURCE_COMPATIBLE:
+    next_gate: PH2_T02_R7_SOURCE_COMPATIBLE_READY_FOR_PH2_T03_PLANNING
+  CONTRACT_SOURCE_MISMATCH:
+    next_gate: PH2_T02_R7_CLOSED_CONTRACT_REQUIRES_HUMAN_DECISION
+  UPSTREAM_UNAVAILABLE:
+    next_gate: PH2_T02_R7_CLOSED_UPSTREAM_REQUIRES_HUMAN_DECISION
+  PROBE_SECURITY_ABORTED:
+    next_gate: PH2_T02_R7_CLOSED_SECURITY_REQUIRES_HUMAN_DECISION
+acceptance_criteria:
+  - R6 submission contract hash remains exact
+  - fresh fingerprint exact-four and exact-15 pass before POST
+  - exactly one POST and zero retry occur
+  - SOURCE_COMPATIBLE requires exact ordered header and cleanup true
+  - every result has data_rows_read zero and artifact count zero
+  - exception reason contains no raw exception message URL path cookie or body
+  - R6 and R7 workflows are absent at final main
+  - PH2-T03 remains absent until a compatible result exists
+  - hosted Extract and all Foundation runs pass with zero artifacts
+tests_required:
+  - all YAML parses
+  - workflow structure standard-library AST and unchanged payload hash logic pass
+  - browser-header allowlist and message-free exception map pass offline
+  - synthetic parser ZIP header cleanup self-tests pass
+  - result JSON schema and cleanup proof pass
+  - workflow removal remote 404 and final Foundation success
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: true
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - any form or payload semantic must change
+  - more than one POST or an automatic retry is required
+  - external dependency curl browser or non-approved host is required
+  - archive header row cleanup or sanitization gate fails
+validation_results:
+  bootstrap_commit: PENDING
+  extract_workflow_run: PENDING
+  extract_workflow_job: PENDING
+  extract_workflow_conclusion: PENDING
+  foundation_run: PENDING
+  foundation_job: PENDING
+  foundation_conclusion: PENDING
+  workflow_artifact_count: PENDING
+  foundation_artifact_count: PENDING
+  result: PENDING
+  reason_code: PENDING
+  request_count: PENDING
+  post_count: PENDING
+  temporary_zip_count: PENDING
+  header_records_read: PENDING
+  data_rows_read: PENDING
+  cleanup_path_absent: PENDING
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

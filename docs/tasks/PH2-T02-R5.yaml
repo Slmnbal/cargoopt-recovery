@@ -157,9 +157,9 @@ validation_results:
   temporary_zip_count: 0
   header_records_read: 0
   data_rows_read: 0
-  temporary_workflow_cleanup: PENDING
-  result_commit: PENDING
-  result_foundation_run: PENDING
+  temporary_workflow_cleanup: PASSED_REMOTE_404
+  result_commit: 21bf5d2a39251aa83410c405d8c1a76c8728a57a
+  result_foundation_run: 31894279015
   final_closeout_commit: PENDING
   final_closeout_foundation_run: PENDING
   downstream_evidence_use: APPROVED_FOR_EXACT_SET_BOUNDED_EXTRACT_CONTRACT

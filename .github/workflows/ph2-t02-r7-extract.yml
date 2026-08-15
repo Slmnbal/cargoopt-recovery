@@ -1,15 +1,15 @@
-name: PH2-T02-R6 Bounded Extract
+name: PH2-T02-R7 Bounded Extract
 
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/ph2-t02-r6-extract.yml
+      - .github/workflows/ph2-t02-r7-extract.yml
 
 permissions: {}
 
 concurrency:
-  group: ph2-t02-r6-bounded-extract
+  group: ph2-t02-r7-bounded-extract
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           from urllib.parse import urlencode, urljoin, urlsplit
 
 
-          PREFIX = "PH2_T02_R6_RESULT_JSON="
+          PREFIX = "PH2_T02_R7_RESULT_JSON="
           FORM_URL = (
               "https://www.transtats.bts.gov/"
               "DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ"
@@ -225,7 +225,13 @@ jobs:
                   headers = {
                       "Accept": accept,
                       "Accept-Encoding": "identity",
-                      "User-Agent": "CargoOptRecovery-PH2-T02-R6/1.0",
+                      "Accept-Language": "en-US,en;q=0.9",
+                      "Connection": "close",
+                      "User-Agent": (
+                          "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+                          "(KHTML, like Gecko) Chrome/140.0 Safari/537.36 "
+                          "CargoOptRecovery-PH2-T02-R7/1.0"
+                      ),
                   }
                   cookie_jar = self.cookies.get(host, {})
                   if cookie_jar:
@@ -233,6 +239,17 @@ jobs:
                           f"{name}={cookie_jar[name]}" for name in sorted(cookie_jar)
                       )
                   if method == "POST":
+                      headers.update(
+                          {
+                              "Origin": "https://www.transtats.bts.gov",
+                              "Referer": FORM_URL,
+                              "Sec-Fetch-Site": "same-origin",
+                              "Sec-Fetch-Mode": "navigate",
+                              "Sec-Fetch-User": "?1",
+                              "Sec-Fetch-Dest": "document",
+                              "Upgrade-Insecure-Requests": "1",
+                          }
+                      )
                       if body is None or len(body) > MAX_POST_BYTES:
                           security("POST_BODY_SIZE_POLICY_VIOLATION")
                       headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -313,8 +330,9 @@ jobs:
                           current,
                           body=current_body,
                           accept=(
+                              "text/html,application/xhtml+xml,application/xml;q=0.9,"
                               "application/zip,application/x-zip-compressed,"
-                              "application/octet-stream"
+                              "application/octet-stream;q=0.8,*/*;q=0.7"
                           ),
                       )
                       try:
@@ -352,7 +370,7 @@ jobs:
                               security("TEMPORARY_ZIP_COUNT_EXCEEDED")
                           temporary = tempfile.NamedTemporaryFile(
                               mode="wb",
-                              prefix="cargoopt-r6-",
+                              prefix="cargoopt-r7-",
                               suffix=".zip",
                               dir=tempfile.gettempdir(),
                               delete=False,
@@ -1007,6 +1025,22 @@ jobs:
           except ClosedError as error:
               closed_result = error.result
               reason_code = error.reason_code
+          except (TimeoutError, ssl.SSLError, http.client.HTTPException, OSError) as error:
+              closed_result = "UPSTREAM_UNAVAILABLE"
+              transport_reason_by_type = {
+                  "TimeoutError": "TRANSPORT_TIMEOUT",
+                  "SSLError": "TRANSPORT_TLS_ERROR",
+                  "RemoteDisconnected": "TRANSPORT_REMOTE_DISCONNECTED",
+                  "IncompleteRead": "TRANSPORT_INCOMPLETE_READ",
+                  "BadStatusLine": "TRANSPORT_BAD_STATUS_LINE",
+                  "CannotSendRequest": "TRANSPORT_CANNOT_SEND_REQUEST",
+                  "ResponseNotReady": "TRANSPORT_RESPONSE_NOT_READY",
+                  "ConnectionResetError": "TRANSPORT_CONNECTION_RESET",
+                  "BrokenPipeError": "TRANSPORT_BROKEN_PIPE",
+              }
+              reason_code = transport_reason_by_type.get(
+                  type(error).__name__, "TRANSPORT_ALLOWLISTED_EXCEPTION"
+              )
           except Exception:
               closed_result = "PROBE_SECURITY_ABORTED"
               reason_code = "UNEXPECTED_INTERNAL_EXCEPTION"
@@ -1049,6 +1083,8 @@ jobs:
                   "connect_timeout_seconds": CONNECT_TIMEOUT,
                   "read_timeout_seconds": READ_TIMEOUT,
                   "automatic_retry_count": 0,
+                  "transport_profile": "BROWSER_EQUIVALENT_SAME_ORIGIN_NAVIGATION",
+                  "exception_messages_logged": False,
                   "elapsed_ms": round((time.monotonic() - started) * 1000),
               },
               "form": {
@@ -1085,4 +1121,5 @@ jobs:
           }
           print(PREFIX + canonical(result).decode("utf-8"))
           PY
+
 

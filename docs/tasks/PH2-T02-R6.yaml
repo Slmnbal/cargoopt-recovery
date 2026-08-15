@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R6
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T16:00:16Z"
+closed_result: PROBE_SECURITY_ABORTED
+closed_reason_code: UNEXPECTED_INTERNAL_EXCEPTION
+extract_status: POST_ATTEMPTED_RESPONSE_HEADER_NOT_OBTAINED
 planned_at: "2026-08-15T15:56:40Z"
 approved_at: "2026-08-15T15:56:40Z"
 approval_source: explicit_user_command
@@ -164,25 +168,31 @@ stop_conditions:
   - non-approved host POST replay redirect byte archive member header or cleanup cap fails
   - data row dependency source test config migration or PH2-T03 work is required
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  extract_workflow_conclusion: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  foundation_conclusion: PENDING
-  workflow_artifact_count: PENDING
-  foundation_artifact_count: PENDING
-  result: PENDING
-  request_count: PENDING
-  post_count: PENDING
-  fresh_form_contract_sha256: PENDING
-  exact_default_excluded_control_count: PENDING
-  exact_field_count: PENDING
-  temporary_zip_count: PENDING
-  header_records_read: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
+  bootstrap_commit: 21bf5d2a39251aa83410c405d8c1a76c8728a57a
+  extract_workflow_run: 31894279022
+  extract_workflow_job: 95035039898
+  extract_workflow_conclusion: success
+  foundation_run: 31894279015
+  foundation_job: 95035040020
+  foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: PROBE_SECURITY_ABORTED
+  reason_code: UNEXPECTED_INTERNAL_EXCEPTION
+  request_count: 2
+  post_count: 1
+  redirect_count: 0
+  automatic_retry_count: 0
+  fresh_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  fresh_form_contract_exact: true
+  exact_default_excluded_control_count: 4
+  exact_field_count: 15
+  submission_contract_sha256: 2a0b2c2b5e4b1e538faa1bdd3a7629ed5147c158216ff3aa57f17f81ead42f2a
+  temporary_zip_count: 0
+  header_records_read: 0
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
   temporary_workflow_cleanup: PENDING
   result_commit: PENDING
   result_foundation_run: PENDING

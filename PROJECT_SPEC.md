@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.10.2` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_AWAITING_APPROVAL` |
+| Belge sürümü | `0.10.4` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_PROBE_SECURITY_ABORTED` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02` — source compatibility probe; ayrı yürütme onayı bekleniyor |
+| Aktif görev | Yok — `PH2-T02` fail-closed insan kararı bekliyor |
 
 ## 1. Tek cümlelik tanım
 
@@ -309,7 +309,8 @@ gerektirir.
 - Tamamlanan fazlar: `PHASE_0 — COMPLETED/PASSED`, `PHASE_1 — COMPLETED/PASSED`
 - Aktif faz: `PHASE_2 — data_and_domain`
 - Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`, `PH2-T01`
-- Aktif görev: `PH2-T02`; resmî source/right/exact-15 probe planı hazır, ayrı yürütme onayı bekliyor
+- Sonuçlanan görev: `PH2-T02 — BLOCKED/PROBE_SECURITY_ABORTED`; doğrudan probe ortamı transport sözleşmesini ispatlayamadı
+- Aktif görev: Yok; PH2-T02 sonucu için ayrı insan kararı bekleniyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -317,8 +318,8 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: PH2-T02 bounded source compatibility probe'u için ayrı exact yürütme onayı
+- Sıradaki kapı: PH2-T02 `PROBE_SECURITY_ABORTED` sonucu için ayrı insan kararı; retry veya governance işi kendiliğinden başlamaz
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`
-- Faz disiplini: PH2-T02 ayrıca onaylanmadan network isteği veya geçici data download yapılmaz; sonuç kabul edilmeden PH2-T03 planlanmaz
+- Faz disiplini: PH2-T02 fail-closed kapandı; ayrı karar verilmeden retry yapılmaz ve PH2-T03 planlanmaz

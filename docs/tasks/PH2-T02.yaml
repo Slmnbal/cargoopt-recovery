@@ -1,17 +1,26 @@
 schema_version: 1
 task_id: PH2-T02
 phase: PHASE_2
-status: PLANNED
+status: BLOCKED
 planned_at: "2026-08-15"
 planning_approval_source: explicit_user_command
 planning_approval_text: >-
   PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini planla.
 execution_requires_separate_human_approval: true
-execution_approval_status: AWAITING_EXPLICIT_APPROVAL
-execution_approval_source: null
-execution_approved_at: null
-exact_next_approval_text: >-
+execution_approval_status: APPROVED
+execution_approval_source: explicit_user_command
+execution_approved_at: "2026-08-15T13:44:10Z"
+execution_approval_text: >-
   PH2-T02 source compatibility probe planını onaylıyorum; başlat.
+started_at: "2026-08-15T13:44:10Z"
+completed_at: "2026-08-15T13:48:02Z"
+result_status: PROBE_SECURITY_ABORTED
+result_reason_code: EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT
+result_report: docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+result_approval_required: true
+result_approval_status: AWAITING_HUMAN_DECISION
+next_task_planning_status: FORBIDDEN_PENDING_HUMAN_DECISION
+exact_next_approval_text: null
 task_type: OFFICIAL_SOURCE_COMPATIBILITY_PROBE_ONLY
 goal: >-
   Resmî BTS Reporting Carrier On-Time Performance kaynağında Ocak 2024 için
@@ -29,7 +38,7 @@ preconditions:
   ph2_t01_result_approval: SATISFIED
   ph2_t01_source_status: CONDITIONAL_GO_SOURCE_COMPATIBILITY_PROBE_REQUIRED
   phase_3_to_phase_8_status: LOCKED
-  execution_approval: REQUIRED_NOT_YET_GRANTED
+  execution_approval: SATISFIED
 normative_inputs:
   - docs/governance/PHASE_2_ENTRY_CONTRACT.md
   - docs/data/BTS_DATA_CONTRACT.md
@@ -298,4 +307,24 @@ stop_conditions:
   - onaylı exact files_allowed dışında repository mutation gerekirse
   - dependency install lock source test config workflow migration data directory artifact veya implementation gerekirse
   - PH2-T03 veya Phase 3+ hazırlığı gerekirse
-validation_results: null
+validation_results:
+  execution_approval_recorded_before_network: PASSED
+  plan_commit_hosted_foundation_ci: PASSED
+  official_source_identity: PASSED
+  expected_15_fields_present_in_official_dictionary: PASSED
+  selected_field_form_contract: NOT_OBTAINED
+  exact_15_header_equality: NOT_RUN_NO_ARTIFACT
+  archive_member_validation: NOT_RUN_NO_ARTIFACT
+  rights_status: DATASET_SPECIFIC_TERMS_NOT_ESTABLISHED
+  strict_direct_client_requests: 1
+  diagnostic_official_retrieval_operations: 9
+  total_logical_operations: 10
+  max_total_requests: 12
+  diagnostic_transport_concurrency_and_redirect_evidence: NOT_EXPOSED
+  artifact_count: 0
+  persistent_source_bytes: 0
+  data_rows_read: 0
+  temporary_cleanup_guard: PASSED
+  authorized_file_set: PASSED
+  yaml_and_markdown_structure: PASSED
+  hosted_foundation_ci: PENDING_RESULT_COMMIT

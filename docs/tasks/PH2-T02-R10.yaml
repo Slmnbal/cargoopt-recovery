@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R10
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T16:21:39Z"
+closed_result: CONTRACT_SOURCE_MISMATCH
+closed_reason_code: CSV_HEADER_CANONICAL_OR_TERMINAL_SENTINEL_MISMATCH
+discovery_result: EXACT_15_BTS_PHYSICAL_CODES_OBSERVED
 planned_at: "2026-08-15T16:17:27Z"
 approved_at: "2026-08-15T16:17:27Z"
 approval_source: explicit_user_command
@@ -72,21 +76,40 @@ stop_conditions:
   - canonical DOM order is not an exact unique 15-field permutation
   - any data row fallback retry or scope expansion is required
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  result: PENDING
-  reason_code: PENDING
-  observed_header_order: PENDING
-  terminal_empty_sentinel: PENDING
-  logical_header_count: PENDING
-  physical_header_count: PENDING
-  post_count: PENDING
-  temporary_zip_count: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
+  bootstrap_commit: 3156cca0968a655633efd5ff3f1219f8ad2355c2
+  extract_workflow_run: 31895258635
+  extract_workflow_job: 95037495467
+  foundation_run: 31895258632
+  foundation_job: 95037495292
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: CONTRACT_SOURCE_MISMATCH
+  reason_code: CSV_HEADER_CANONICAL_OR_TERMINAL_SENTINEL_MISMATCH
+  observed_header_order:
+    - FL_DATE
+    - OP_UNIQUE_CARRIER
+    - OP_CARRIER_AIRLINE_ID
+    - OP_CARRIER_FL_NUM
+    - ORIGIN_AIRPORT_ID
+    - ORIGIN
+    - DEST_AIRPORT_ID
+    - DEST
+    - CRS_DEP_TIME
+    - CRS_ARR_TIME
+    - ARR_DELAY_NEW
+    - CANCELLED
+    - DIVERTED
+    - CRS_ELAPSED_TIME
+    - DISTANCE
+  terminal_empty_sentinel: false
+  logical_header_count: 15
+  physical_header_count: 15
+  post_count: 1
+  temporary_zip_count: 1
+  header_records_read: 1
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
   temporary_workflow_cleanup: PENDING
   result_commit: PENDING
   result_foundation_run: PENDING

@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.11.12` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R10_HEADER_SERIALIZATION_RUNNING` |
+| Belge sürümü | `0.11.13` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R11_PHYSICAL_HEADER_RECONCILIATION` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02-R10` — canonical DOM order ve terminal-empty sentinel header doğrulaması |
+| Aktif görev | `PH2-T02-R11` — BTS fiziksel header kodlarını canonical alanlara offline bağlama |
 
 ## 1. Tek cümlelik tanım
 
@@ -319,7 +319,8 @@ gerektirir.
 - Sonuçlanan görev: `PH2-T02-R7 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; browser profili GET'e taşınca UA-dependent form varyantı oluştu, POST `0`, row `0`, cleanup `PASSED`
 - Sonuçlanan görev: `PH2-T02-R8 — BLOCKED/UPSTREAM_UNAVAILABLE`; exact form/payload geçti, ikinci HTTPS bağlantısı POST connect aşamasında timeout, ZIP `0`, row `0`, cleanup `PASSED`
 - Sonuçlanan görev: `PH2-T02-R9 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; POST `200`, ZIP `1`, header exact literal order mismatch, row `0`, cleanup `PASSED`
-- Aktif görev: `PH2-T02-R10 — IN_PROGRESS`; form DOM target sırası ve yalnız terminal boş CSV sentinel varyantı doğrulanıyor
+- Sonuçlanan görev: `PH2-T02-R10 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; exact 15 fiziksel BTS kodu gözlendi, business-label header varsayımı reddedildi
+- Aktif görev: `PH2-T02-R11 — IN_PROGRESS`; R2 field mapping ile R10 physical header exact offline uzlaştırılıyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -327,7 +328,7 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: R10 logical exact-15 source-compatible sonucu veya definitive schema mismatch
+- Sıradaki kapı: exact physical-to-canonical mapping sözleşmesi ve PH2-T02 source-compatible kapanışı
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`

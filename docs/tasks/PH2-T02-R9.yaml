@@ -96,8 +96,8 @@ validation_results:
   data_rows_read: 0
   cleanup_path_absent: true
   artifact_count: 0
-  temporary_workflow_cleanup: PENDING
-  result_commit: PENDING
-  result_foundation_run: PENDING
+  temporary_workflow_cleanup: PASSED_REMOTE_404
+  result_commit: 3156cca0968a655633efd5ff3f1219f8ad2355c2
+  result_foundation_run: 31895258632
   final_closeout_commit: PENDING
   final_closeout_foundation_run: PENDING

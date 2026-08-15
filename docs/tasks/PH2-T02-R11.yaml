@@ -1,0 +1,86 @@
+schema_version: 1
+task_id: PH2-T02-R11
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T16:22:45Z"
+approved_at: "2026-08-15T16:22:45Z"
+approval_source: explicit_user_command
+approval_text: "artık bunu bitirelim"
+task_type: OFFLINE_PHYSICAL_TO_CANONICAL_HEADER_RECONCILIATION
+goal: >-
+  R2'de kanıtlanan field-control mapping ile R10'da gözlenen exact 15 fiziksel
+  BTS header kodunu one-to-one ve ordered biçimde uzlaştırmak; kaynak ve kalite
+  sözleşmelerine exact non-fuzzy mapping'i eklemek; hiçbir yeni network veya data
+  access olmadan PH2-T02'yi SOURCE_COMPATIBLE olarak kapatmak.
+preconditions:
+  ph2_t02_r2_mapping_count: 15
+  ph2_t02_r10_observed_physical_header_count: 15
+  ph2_t02_r10_extra_missing_duplicate_columns: ZERO
+  ph2_t02_r10_data_rows_read: 0
+  ph2_t02_r10_cleanup: PASSED
+in_scope:
+  - exact ordered physical-to-canonical 15-field mapping
+  - BTS source contract physical schema clarification
+  - data-quality raw physical header and canonical post-map equality gates
+  - ADR for evidence decision alternatives and downstream consequences
+  - original PH2-T02 aggregate result and Phase 2 gate reconciliation
+out_of_scope:
+  - network POST ZIP CSV or data row access
+  - fuzzy rename inference or automatic schema drift acceptance
+  - ingestion implementation dependency source test data or PH2-T03 creation
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02.yaml
+  - docs/tasks/PH2-T02-R11.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R11.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/adr/ADR-010-bts-physical-header-mapping.md
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .github/**
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+acceptance_criteria:
+  - mapping is exactly 15 one-to-one ordered and contains no fuzzy rule
+  - canonical field set remains the accepted BTS contract list
+  - raw physical schema mismatch remains snapshot fatal
+  - R2 mapping and R10 observed header mechanically reproduce the same mapping
+  - no new network data dependency implementation or PH2-T03 work occurs
+  - Phase 2 stays active with gate ready only for PH2-T03 planning
+tests_required:
+  - YAML and Markdown structure
+  - exact mapping cardinality uniqueness order and round-trip checks
+  - immutable dependency lock source tests and Foundation workflow hashes
+  - all temporary workflow paths remote 404
+  - result and final Foundation runs success with zero artifacts
+dependencies_allowed: false
+migrations_allowed: false
+implementation_allowed: false
+network_allowed: false
+persistent_data_allowed: false
+stop_conditions:
+  - mapping requires inference beyond exact R2 and R10 evidence
+  - canonical business field meaning or label formula would change
+  - source code dependency data or PH2-T03 scope is required
+validation_results:
+  mapping_check: PENDING
+  contract_update: PENDING
+  data_rows_read: 0
+  network_requests: 0
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

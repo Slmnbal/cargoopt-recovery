@@ -1,0 +1,223 @@
+schema_version: 1
+task_id: PH2-T04
+phase: PHASE_2
+status: PLANNED
+planned_at: "2026-08-15"
+planning_approval_source: explicit_user_command
+planning_approval_text: "bu iki aşamayı tekte yap"
+execution_requires_separate_human_approval: false
+execution_approval_status: CONDITIONALLY_APPROVED
+execution_approval_source: explicit_user_command
+execution_approval_text: "bu iki aşamayı tekte yap"
+execution_condition: PH2_T03_MUST_CLOSE_PASSED_FIRST
+execution_condition_result: SATISFIED
+task_type: FIXTURE_BACKED_ACQUISITION_AND_IMMUTABLE_PROVENANCE_BOUNDARY
+goal: >-
+  Resmî BTS acquisition için standard-library tabanlı, host/scheme/port ve
+  redirect allowlist'li, timeout/retry/byte-limit kontrollü, stream SHA-256 ve
+  atomic no-overwrite publish kullanan source boundary ile güvenli ZIP
+  doğrulamasını ve canonical immutable provenance manifestini yalnız sentetik
+  fixture'larla uygulamak; gerçek BTS verisine istek göndermemek.
+
+preconditions:
+  phase_1_status: COMPLETED
+  phase_1_gate: PASSED
+  phase_2_status: ACTIVE
+  ph2_t02_status: COMPLETED
+  ph2_t02_result_status: SOURCE_COMPATIBLE
+  ph2_t03_status: COMPLETED
+  ph2_t03_result_status: DEPENDENCY_LOCK_VERIFIED
+  ph2_t03_closeout_commit: c63bae1942a2169e880eed446dd787e48fa33c8e
+  ph2_t03_closeout_foundation_run: 31897753560
+  ph2_t03_closeout_foundation_job: 95043600622
+  ph2_t03_closeout_foundation_conclusion: success
+  ph2_t03_closeout_foundation_artifacts: 0
+  phase_3_to_phase_8_status: LOCKED
+  combined_execution_authorization: SATISFIED
+
+normative_inputs:
+  - docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R11.md
+  - docs/data/PHASE_2_DEPENDENCY_VERIFICATION.md
+  - docs/tasks/PH2-T03.yaml
+
+files_allowed_is_exact_allowlist: true
+files_allowed_during_execution:
+  - .gitignore
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T04.yaml
+  - docs/data/ACQUISITION_RUNBOOK.md
+  - configs/data/bts_reporting_otp_2024.json
+  - src/cargoopt_recovery/data/__init__.py
+  - src/cargoopt_recovery/data/acquisition.py
+  - src/cargoopt_recovery/data/manifests.py
+  - tests/fixtures/bts/exact_15_header.csv
+  - tests/fixtures/bts/wrong_header.csv
+  - tests/test_data_acquisition.py
+
+files_forbidden_during_execution:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .github/**
+  - src/cargoopt_recovery/__init__.py
+  - src/cargoopt_recovery/data/schema.py
+  - src/cargoopt_recovery/data/quality.py
+  - src/cargoopt_recovery/data/processing.py
+  - src/cargoopt_recovery/data/timezones.py
+  - src/cargoopt_recovery/data/features.py
+  - src/cargoopt_recovery/domain/**
+  - tests/test_data_quality.py
+  - tests/test_flight_processing.py
+  - tests/test_feature_availability.py
+  - tests/property/**
+  - data/**
+  - artifacts/**
+  - migrations/**
+  - frontend/**
+  - knowledge/**
+  - docs/tasks/PH2-T05.yaml
+  - docs/tasks/PH2-T06.yaml
+  - docs/tasks/PH2-T07.yaml
+  - docs/tasks/PH2-T08.yaml
+  - docs/tasks/PH2-T09.yaml
+  - docs/tasks/PH2-T10.yaml
+  - docs/tasks/PH2-T11.yaml
+
+in_scope:
+  - immutable request specification with secret-header rejection and body fingerprint
+  - exact scheme host port URL and final-URL validation
+  - same-policy redirect validation and bounded redirect count
+  - automatic retry for idempotent GET or HEAD only
+  - zero automatic retry for POST
+  - retryable HTTP status and transport error classification
+  - bounded request body response body chunk and total attempts
+  - content type encoding content-length and final byte-count validation
+  - streaming SHA-256 into a same-directory temporary file
+  - atomic hard-link no-overwrite publish and unconditional temporary cleanup
+  - ZIP member count name traversal symlink encryption size ratio and CRC gates
+  - exact physical header validation without fuzzy rename projection or coercion
+  - canonical manifest bytes hash and immutable same-ID conflict detection
+  - production acquisition config for exact 2024 dataset and 15 physical fields
+  - fixture-only local HTTP integration and synthetic ZIP tests
+  - data root Git ignore policy without creating the data directory
+
+out_of_scope:
+  - any request to BTS or another external network host
+  - January or full-year ZIP CSV row download or persistence
+  - dynamic BTS HTML form parsing or actual POST payload construction
+  - staging type parsing row validation quarantine duplicate or quality engine
+  - timezone processing schedule outcome split universe feature or domain code
+  - CLI API UI database migration container deployment or scheduler
+  - dependency version lock workflow or accepted contract mutation
+  - secret cookie token anti-CSRF or raw response byte logging
+  - PH2-T05 or later file placeholder adapter interface or TODO
+
+security_contract:
+  default_scheme: https
+  production_allowed_hosts:
+    - transtats.bts.gov
+    - www.transtats.bts.gov
+  production_allowed_ports: [443]
+  credentials_allowed: false
+  sensitive_request_headers_allowed: false
+  automatic_post_retry_allowed: false
+  redirect_to_unallowlisted_origin_allowed: false
+  overwrite_allowed: false
+  archive_extraction_allowed: false
+  source_distribution_allowed: false
+  test_network_scope: LOOPBACK_TEMPORARY_HTTP_SERVER_ONLY
+
+execution_sequence:
+  - record satisfied PH2-T03 and combined authorization preconditions
+  - add data root ignore rule without creating persistent data bytes
+  - write exact production acquisition config and operator runbook
+  - implement manifest value objects canonical JSON hash and immutable writer
+  - implement guarded request redirect retry bounded stream and atomic publish
+  - implement safe streaming ZIP inspection CRC and exact physical header gate
+  - add two header-only synthetic fixtures
+  - add positive negative and cleanup-focused unit and integration tests
+  - run local parser format lint type test and package build gates where available
+  - publish result candidate and verify exact hosted Foundation
+  - close task only after hosted success and artifact zero
+
+acceptance_criteria:
+  - no dependency or workflow change
+  - production policy defaults to HTTPS and exact BTS host/port allowlist
+  - initial and every redirect/final URL are validated
+  - POST is never automatically retried or redirected
+  - response cannot exceed configured header or streamed byte limit
+  - declared and observed content length mismatch fails closed
+  - incomplete oversize or rejected download leaves no destination or part file
+  - destination cannot be overwritten even by an otherwise valid response
+  - unsafe duplicate encrypted symlink oversized high-ratio or CRC-bad ZIP fails
+  - raw header must exactly equal the accepted ordered 15 physical fields
+  - manifest serialization is canonical and content hash reproducible
+  - same artifact ID with different raw hash fails closed
+  - tests make zero external network request and use only temporary paths
+  - no real source data row or archive enters repository or workflow artifact
+  - hosted Foundation passes all gates with zero artifacts
+
+tests_required:
+  - valid bounded loopback download and stream SHA-256
+  - same-origin redirect pass and cross-origin redirect rejection
+  - truncated Content-Length response rejection and cleanup
+  - declared oversize and streamed oversize rejection and cleanup
+  - retryable GET bounded retry and POST zero-retry
+  - existing destination no-overwrite
+  - valid one-member ZIP and exact 15 physical header
+  - wrong header path traversal duplicate member symlink encrypted flag size ratio and CRC failure
+  - canonical manifest bytes and fixed SHA-256
+  - immutable manifest idempotency and same-ID different-hash conflict
+  - config exact 12 periods exact 15 ordered fields and HTTPS production policy
+  - YAML JSON TOML parse conflict-marker format lint mypy strict pytest build and audit
+
+result_contracts:
+  PASSED:
+    task_status: COMPLETED
+    result_status: ACQUISITION_PROVENANCE_BOUNDARY_VERIFIED
+    phase_2_status: ACTIVE
+    phase_2_gate: PH2_T04_BOUNDARY_VERIFIED_READY_FOR_PH2_T05_PLANNING
+    active_task: null
+    next_task_rule: PH2_T05_MAY_ONLY_BE_PLANNED
+  BLOCKED:
+    task_status: BLOCKED
+    phase_2_status: ACTIVE
+    phase_2_gate: PH2_T04_BLOCKED_REQUIRES_HUMAN_DECISION
+    active_task: null
+    next_task_rule: PH2_T05_FORBIDDEN
+
+stop_conditions:
+  - exact allowlist outside mutation is required
+  - external network or real data is required for a test
+  - urllib zipfile hashlib tempfile pathlib os and existing test stack are insufficient
+  - redirect or atomic no-overwrite cannot be enforced fail-closed
+  - accepted physical header or source contract must change
+  - a failing gate requires weakening a byte archive header manifest or cleanup rule
+  - dependency workflow data quality Phase 3 or later work becomes necessary
+
+dependencies_allowed: false
+dependency_lock_mutation_allowed: false
+workflow_mutation_allowed: false
+external_network_allowed: false
+loopback_test_server_allowed: true
+persistent_data_allowed: false
+implementation_allowed: true
+migrations_allowed: false
+phase_3_plus_allowed: false
+
+validation_results:
+  planning_scope: PASSED
+  ph2_t03_precondition: PASSED
+  combined_execution_authorization: PASSED
+  implementation: NOT_STARTED
+  external_network_requests: 0
+  data_downloads: 0
+  data_rows_read: 0

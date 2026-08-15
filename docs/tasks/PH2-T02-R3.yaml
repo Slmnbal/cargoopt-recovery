@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R3
 phase: PHASE_2
-status: IN_PROGRESS
+status: CLOSING
+closed_at: "2026-08-15T14:55:23Z"
+closed_result: RIGHTS_READY_FOR_EXTRACT_PLANNING
+closed_reason_code: OFFICIAL_PUBLIC_GOVERNMENT_WORKS_CHAIN_PASSED
+extract_status: NOT_RUN
 planned_at: "2026-08-15T14:51:23Z"
 approved_at: "2026-08-15T14:51:23Z"
 approval_source: standing_user_authorization_for_routine_technical_approvals
@@ -156,4 +160,31 @@ stop_conditions:
   - non-approved host scheme method or redirect is required
   - Extract POST ZIP CSV or data row becomes necessary
   - task allowlist dependency or PH2-T03 work is required
-validation_results: null
+validation_results:
+  discovery_commit: 524550ee70f48b1492c89d073dcb0376077a90a9
+  discovery_workflow_run: 31891212312
+  discovery_workflow_job: 95027646385
+  discovery_workflow_conclusion: success
+  discovery_foundation_run: 31891212307
+  discovery_foundation_job: 95027646222
+  discovery_foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  offline_result_schema: PASSED
+  result: RIGHTS_READY_FOR_EXTRACT_PLANNING
+  request_count: 3
+  redirect_count: 0
+  primary_metadata_checks: PASSED
+  corroboration_metadata_checks: PASSED
+  government_works_page: PASSED
+  local_analysis_with_attribution: true
+  raw_redistribution_enabled: false
+  form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  extract: NOT_RUN
+  artifact_count: 0
+  data_rows_read: 0
+  temporary_workflow_cleanup: IN_PROGRESS
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

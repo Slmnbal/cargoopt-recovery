@@ -253,11 +253,11 @@ validation_results:
   data_rows_read: 0
   cleanup_path_absent: true
   artifact_count: 0
-  temporary_workflow_cleanup: PENDING_REMOTE_VERIFICATION
-  result_commit: PENDING
-  result_foundation_run: PENDING
-  result_foundation_job: PENDING
-  result_foundation_conclusion: PENDING
-  result_foundation_artifact_count: PENDING
-  final_closeout_commit: PENDING
-  final_closeout_foundation_run: PENDING
+  temporary_workflow_cleanup: PASSED_REMOTE_404
+  result_commit: 4e601556000e7372570f071f3c2d9542df086c9c
+  result_foundation_run: 31893270117
+  result_foundation_job: 95032611933
+  result_foundation_conclusion: success
+  result_foundation_artifact_count: 0
+  final_closeout_commit: EXTERNAL_EVIDENCE_AFTER_COMMIT
+  final_closeout_foundation_run: EXTERNAL_EVIDENCE_AFTER_COMMIT

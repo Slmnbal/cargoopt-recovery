@@ -76,9 +76,10 @@ POST yapılmadığı için temporary path hiç oluşturulmamıştır. Buna rağm
 Absolute temporary path loglanmamış; temp path olmadığı için path hash'i de
 `null` kalmıştır.
 
-Geçici R4 workflow'u bu result commit'inde silinir. Remote workflow path
-yokluğu, result commit'i yayımlandıktan sonra GitHub Contents API ile ayrıca
-doğrulanır.
+Geçici R4 workflow'u result commit'i
+`4e601556000e7372570f071f3c2d9542df086c9c` içinde silinmiştir. Aynı commit
+üzerindeki remote workflow path yokluğu GitHub Contents API üzerinden
+`404 Not Found` ile doğrulanmıştır.
 
 ## 5. Hosted doğrulama
 
@@ -89,8 +90,13 @@ uyumluluğu anlamına gelmez. Asıl domain sonucu sanitize edilmiş JSON içinde
 
 Aynı bootstrap commit'indeki Foundation run da `success` olmuş; Extract ve
 Foundation run'larının ikisi de sıfır artifact üretmiştir. Result/cleanup
-commit'inin Foundation kanıtı ve remote workflow yokluk kanıtı kapanış
-commit'inden önce kaydedilir.
+commit'indeki Foundation run `31893270117`, job `95032611933` ile `success`
+olmuş ve sıfır artifact üretmiştir. Remote workflow yokluğu aynı commit için
+`404 Not Found` ile kanıtlanmıştır.
+
+Final closeout commit ve onun Foundation sonucu repository dışı hosted kanıt
+olarak görev kapanışında doğrulanır; commit kendi SHA'sını öz-referanslı olarak
+içeriğine yazmaz.
 
 ## 6. Downstream kapısı
 

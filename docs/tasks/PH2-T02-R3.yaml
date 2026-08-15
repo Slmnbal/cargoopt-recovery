@@ -1,0 +1,159 @@
+schema_version: 1
+task_id: PH2-T02-R3
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T14:51:23Z"
+approved_at: "2026-08-15T14:51:23Z"
+approval_source: standing_user_authorization_for_routine_technical_approvals
+approval_basis_text: >-
+  projeye tam anlamyla başlayana kadar devam et onaylama süreçlerini otomatik yap
+approval_scope_note: >-
+  R3 yeni host, method, veri indirme veya Extract yetkisi eklemez; R2'de 404
+  veren eski API slug'ını aynı resmî catalog.data.gov hostundaki sayfa tarafından
+  yayımlanan immutable raw harvest record URL'leriyle değiştirir.
+task_type: HOSTED_READ_ONLY_OFFICIAL_RAW_METADATA_RIGHTS_DISCOVERY
+goal: >-
+  Data.gov'un BTS Flight Data ve Marketing On-Time kayıtlarına ait resmî raw
+  DCAT JSON metadata'sını üç bounded GET içinde doğrulamak; BTS publisher,
+  public access, TranStats distribution ve USA.gov government-works license
+  zincirini mekanik olarak kanıtlamak; raw redistribution kapalıyken local
+  analysis with attribution kararını üretmek.
+preconditions:
+  ph2_t02_r2_status: BLOCKED
+  ph2_t02_r2_result: UPSTREAM_UNAVAILABLE
+  ph2_t02_r2_form_contract: PASSED
+  ph2_t02_r2_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  ph2_t02_r2_extract: NOT_RUN
+  ph2_t02_r2_final_commit: 39af735428a53a0dfde55c7b1e41ce613faf0b2a
+  ph2_t02_r2_final_foundation_run: 31891002012
+  temporary_workflow_absent: true
+  phase_3_to_phase_8_status: LOCKED
+official_source_discovery:
+  bts_flight_catalog_page: https://catalog.data.gov/dataset/bts-flight-data
+  bts_flight_raw_record: https://catalog.data.gov/harvest_record/7f916ec4-5f37-48f0-b59f-2ac5c8571ba9/raw
+  marketing_catalog_page: https://catalog.data.gov/dataset/u-s-marketing-air-carriers-on-time-performance
+  marketing_raw_record: https://catalog.data.gov/harvest_record/917a88c3-4f1e-4866-bf45-31da73067372/raw
+  government_works: https://www.usa.gov/government-works
+  discovery_method: DATA_GOV_PAGE_PUBLISHED_VIEW_RAW_DATA_LINK
+in_scope:
+  - iki exact Data.gov raw harvest JSON GET'i
+  - bir exact USA.gov government-works GET'i
+  - JSON content type byte count SHA-256 ve safe metadata field parse
+  - primary BTS Flight Data kaydında public access BTS publisher on-time description TranStats distribution ve license URL kontrolü
+  - Marketing On-Time kaydında public access BTS publisher ve public-domain license corroboration
+  - USA.gov license target status host scheme ve exact path kontrolü
+  - raw redistribution kapalı attribution zorunlu local analysis kararı
+  - sanitize edilmiş tek canonical result JSON
+  - workflow cleanup result report ve Foundation evidence
+out_of_scope:
+  - formu tekrar fetch etmek veya form contract'ını değiştirmek
+  - POST Extract ZIP CSV header veya row access
+  - Data.gov dışındaki catalog mirror'u
+  - dependency checkout action cache artifact secret OIDC environment
+  - source test config data lock migration PH2-T03 veya product implementation
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R3.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R3.md
+  - .github/workflows/ph2-t02-r3-rights.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r3-rights.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R2.md
+hosted_execution_contract:
+  runner: ubuntu-24.04
+  workflow_path: .github/workflows/ph2-t02-r3-rights.yml
+  permissions: EMPTY_OBJECT
+  checkout: FORBIDDEN
+  actions_uses: FORBIDDEN
+  dependencies: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  runtime: SYSTEM_CPYTHON_STANDARD_LIBRARY_ONLY
+  timeout_minutes: 8
+  sanitized_log_prefix: PH2_T02_R3_RESULT_JSON=
+network_policy:
+  methods: [GET]
+  schemes: [https]
+  hosts:
+    - catalog.data.gov
+    - usa.gov
+    - www.usa.gov
+  max_requests: 4
+  max_redirects: 1
+  fixed_urls:
+    - https://catalog.data.gov/harvest_record/7f916ec4-5f37-48f0-b59f-2ac5c8571ba9/raw
+    - https://catalog.data.gov/harvest_record/917a88c3-4f1e-4866-bf45-31da73067372/raw
+    - https://www.usa.gov/government-works
+  retries: 0
+  minimum_interval_seconds: 1
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  max_bytes_each: 1048576
+rights_ready_requires_all:
+  - primary JSON accessLevel is public
+  - primary publisher name is Bureau of Transportation Statistics
+  - primary description is carrier monthly on time performance
+  - primary distribution contains exact HTTPS TranStats accessURL
+  - primary license is exact HTTPS USA.gov government-works URL
+  - corroboration JSON accessLevel is public
+  - corroboration publisher name is Bureau of Transportation Statistics
+  - corroboration license is USA.gov public-domain label
+  - government-works URL returns 200 on exact HTTPS USA.gov path
+  - raw redistribution stays disabled and attribution mandatory
+closed_results:
+  RIGHTS_READY_FOR_EXTRACT_PLANNING:
+    next_gate: PH2_T02_R3_RESULT_READY_FOR_EXTRACT_PLANNING_DECISION
+  RIGHTS_UNRESOLVED:
+    next_gate: PH2_T02_R3_CLOSED_RIGHTS_REQUIRES_HUMAN_DECISION
+  UPSTREAM_UNAVAILABLE:
+    next_gate: PH2_T02_R3_CLOSED_UPSTREAM_REQUIRES_HUMAN_DECISION
+  PROBE_SECURITY_ABORTED:
+    next_gate: PH2_T02_R3_CLOSED_SECURITY_REQUIRES_HUMAN_DECISION
+acceptance_criteria:
+  - exactly three fixed official GET targets are attempted within request budget
+  - raw JSON bodies are parsed in memory and never logged
+  - only allowlisted metadata fields booleans hashes sizes and URLs enter result
+  - rights ready is never inferred from USA.gov page alone
+  - R2 form contract hash is immutable and not recomputed
+  - Extract remains NOT_RUN and data_rows_read is 0
+  - workflow is absent at final main
+  - PH2-T03 remains absent
+  - result and closeout Foundation runs pass with zero artifacts
+tests_required:
+  - all YAML parses
+  - workflow structure and standard-library AST scan passes
+  - exact URL host method redirect byte timeout count invariants pass
+  - result JSON schema and rights boolean logic pass offline
+  - foundation lock source tests and prior reports remain byte-identical
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: false
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - any raw record is non-JSON non-200 or exceeds byte cap
+  - metadata field chain is missing or ambiguous
+  - non-approved host scheme method or redirect is required
+  - Extract POST ZIP CSV or data row becomes necessary
+  - task allowlist dependency or PH2-T03 work is required
+validation_results: null

@@ -1,0 +1,344 @@
+name: PH2-T02-R3 Rights Discovery
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/ph2-t02-r3-rights.yml
+
+permissions: {}
+
+concurrency:
+  group: ph2-t02-r3-rights
+  cancel-in-progress: false
+
+jobs:
+  rights:
+    name: Official raw metadata rights chain
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Run bounded standard-library rights discovery
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from __future__ import annotations
+
+          import hashlib
+          import http.client
+          import json
+          import platform
+          import ssl
+          import time
+          from typing import Any
+          from urllib.parse import urljoin, urlsplit
+
+
+          PREFIX = "PH2_T02_R3_RESULT_JSON="
+          URLS = [
+              (
+                  "primary",
+                  "https://catalog.data.gov/harvest_record/"
+                  "7f916ec4-5f37-48f0-b59f-2ac5c8571ba9/raw",
+              ),
+              (
+                  "corroboration",
+                  "https://catalog.data.gov/harvest_record/"
+                  "917a88c3-4f1e-4866-bf45-31da73067372/raw",
+              ),
+              ("government_works", "https://www.usa.gov/government-works"),
+          ]
+          ALLOWED_HOSTS = {"catalog.data.gov", "usa.gov", "www.usa.gov"}
+          MAX_REQUESTS = 4
+          MAX_REDIRECTS = 1
+          MAX_BYTES = 1024 * 1024
+          MIN_INTERVAL = 1.0
+          CONNECT_TIMEOUT = 10
+          READ_TIMEOUT = 60
+
+
+          def canonical(value: Any) -> bytes:
+              return json.dumps(
+                  value, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+              ).encode("utf-8")
+
+
+          def sha256(value: bytes) -> str:
+              return hashlib.sha256(value).hexdigest()
+
+
+          def check_url(url: str) -> str:
+              parsed = urlsplit(url)
+              host = (parsed.hostname or "").lower()
+              if parsed.scheme != "https" or host not in ALLOWED_HOSTS:
+                  raise RuntimeError("URL_POLICY_VIOLATION")
+              if parsed.username or parsed.password or parsed.fragment:
+                  raise RuntimeError("URL_CREDENTIAL_OR_FRAGMENT_FORBIDDEN")
+              return host
+
+
+          class Client:
+              def __init__(self) -> None:
+                  self.count = 0
+                  self.redirects = 0
+                  self.last_at: float | None = None
+                  self.context = ssl.create_default_context()
+
+              def get(self, requested_url: str) -> tuple[dict[str, Any], bytes]:
+                  current = requested_url
+                  chain: list[dict[str, Any]] = []
+                  started = time.monotonic()
+                  while True:
+                      if self.count >= MAX_REQUESTS:
+                          raise RuntimeError("REQUEST_BUDGET_EXCEEDED")
+                      host = check_url(current)
+                      parsed = urlsplit(current)
+                      target = parsed.path or "/"
+                      if parsed.query:
+                          target += "?" + parsed.query
+                      now = time.monotonic()
+                      if self.last_at is not None:
+                          remaining = MIN_INTERVAL - (now - self.last_at)
+                          if remaining > 0:
+                              time.sleep(remaining)
+                      self.count += 1
+                      self.last_at = time.monotonic()
+                      connection = http.client.HTTPSConnection(
+                          host,
+                          parsed.port or 443,
+                          timeout=CONNECT_TIMEOUT,
+                          context=self.context,
+                      )
+                      try:
+                          connection.request(
+                              "GET",
+                              target,
+                              headers={
+                                  "Accept": "application/json,text/html",
+                                  "Accept-Encoding": "identity",
+                                  "User-Agent": "CargoOptRecovery-PH2-T02-R3/1.0",
+                              },
+                          )
+                          response = connection.getresponse()
+                          if connection.sock is not None:
+                              connection.sock.settimeout(READ_TIMEOUT)
+                          status = response.status
+                          location = response.getheader("Location")
+                          if status in {301, 302, 303, 307, 308}:
+                              if not location:
+                                  raise RuntimeError("REDIRECT_WITHOUT_LOCATION")
+                              self.redirects += 1
+                              if self.redirects > MAX_REDIRECTS:
+                                  raise RuntimeError("REDIRECT_BUDGET_EXCEEDED")
+                              next_url = urljoin(current, location)
+                              next_host = check_url(next_url)
+                              chain.append(
+                                  {
+                                      "from_host": host,
+                                      "status": status,
+                                      "to_host": next_host,
+                                      "to_url": next_url,
+                                  }
+                              )
+                              response.read()
+                              current = next_url
+                              continue
+                          body = bytearray()
+                          while True:
+                              chunk = response.read(65536)
+                              if not chunk:
+                                  break
+                              body.extend(chunk)
+                              if len(body) > MAX_BYTES:
+                                  raise RuntimeError("RESPONSE_BYTE_LIMIT_EXCEEDED")
+                          raw = bytes(body)
+                          return (
+                              {
+                                  "requested_url": requested_url,
+                                  "final_url": current,
+                                  "status": status,
+                                  "content_type": response.getheader("Content-Type"),
+                                  "content_length": response.getheader("Content-Length"),
+                                  "etag": response.getheader("ETag"),
+                                  "last_modified": response.getheader("Last-Modified"),
+                                  "byte_count": len(raw),
+                                  "sha256": sha256(raw),
+                                  "redirects": chain,
+                                  "elapsed_ms": round((time.monotonic() - started) * 1000),
+                              },
+                              raw,
+                          )
+                      finally:
+                          connection.close()
+
+
+          def parse_record(raw: bytes) -> dict[str, Any]:
+              payload = json.loads(raw.decode("utf-8"))
+              if not isinstance(payload, dict):
+                  raise RuntimeError("METADATA_NOT_OBJECT")
+              publisher = payload.get("publisher") or {}
+              distributions = payload.get("distribution") or []
+              distribution_urls = sorted(
+                  {
+                      str(item.get("accessURL", ""))
+                      for item in distributions
+                      if isinstance(item, dict) and item.get("accessURL")
+                  }
+              )
+              return {
+                  "title": str(payload.get("title", ""))[:256],
+                  "access_level": str(payload.get("accessLevel", "")),
+                  "publisher": str(publisher.get("name", ""))[:256],
+                  "description": str(payload.get("description", ""))[:512],
+                  "distribution_urls": distribution_urls,
+                  "license": str(payload.get("license", ""))[:512],
+                  "identifier": str(payload.get("identifier", ""))[:256],
+              }
+
+
+          started = time.monotonic()
+          client = Client()
+          pages: list[dict[str, Any]] = []
+          bodies: dict[str, bytes] = {}
+          result: dict[str, Any]
+          try:
+              for page_id, url in URLS:
+                  metadata, body = client.get(url)
+                  pages.append({"id": page_id, **metadata})
+                  bodies[page_id] = body
+              page_by_id = {page["id"]: page for page in pages}
+              all_200 = all(page["status"] == 200 for page in pages)
+              primary = parse_record(bodies["primary"])
+              corroboration = parse_record(bodies["corroboration"])
+
+              primary_license = urlsplit(primary["license"])
+              corroboration_license = urlsplit(corroboration["license"])
+              primary_checks = {
+                  "access_public": primary["access_level"].lower() == "public",
+                  "publisher_bts": primary["publisher"] == "Bureau of Transportation Statistics",
+                  "carrier_monthly_on_time": (
+                      primary["description"].lower()
+                      == "the dataset contains carrier monthly on time performance."
+                  ),
+                  "transtats_distribution": (
+                      "https://www.transtats.bts.gov" in primary["distribution_urls"]
+                  ),
+                  "government_works_license": (
+                      primary_license.scheme == "https"
+                      and (primary_license.hostname or "").lower() == "www.usa.gov"
+                      and primary_license.path == "/government-works"
+                  ),
+              }
+              corroboration_checks = {
+                  "access_public": corroboration["access_level"].lower() == "public",
+                  "publisher_bts": (
+                      corroboration["publisher"] == "Bureau of Transportation Statistics"
+                  ),
+                  "on_time_performance": "on-time" in corroboration["description"].lower(),
+                  "public_domain_label": (
+                      corroboration_license.scheme in {"http", "https"}
+                      and (corroboration_license.hostname or "").lower()
+                      == "www.usa.gov"
+                      and corroboration_license.path == "/publicdomain/label/1.0/"
+                  ),
+              }
+              government_final = urlsplit(page_by_id["government_works"]["final_url"])
+              government_check = bool(
+                  page_by_id["government_works"]["status"] == 200
+                  and government_final.scheme == "https"
+                  and (government_final.hostname or "").lower() in {"usa.gov", "www.usa.gov"}
+                  and government_final.path == "/government-works"
+              )
+              rights_ready = bool(
+                  all_200
+                  and all(primary_checks.values())
+                  and all(corroboration_checks.values())
+                  and government_check
+              )
+              if not all_200:
+                  closed_result = "UPSTREAM_UNAVAILABLE"
+                  reason_code = "OFFICIAL_METADATA_GET_NOT_200"
+              elif rights_ready:
+                  closed_result = "RIGHTS_READY_FOR_EXTRACT_PLANNING"
+                  reason_code = "OFFICIAL_PUBLIC_GOVERNMENT_WORKS_CHAIN_PASSED"
+              else:
+                  closed_result = "RIGHTS_UNRESOLVED"
+                  reason_code = "OFFICIAL_METADATA_CHAIN_INCOMPLETE"
+
+              result = {
+                  "schema_version": 1,
+                  "mode": "RIGHTS_DISCOVERY",
+                  "result": closed_result,
+                  "reason_code": reason_code,
+                  "runtime": {
+                      "implementation": platform.python_implementation(),
+                      "python": platform.python_version(),
+                      "os": platform.system(),
+                      "architecture": platform.machine(),
+                  },
+                  "request_policy": {
+                      "method": "GET_ONLY",
+                      "count": client.count,
+                      "max": MAX_REQUESTS,
+                      "redirect_count": client.redirects,
+                      "redirect_max": MAX_REDIRECTS,
+                      "minimum_interval_seconds": MIN_INTERVAL,
+                      "connect_timeout_seconds": CONNECT_TIMEOUT,
+                      "read_timeout_seconds": READ_TIMEOUT,
+                      "elapsed_ms": round((time.monotonic() - started) * 1000),
+                  },
+                  "pages": pages,
+                  "primary": {
+                      "title": primary["title"],
+                      "identifier": primary["identifier"],
+                      "distribution_urls": primary["distribution_urls"],
+                      "license": primary["license"],
+                      "checks": primary_checks,
+                  },
+                  "corroboration": {
+                      "title": corroboration["title"],
+                      "identifier": corroboration["identifier"],
+                      "license": corroboration["license"],
+                      "checks": corroboration_checks,
+                  },
+                  "government_works_page_ok": government_check,
+                  "local_analysis_with_attribution": rights_ready,
+                  "raw_redistribution_enabled": False,
+                  "form_contract_sha256": (
+                      "3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0"
+                  ),
+                  "extract": "NOT_RUN",
+                  "artifact_count": 0,
+                  "data_rows_read": 0,
+                  "automatic_retry_count": 0,
+              }
+          except Exception as error:
+              result = {
+                  "schema_version": 1,
+                  "mode": "RIGHTS_DISCOVERY",
+                  "result": "PROBE_SECURITY_ABORTED",
+                  "reason_code": type(error).__name__ + ":" + str(error)[:160],
+                  "runtime": {
+                      "implementation": platform.python_implementation(),
+                      "python": platform.python_version(),
+                      "os": platform.system(),
+                      "architecture": platform.machine(),
+                  },
+                  "request_policy": {
+                      "method": "GET_ONLY",
+                      "count": client.count,
+                      "max": MAX_REQUESTS,
+                      "redirect_count": client.redirects,
+                      "redirect_max": MAX_REDIRECTS,
+                      "elapsed_ms": round((time.monotonic() - started) * 1000),
+                  },
+                  "pages": pages,
+                  "extract": "NOT_RUN",
+                  "artifact_count": 0,
+                  "data_rows_read": 0,
+                  "automatic_retry_count": 0,
+              }
+
+          print(PREFIX + canonical(result).decode("utf-8"))
+          PY

@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R5
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T15:55:24Z"
+closed_result: CONTROL_NOT_UNAMBIGUOUS
+closed_reason_code: OUTSIDE_CHECKED_CONTROL_COUNT_NOT_ONE
+classification_decision: EXACT_FOUR_DEFAULT_OUTPUT_FIELD_CHECKBOXES_IDENTIFIED
 planned_at: "2026-08-15T15:51:37Z"
 approved_at: "2026-08-15T15:51:37Z"
 approval_source: explicit_user_command
@@ -127,17 +131,28 @@ stop_conditions:
   - outside checked control cannot be expressed with safe public metadata
   - POST ZIP CSV header data row dependency source test or PH2-T03 is required
 validation_results:
-  bootstrap_commit: PENDING
-  discovery_workflow_run: PENDING
-  discovery_workflow_job: PENDING
-  discovery_workflow_conclusion: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  foundation_conclusion: PENDING
-  workflow_artifact_count: PENDING
-  foundation_artifact_count: PENDING
-  result: PENDING
-  outside_checked_control_count: PENDING
+  bootstrap_commit: a953617b0591fd310ceea4c20ba750bd5355e3ef
+  discovery_workflow_run: 31894069584
+  discovery_workflow_job: 95034532975
+  discovery_workflow_conclusion: success
+  foundation_run: 31894069749
+  foundation_job: 95034533391
+  foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: CONTROL_NOT_UNAMBIGUOUS
+  reason_code: OUTSIDE_CHECKED_CONTROL_COUNT_NOT_ONE
+  fresh_form_contract_exact: true
+  fresh_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  outside_checked_control_count: 4
+  outside_checked_controls_exact:
+    - ORIGIN_AIRPORT_SEQ_ID
+    - ORIGIN_CITY_MARKET_ID
+    - DEST_AIRPORT_SEQ_ID
+    - DEST_CITY_MARKET_ID
+  controls_are_enabled_field_checkboxes: true
+  controls_have_independent_field_names_ids_and_labels: true
+  same_name_as_exact_15_selector: false
   post_count: 0
   temporary_zip_count: 0
   header_records_read: 0
@@ -147,3 +162,9 @@ validation_results:
   result_foundation_run: PENDING
   final_closeout_commit: PENDING
   final_closeout_foundation_run: PENDING
+  downstream_evidence_use: APPROVED_FOR_EXACT_SET_BOUNDED_EXTRACT_CONTRACT
+  downstream_approval_text: "artık bunu bitirelim"
+  downstream_safety_basis: >-
+    Four controls are enabled checkbox field selectors with exact public
+    name/id/label identities; omitting them is browser-equivalent to leaving
+    those four optional output columns unchecked while submitting exact 15.

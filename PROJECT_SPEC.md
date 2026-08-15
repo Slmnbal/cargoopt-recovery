@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.11.7` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R5_CONTROL_DISCOVERY_RUNNING` |
+| Belge sürümü | `0.11.8` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R6_BOUNDED_EXTRACT_RUNNING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02-R5` — exact-15 dışı seçili kontrolün read-only sınıflandırması |
+| Aktif görev | `PH2-T02-R6` — exact-four default alan exclusion ile bounded exact-15 Extract |
 
 ## 1. Tek cümlelik tanım
 
@@ -314,7 +314,8 @@ gerektirir.
 - Sonuçlanan görev: `PH2-T02-R2 — BLOCKED/UPSTREAM_UNAVAILABLE`; form sözleşmesi `PASSED`, rights metadata `404`
 - Sonuçlanan görev: `PH2-T02-R3 — COMPLETED/RIGHTS_READY_FOR_EXTRACT_PLANNING`
 - Sonuçlanan görev: `PH2-T02-R4 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; fresh fingerprint exact, exact-15 dışı seçili kontrol nedeniyle POST `0`, ZIP `0`, row `0`, cleanup `PASSED`
-- Aktif görev: `PH2-T02-R5 — IN_PROGRESS`; ekstra seçili kontrol yalnız sanitize edilmiş form metadata'sıyla tanımlanıyor
+- Sonuçlanan görev: `PH2-T02-R5 — BLOCKED/CONTROL_NOT_UNAMBIGUOUS`; tek kontrol varsayımı yerine dört bağımsız default field checkbox'ı güvenli metadata ile exact tanımlandı
+- Aktif görev: `PH2-T02-R6 — IN_PROGRESS`; exact-four seti browser-equivalent unchecked yapılarak January 2024 exact-15 header doğrulanıyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -322,7 +323,7 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: ekstra kontrol semantiğinin mekanik kanıtı ve yalnız güvenli sonuçta ayrı bounded Extract
+- Sıradaki kapı: R6 exact ordered header ve mandatory cleanup sonucu
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`

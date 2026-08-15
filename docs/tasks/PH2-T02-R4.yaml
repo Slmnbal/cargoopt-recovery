@@ -1,0 +1,252 @@
+schema_version: 1
+task_id: PH2-T02-R4
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T15:24:50Z"
+approved_at: "2026-08-15T15:24:50Z"
+approval_source: explicit_user_command
+approval_text: >-
+  PH2-T02-R4 bounded Extract görevini planla ve çalıştır: fresh form
+  fingerprint, January 2024 exact-15 POST, en fazla bir geçici ZIP,
+  header-only, sıfır data row ve zorunlu cleanup.
+task_type: HOSTED_BOUNDED_HEADER_ONLY_EXTRACT
+goal: >-
+  R2'de kanıtlanan form sözleşmesini fresh bir GET üzerinde byte-for-byte aynı
+  canonical fingerprint ile yeniden doğrulamak; yalnız eşleşme halinde January
+  2024 ve exact 15 alanla tek POST yapmak; en fazla bir geçici ZIP içindeki tek
+  CSV üyesinin yalnız header'ını okuyup exact ordered schema'yı kanıtlamak ve
+  geçici ZIP'i sonuçtan bağımsız olarak silmek.
+preconditions:
+  phase_1_status: COMPLETED
+  phase_2_status: ACTIVE
+  ph2_t02_r2_form_contract: PASSED
+  ph2_t02_r2_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  ph2_t02_r3_status: COMPLETED
+  ph2_t02_r3_result: RIGHTS_READY_FOR_EXTRACT_PLANNING
+  ph2_t02_r3_local_analysis_with_attribution: true
+  ph2_t02_r3_raw_redistribution_enabled: false
+  ph2_t02_r3_final_commit: 4acd3ce424a2a7440a616eed6d8db1f6ae6d3960
+  ph2_t02_r3_final_foundation_run: 31891413850
+  ph2_t02_r3_final_foundation_job: 95028123212
+  temporary_workflow_absent: true
+  phase_3_to_phase_8_status: LOCKED
+normative_inputs:
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R2.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R3.md
+  - docs/tasks/PH2-T02-R2.yaml
+  - docs/tasks/PH2-T02-R3.yaml
+expected_selected_columns_exact_order:
+  - FlightDate
+  - Reporting_Airline
+  - DOT_ID_Reporting_Airline
+  - Flight_Number_Reporting_Airline
+  - OriginAirportID
+  - Origin
+  - DestAirportID
+  - Dest
+  - CRSDepTime
+  - CRSArrTime
+  - CRSElapsedTime
+  - Distance
+  - Cancelled
+  - Diverted
+  - ArrDelayMinutes
+in_scope:
+  - fresh selected-field form GET and R2-compatible canonical fingerprint
+  - fingerprint equality before POST
+  - exact year 2024 and exact January selector
+  - exact 15 checkbox controls in the contract order
+  - exactly zero or one POST; no POST retry or replay
+  - fresh in-memory same-host cookie continuity without value logging
+  - at most one temporary ZIP file under the runner temporary directory
+  - one safe non-encrypted regular CSV archive member
+  - first CSV record read only through its terminating newline
+  - byte-order-mark removal only; no trim rename reorder projection or coercion
+  - exact ordered 15-column header equality
+  - SHA-256 byte counts safe booleans and reason-code-only canonical result JSON
+  - unconditional temporary ZIP cleanup on success and failure
+  - temporary workflow removal result report and Foundation closeout evidence
+out_of_scope:
+  - any CSV data row read parse count sample or persistence
+  - full CSV extraction decompression dataset ingestion or redistribution
+  - any month other than January 2024 or any field outside exact 15
+  - a second POST retry rerun or a second temporary ZIP
+  - browser login CAPTCHA manual interaction or cookie export
+  - dependency checkout action cache artifact secret OIDC environment
+  - source test config data lock migration product implementation or PH2-T03
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R4.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R4.md
+  - .github/workflows/ph2-t02-r4-extract.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r4-extract.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R1.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R2.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R3.md
+hosted_execution_contract:
+  platform: GitHub Actions
+  runner: ubuntu-24.04
+  workflow_path: .github/workflows/ph2-t02-r4-extract.yml
+  trigger: PUSH_TO_MAIN_WHEN_EXACT_WORKFLOW_PATH_CHANGES
+  permissions: EMPTY_OBJECT
+  checkout: FORBIDDEN
+  actions_uses: FORBIDDEN
+  dependencies: FORBIDDEN
+  artifacts: FORBIDDEN
+  secrets: FORBIDDEN
+  runtime: PREINSTALLED_SYSTEM_CPYTHON_STANDARD_LIBRARY_ONLY
+  timeout_minutes: 12
+  concurrency: 1
+  sanitized_log_prefix: PH2_T02_R4_RESULT_JSON=
+network_policy:
+  schemes: [https]
+  hosts:
+    - www.transtats.bts.gov
+    - transtats.bts.gov
+  initial_url: https://www.transtats.bts.gov/DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ
+  methods: [GET, POST]
+  initial_get_count: 1
+  post_count_max: 1
+  total_request_count_max: 5
+  redirect_count_max: 3
+  post_redirect_307_308: FORBIDDEN
+  post_retries: 0
+  automatic_reruns: 0
+  minimum_interval_seconds: 1
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  form_max_bytes: 8388608
+  outbound_form_max_bytes: 8388608
+zip_policy:
+  temporary_zip_count_max: 1
+  compressed_byte_limit: 268435456
+  archive_member_count_exact: 1
+  member_type: REGULAR_NON_ENCRYPTED_CSV
+  declared_uncompressed_byte_limit: 2147483648
+  header_byte_limit: 1048576
+  persistent_archive: FORBIDDEN
+  raw_redistribution: FORBIDDEN
+header_policy:
+  records_read_max: 1
+  data_rows_read_exact: 0
+  stop_read_at_first_lf: true
+  transformations_allowed: [UTF8_BOM_REMOVAL]
+  exact_ordered_equality_required: true
+sanitization_policy:
+  forbidden_in_logs:
+    - raw HTML
+    - cookie values
+    - hidden field values
+    - viewstate or event-validation values
+    - POST body
+    - ZIP bytes
+    - CSV member bytes
+    - CSV data rows
+    - absolute temporary path
+  temporary_path_log_form: SHA256_OF_ABSOLUTE_PATH_STRING_ONLY
+  result_format: ONE_CANONICAL_JSON_LINE
+closed_results:
+  SOURCE_COMPATIBLE:
+    next_gate: PH2_T02_R4_SOURCE_COMPATIBLE_READY_FOR_RESULT_APPROVAL
+  CONTRACT_SOURCE_MISMATCH:
+    next_gate: PH2_T02_R4_CLOSED_CONTRACT_REQUIRES_HUMAN_DECISION
+  UPSTREAM_UNAVAILABLE:
+    next_gate: PH2_T02_R4_CLOSED_UPSTREAM_REQUIRES_HUMAN_DECISION
+  PROBE_SECURITY_ABORTED:
+    next_gate: PH2_T02_R4_CLOSED_SECURITY_REQUIRES_HUMAN_DECISION
+acceptance_criteria:
+  - task approval and exact scope are committed before hosted network starts
+  - workflow uses permissions empty object and contains no uses step
+  - fresh fingerprint equals the immutable R2 fingerprint before POST
+  - exactly 15 distinct checkbox controls plus exact year and month are submitted
+  - no hidden cookie or response content is logged
+  - no more than one POST and one temporary ZIP can occur
+  - only one safe CSV member is opened
+  - reading stops immediately after the first LF of the CSV record
+  - data_rows_read is exactly zero in every result
+  - temporary path is absent before sanitized result is printed
+  - workflow is absent at final main and no Action artifact exists
+  - PH2-T03 remains absent and Phase 3 through Phase 8 remain locked
+  - result and final Foundation runs pass with zero artifacts
+tests_required:
+  - all repository YAML parses
+  - workflow structure and forbidden-key scan passes
+  - inline Python AST parses and imports standard library only
+  - synthetic in-memory parser and one-member ZIP header tests pass offline
+  - fingerprint-before-POST request-count redirect timeout and byte-cap invariants pass
+  - sanitize result schema and forbidden-content checks pass offline
+  - immutable foundation dependency lock source tests and prior reports retain hashes
+  - hosted Extract and Foundation runs complete and expose zero artifacts
+  - workflow removal is proven by remote 404
+  - final Foundation closeout run passes with zero artifacts
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: true
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - fresh form fingerprint differs from the immutable R2 hash
+  - exact form method action year month fields or submit control is ambiguous
+  - authentication CAPTCHA manual state or a non-approved host is required
+  - POST redirect would replay POST with 307 or 308
+  - response exceeds a byte count timeout redirect request or archive safety cap
+  - more than one temporary path or any persistent archive would be required
+  - archive contains anything other than one safe regular non-encrypted CSV member
+  - header requires reading after its first newline or does not equal exact ordered 15
+  - cleanup cannot prove the temporary path absent
+  - dependency artifact secret source test config data migration or PH2-T03 work is required
+validation_results:
+  bootstrap_commit: PENDING
+  extract_workflow_run: PENDING
+  extract_workflow_job: PENDING
+  extract_workflow_conclusion: PENDING
+  extract_foundation_run: PENDING
+  extract_foundation_job: PENDING
+  extract_foundation_conclusion: PENDING
+  workflow_artifact_count: PENDING
+  foundation_artifact_count: PENDING
+  offline_result_schema: PENDING
+  result: PENDING
+  request_count: PENDING
+  post_count: PENDING
+  fresh_form_contract_sha256: PENDING
+  exact_field_count: PENDING
+  exact_year: PENDING
+  exact_month: PENDING
+  temporary_zip_count: PENDING
+  header_records_read: PENDING
+  data_rows_read: PENDING
+  cleanup_path_absent: PENDING
+  artifact_count: PENDING
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  result_foundation_job: PENDING
+  result_foundation_conclusion: PENDING
+  result_foundation_artifact_count: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

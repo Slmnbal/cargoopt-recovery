@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.11.4` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R3_RESULT_READY_FOR_EXTRACT_PLANNING_DECISION` |
+| Belge sürümü | `0.11.5` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R4_EXTRACT_RUNNING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | Yok — form ve haklar Discovery kapıları geçti |
+| Aktif görev | `PH2-T02-R4` — bounded January 2024 exact-15 header-only Extract |
 
 ## 1. Tek cümlelik tanım
 
@@ -313,7 +313,7 @@ gerektirir.
 - Sonuçlanan retry görevi: `PH2-T02-R1 — BLOCKED/PROBE_SECURITY_ABORTED`; Extract `NOT_RUN`, cleanup `PASSED`
 - Sonuçlanan görev: `PH2-T02-R2 — BLOCKED/UPSTREAM_UNAVAILABLE`; form sözleşmesi `PASSED`, rights metadata `404`
 - Sonuçlanan görev: `PH2-T02-R3 — COMPLETED/RIGHTS_READY_FOR_EXTRACT_PLANNING`
-- Aktif görev: yok
+- Aktif görev: `PH2-T02-R4 — IN_PROGRESS`; fresh form fingerprint sonrası tek bounded POST, en fazla bir geçici ZIP, yalnız CSV header ve zorunlu cleanup
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -321,7 +321,7 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: January 2024 exact-15 header-only bounded Extract güvenlik görevi
+- Sıradaki kapı: R4 hosted Extract sonucunun sanitize edilmiş kanıtla kapanması
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`

@@ -1,7 +1,7 @@
 schema_version: 1
 task_id: PH2-T02-R2
 phase: PHASE_2
-status: CLOSING
+status: BLOCKED
 closed_at: "2026-08-15T14:46:22Z"
 closed_result: UPSTREAM_UNAVAILABLE
 closed_reason_code: OFFICIAL_DATA_GOV_CATALOG_API_ENDPOINTS_RETURNED_404
@@ -247,8 +247,11 @@ validation_results:
   extract: NOT_RUN
   artifact_count: 0
   data_rows_read: 0
-  temporary_workflow_cleanup: IN_PROGRESS
-  result_commit: PENDING
-  result_foundation_run: PENDING
-  final_closeout_commit: PENDING
-  final_closeout_foundation_run: PENDING
+  temporary_workflow_cleanup: PASSED_REMOTE_404
+  result_commit: 94246e865ae2882dd160ca39a65634b7bec3b3cf
+  result_foundation_run: 31890920119
+  result_foundation_job: 95026946209
+  result_foundation_conclusion: success
+  result_foundation_artifact_count: 0
+  final_closeout_commit: EXTERNAL_EVIDENCE_AFTER_COMMIT
+  final_closeout_foundation_run: EXTERNAL_EVIDENCE_AFTER_COMMIT

@@ -109,8 +109,14 @@ tamamlanmış, ikisi de sıfır artifact üretmiştir. Workflow success kapalı 
 protokolünün çalıştığını gösterir; rights veya source compatibility success
 anlamına gelmez.
 
-Result ve final closeout commit/run kanıtları cleanup doğrulamasından sonra bu
-bölüme eklenir.
+Result/cleanup commit'i `94246e865ae2882dd160ca39a65634b7bec3b3cf`
+üzerindeki Foundation run `31890920119`, job `95026946209` ile başarıyla
+tamamlandı ve sıfır artifact üretti. Aynı commit'te geçici R2 workflow yolunun
+GitHub Contents API sonucu `404 Not Found` olarak doğrulandı.
+
+Final closeout commit ve onun Foundation sonucu repository dışı hosted kanıt
+olarak görev kapanışında doğrulanır; commit kendi SHA'sını öz-referanslı olarak
+içeriğine yazmaz.
 
 ## 8. Downstream kapısı
 

@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R9
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T16:15:57Z"
+closed_result: CONTRACT_SOURCE_MISMATCH
+closed_reason_code: CSV_HEADER_EXACT_ORDER_MISMATCH
+transport_result: PASSED_REUSED_CONNECTION_POST_200_ZIP_RECEIVED
 planned_at: "2026-08-15T16:11:57Z"
 approved_at: "2026-08-15T16:11:57Z"
 approval_source: explicit_user_command
@@ -70,18 +74,28 @@ stop_conditions:
   - any fallback connection or retry is required
   - payload data row or task scope must expand
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  result: PENDING
-  reason_code: PENDING
-  post_count: PENDING
-  temporary_zip_count: PENDING
-  header_records_read: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
+  bootstrap_commit: 609c501911041f26e9fb410e70f60744bf79727d
+  extract_workflow_run: 31894999738
+  extract_workflow_job: 95036841068
+  foundation_run: 31894999747
+  foundation_job: 95036840971
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: CONTRACT_SOURCE_MISMATCH
+  reason_code: CSV_HEADER_EXACT_ORDER_MISMATCH
+  request_count: 2
+  post_count: 1
+  post_status: 200
+  reused_connection_for_post: true
+  fallback_connection_count: 0
+  archive_content_type: application/zip
+  archive_byte_count: 9050151
+  archive_sha256: 40f6c2863dc72472354251ea1945587bc1593d6ce8d5af26c5ad5d9b4825ca5b
+  temporary_zip_count: 1
+  header_records_read: 0
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
   temporary_workflow_cleanup: PENDING
   result_commit: PENDING
   result_foundation_run: PENDING

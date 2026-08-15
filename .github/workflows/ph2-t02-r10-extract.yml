@@ -1,15 +1,15 @@
-name: PH2-T02-R9 Bounded Extract
+name: PH2-T02-R10 Bounded Extract
 
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/ph2-t02-r9-extract.yml
+      - .github/workflows/ph2-t02-r10-extract.yml
 
 permissions: {}
 
 concurrency:
-  group: ph2-t02-r9-bounded-extract
+  group: ph2-t02-r10-bounded-extract
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           from urllib.parse import urlencode, urljoin, urlsplit
 
 
-          PREFIX = "PH2_T02_R9_RESULT_JSON="
+          PREFIX = "PH2_T02_R10_RESULT_JSON="
           FORM_URL = (
               "https://www.transtats.bts.gov/"
               "DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ"
@@ -228,7 +228,7 @@ jobs:
                   headers = {
                       "Accept": accept,
                       "Accept-Encoding": "identity",
-                      "User-Agent": "CargoOptRecovery-PH2-T02-R9/1.0",
+                      "User-Agent": "CargoOptRecovery-PH2-T02-R10/1.0",
                   }
                   cookie_jar = self.cookies.get(host, {})
                   if cookie_jar:
@@ -243,7 +243,7 @@ jobs:
                                   "Mozilla/5.0 (X11; Linux x86_64) "
                                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                                   "Chrome/140.0 Safari/537.36 "
-                                  "CargoOptRecovery-PH2-T02-R9/1.0"
+                                  "CargoOptRecovery-PH2-T02-R10/1.0"
                               ),
                               "Origin": "https://www.transtats.bts.gov",
                               "Referer": FORM_URL,
@@ -392,7 +392,7 @@ jobs:
                               security("TEMPORARY_ZIP_COUNT_EXCEEDED")
                           temporary = tempfile.NamedTemporaryFile(
                               mode="wb",
-                              prefix="cargoopt-r9-",
+                              prefix="cargoopt-r10-",
                               suffix=".zip",
                               dir=tempfile.gettempdir(),
                               delete=False,
@@ -832,7 +832,21 @@ jobs:
               return bytes(header)
 
 
-          def inspect_archive(path: str) -> dict[str, Any]:
+          def classify_header_serialization(
+              observed: list[str], expected: list[str]
+          ) -> tuple[bool, bool]:
+              if len(expected) != 15 or len(set(expected)) != 15:
+                  security("CANONICAL_SOURCE_HEADER_NOT_UNIQUE_EXACT_15")
+              if set(expected) != set(EXPECTED_FIELDS):
+                  security("CANONICAL_SOURCE_HEADER_NOT_EXPECTED_FIELD_PERMUTATION")
+              if observed == expected:
+                  return True, False
+              if observed == expected + [""]:
+                  return True, True
+              return False, False
+
+
+          def inspect_archive(path: str, expected_header: list[str]) -> dict[str, Any]:
               try:
                   archive = zipfile.ZipFile(path, mode="r")
               except (OSError, zipfile.BadZipFile):
@@ -872,8 +886,9 @@ jobs:
                   contract("CSV_HEADER_PARSE_FAILED")
               if len(rows) != 1:
                   contract("CSV_HEADER_RECORD_COUNT_NOT_ONE")
-              if rows[0] != EXPECTED_FIELDS:
-                  contract("CSV_HEADER_EXACT_ORDER_MISMATCH")
+              compatible, terminal_empty_sentinel = classify_header_serialization(
+                  rows[0], expected_header
+              )
               return {
                   "member_count": 1,
                   "member_name_sha256": sha256(info.filename.encode("utf-8")),
@@ -883,8 +898,13 @@ jobs:
                   "header_byte_count": len(raw_header),
                   "header_sha256": sha256(raw_header),
                   "header_record_count": 1,
-                  "header_column_count": len(rows[0]),
-                  "header_exact_ordered": True,
+                  "physical_header_count": len(rows[0]),
+                  "logical_header_count": len(expected_header),
+                  "canonical_source_header_order": expected_header,
+                  "observed_header_order": rows[0],
+                  "terminal_empty_sentinel": terminal_empty_sentinel,
+                  "header_compatible": compatible,
+                  "header_exact_ordered": compatible,
               }
 
 
@@ -910,6 +930,17 @@ jobs:
                       first = read_header(member)
               if first.decode("utf-8").rstrip("\r\n").split(",") != EXPECTED_FIELDS:
                   security("SELF_TEST_HEADER_BOUND_FAILED")
+              exact_ok, exact_sentinel = classify_header_serialization(
+                  EXPECTED_FIELDS, EXPECTED_FIELDS
+              )
+              trailing_ok, trailing_sentinel = classify_header_serialization(
+                  EXPECTED_FIELDS + [""], EXPECTED_FIELDS
+              )
+              invalid_ok, _ = classify_header_serialization(
+                  EXPECTED_FIELDS + ["unexpected"], EXPECTED_FIELDS
+              )
+              if not exact_ok or exact_sentinel or not trailing_ok or not trailing_sentinel or invalid_ok:
+                  security("SELF_TEST_HEADER_SERIALIZATION_FAILED")
               try:
                   check_url("http://www.transtats.bts.gov/")
               except ClosedError as error:
@@ -926,6 +957,7 @@ jobs:
           submission_sha256: str | None = None
           archive_metadata: dict[str, Any] | None = None
           header_metadata: dict[str, Any] | None = None
+          canonical_source_header_order: list[str] = []
           default_excluded_control_names: list[str] = []
           closed_result = "PROBE_SECURITY_ABORTED"
           reason_code = "UNEXPECTED_INTERNAL_EXCEPTION"
@@ -950,6 +982,18 @@ jobs:
               ]
               if len(set(field_control_indices)) != len(EXPECTED_FIELDS):
                   contract("EXACT_15_FIELD_MAPPING_NOT_ONE_TO_ONE")
+              canonical_source_header_order = [
+                  field
+                  for _, field in sorted(
+                      (field_resolution[field][0], field) for field in EXPECTED_FIELDS
+                  )
+              ]
+              if (
+                  len(canonical_source_header_order) != 15
+                  or len(set(canonical_source_header_order)) != 15
+                  or set(canonical_source_header_order) != set(EXPECTED_FIELDS)
+              ):
+                  security("CANONICAL_SOURCE_HEADER_FREEZE_FAILED")
               mapped_form_indices = {
                   parser.controls[index].get("form_index")
                   for index in field_control_indices
@@ -1045,7 +1089,11 @@ jobs:
               archive_metadata = client.post_archive(action, post_body)
               if client.temp_path is None:
                   security("TEMPORARY_ZIP_NOT_CREATED")
-              header_metadata = inspect_archive(client.temp_path)
+              header_metadata = inspect_archive(
+                  client.temp_path, canonical_source_header_order
+              )
+              if not header_metadata["header_compatible"]:
+                  contract("CSV_HEADER_CANONICAL_OR_TERMINAL_SENTINEL_MISMATCH")
               closed_result = "SOURCE_COMPATIBLE"
               reason_code = "FRESH_FORM_AND_EXACT_HEADER_PASSED"
           except ClosedError as error:
@@ -1124,6 +1172,7 @@ jobs:
                   "year": 2024,
                   "month": "January",
                   "selected_field_count": len(EXPECTED_FIELDS),
+                  "canonical_source_header_order": canonical_source_header_order,
                   "default_excluded_control_count": len(default_excluded_control_names),
                   "default_excluded_control_names": default_excluded_control_names,
                   "submission_contract_sha256": submission_sha256,
@@ -1149,6 +1198,7 @@ jobs:
           }
           print(PREFIX + canonical(result).decode("utf-8"))
           PY
+
 
 
 

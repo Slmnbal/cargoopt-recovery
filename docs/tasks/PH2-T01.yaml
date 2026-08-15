@@ -160,6 +160,6 @@ hosted_validation_evidence:
   job_id: 94998027186
   commit_sha: 03181925cd10eb9c9dcd1b75152d35d39114b710
   conclusion: success
-  primary_steps: 17
-  primary_steps_passed: 17
+  primary_steps: 16
+  primary_steps_passed: 16
   artifacts: 0

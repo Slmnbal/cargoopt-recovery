@@ -3,8 +3,8 @@ catalog_id: cargoopt-foundation-dependencies-v1
 task_id: PH1-T01
 researched_at: "2026-08-13"
 updated_by_task: PH1-T03
-updated_at: "2026-08-14"
-status: CLEAN_ROOM_AUDIT_AND_LICENSE_LOCAL_PASS_HOSTED_CI_PENDING
+updated_at: "2026-08-15"
+status: CLEAN_ROOM_AUDIT_LICENSE_AND_HOSTED_CI_PASSED
 source_policy: OFFICIAL_PRIMARY_ONLY
 installation_or_resolution_performed: true
 project_environment_sync_performed: true
@@ -91,7 +91,7 @@ security_policy:
     Bu sonuç 2026-08-14 local audit snapshot'ına aittir; dependency değişikliği
     veya sonraki güvenlik verisi yeni audit gerektirir.
   mandatory_next_gate:
-    - hosted Foundation workflow conclusion equals success
+    - separate human Phase 1 close and Phase 2 open decision
 
 observed_ph1_t03_audit:
   observed_at: "2026-08-14"
@@ -120,6 +120,15 @@ observed_ph1_t03_audit:
     components: 20
     unknown_or_prohibited: 0
     decision: PASSED
+  hosted_ci:
+    run_id: 31875871429
+    commit_sha: d4cc97845b66d1ab97c8555d517f7075a966ca33
+    runner_image: ubuntu-24.04@20260810.271.1
+    project_audited_packages: 13
+    build_audited_packages: 6
+    vulnerabilities: 0
+    adverse_statuses: 0
+    conclusion: PASSED
 
 components:
   - id: runtime-cpython

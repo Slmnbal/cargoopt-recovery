@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.9.3` |
-| Durum | `PHASE_1_ACTIVE — PH1_T03_HOSTED_CI_PENDING` |
+| Belge sürümü | `0.9.4` |
+| Durum | `PHASE_1_ACTIVE — READY_FOR_HUMAN_APPROVAL` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH1-T03` — local clean-room kapıları geçti; hosted CI kanıtı bekleniyor |
+| Aktif görev | Yok — `PH1-T03` tamamlandı; insan faz geçiş kararı bekleniyor |
 
 ## 1. Tek cümlelik tanım
 
@@ -308,15 +308,15 @@ gerektirir.
 
 - Tamamlanan faz: `PHASE_0 — COMPLETED/PASSED`
 - Aktif faz: `PHASE_1 — repository_foundation`
-- Tamamlanan görevler: `PH1-T01`, `PH1-T02`
-- Aktif görev: `PH1-T03 — Clean-room kalite, audit, lisans ve minimal CI kapısı`
-- PH1-T03 durumu: Local clean-room, iki sync, kalite, build, audit, SBOM ve lisans kapıları geçti; hosted CI bekleniyor
+- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`
+- Aktif görev: Yok; Phase 1 insan geçiş kararı bekliyor
+- PH1-T03 durumu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
 - Local sonuç: 13 package project graph + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
-- Sıradaki kapı: Final committed state için GitHub-hosted `Foundation` workflow `success` kanıtı
+- Hosted kanıt: `Foundation` run `31875871429`, commit `d4cc97845b66d1ab97c8555d517f7075a966ca33`, conclusion `success`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Henüz tamamlanmayan: Gerçek hosted-run kanıtı ve buna bağlı PH1-T03 kapanış kaydı
+- Sıradaki kapı: Ayrı insan onayıyla Phase 1 close ve Phase 2 open kararı
 - Runtime dependency sayısı: `0`
 - Ürün/domain davranışı: Yok; Phase 2+ erken hazırlığı yasak
 - Kilitli fazlar: `PHASE_2..PHASE_8`

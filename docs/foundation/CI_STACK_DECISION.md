@@ -4,7 +4,7 @@
 |---|---|
 | Karar kimliği | `foundation-ci-stack-v1` |
 | Görev | `PH1-T03` |
-| Durum | `APPROVED — IMPLEMENTED; HOSTED_RUN_PENDING` |
+| Durum | `APPROVED — IMPLEMENTED — HOSTED_RUN_PASSED` |
 | Araştırma tarihi | 2026-08-13 |
 | Onay tarihi | 2026-08-13 |
 | Onay kaynağı | Proje sahibinin açık komutu |
@@ -18,8 +18,8 @@ ise **GitHub-hosted `ubuntu-24.04` x86_64** runner'dır. Workflow yalnız
 `pull_request` ve `main` branch'ine `push` olaylarında çalışır.
 
 Exact stack ve ayrı PH1-T03 yürütme onayı kayıtlıdır. Stack,
-`.github/workflows/foundation.yml` içinde uygulanmıştır. Nihai kabul için final
-committed state'e ait gerçek GitHub-hosted run kanıtı gerekir.
+`.github/workflows/foundation.yml` içinde uygulanmış ve GitHub-hosted run
+`31875871429` üzerinde `success` sonucuyla doğrulanmıştır.
 
 ## 2. Exact onaylı stack
 
@@ -33,9 +33,10 @@ committed state'e ait gerçek GitHub-hosted run kanıtı gerekir.
 | Python | Standard GIL-enabled CPython `3.14.7` | Action input + runtime assertion | PSF-2.0 | Project runtime |
 
 `actions/setup-python`, `actions/cache` ve `actions/upload-artifact` eklenmez.
-`setup-uv`, exact Python sürümünü kurabildiği için ikinci bir setup action'ı
-gereksizdir. Cache clean-room ispatını zayıflatmamak için kapalıdır. Phase 1
-kalıcı artifact yükleme veya publish yapmaz.
+`setup-uv`, exact uv'yi kurup managed Python dizini ve sürümünü yapılandırır;
+workflow exact CPython'ı `uv python install 3.14.7` ile açıkça kurar. İkinci bir
+setup action'ı gerekmez. Cache kapalıdır. Phase 1 artifact yüklemez veya publish
+yapmaz.
 
 ## 3. Güvenlik sınırı
 
@@ -108,10 +109,9 @@ Bir action release'i, SHA, runner, trigger, permission, cache veya secret
 politikası değişirse bu karar otomatik geçerli olmaz. Belge revize edilir ve
 yeni exact CI stack onayı istenir.
 
-CI stack onayı 2026-08-13 tarihinde exact aday değişmeden kaydedilmiştir. Görev
-hâlâ başlamamıştır. Sıradaki ayrı yürütme cümlesi:
-
-> PH1-T03 planını onaylıyorum; başlat.
+CI stack onayı 2026-08-13 tarihinde exact aday değişmeden kaydedildi. PH1-T03
+2026-08-15 tarihinde hosted `success` kanıtıyla tamamlandı. Sonraki adım bu CI
+kararını değiştirmek değil, ayrı insan faz geçiş kararıdır.
 
 ## 8. Resmî kaynaklar
 

@@ -4,7 +4,7 @@
 |---|---|
 | Görev | `PH1-T03` |
 | Yürütme zamanı | `2026-08-14T18:16:02Z` |
-| Durum | `LOCAL_PASS — HOSTED_CI_PENDING` |
+| Durum | `LOCAL_PASS — HOSTED_CI_PASS` |
 | Referans ortam | Linux x86_64, CPU-only, standard GIL-enabled CPython |
 | Kaynak checkpoint | `CargoOpt_Recovery_PH1_T02_Completed.zip` |
 | Checkpoint SHA-256 | `42013e718d7d07152de3364c6c8a713646f98a84f4bbc95cdf694a430446dd0d` |
@@ -93,4 +93,7 @@ Bu rapor yalnız Linux x86_64 CPU-only referansını doğrular. Windows x86_64
 metadata düzeyinde adaydır fakat yürütülmedi. macOS, ARM, GPU, container ve
 free-threaded CPython doğrulanmış değildir.
 
-Hosted parity kanıtı ilk `main` push'undan sonra bu rapora eklenecektir.
+Hosted parity `Foundation` run `31875871429` ile doğrulandı. Run,
+`d4cc97845b66d1ab97c8555d517f7075a966ca33` commit'inde `ubuntu-24.04` image
+`20260810.271.1` üzerinde bütün sync, kalite, build, audit, SBOM ve final
+integrity adımlarını `success` sonucuyla tamamladı.

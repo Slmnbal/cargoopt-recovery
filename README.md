@@ -53,10 +53,10 @@ uv lock --check --python 3.14.7 --managed-python
 ## Faz kilidi
 
 `PH1-T03` local clean-room, ikinci frozen sync, build, dependency/security,
-CycloneDX ve lisans kapılarını geçti. Nihai görev kapanışı için committed state'e
-ait gerçek hosted `Foundation` workflow sonucunun `success` olması gerekir.
-Phase 1 kapanışı ve Phase 2 açılışı bunun ardından bile yalnız ayrı insan
-onayıyla yapılır; hiçbir sonraki görev veya faz otomatik başlatılmaz.
+CycloneDX, lisans ve gerçek hosted `Foundation` workflow kapılarını geçti.
+Phase 1 `READY_FOR_HUMAN_APPROVAL` durumundadır. Phase 1 kapanışı ve Phase 2
+açılışı yalnız ayrı insan onayıyla yapılır; hiçbir sonraki görev veya faz
+otomatik başlatılmaz.
 
 Kalıcı kanıtlar `docs/foundation/CLEAN_ROOM_VERIFICATION_REPORT.md`,
 `docs/foundation/DEPENDENCY_AUDIT_REPORT.md` ve

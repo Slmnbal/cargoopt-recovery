@@ -4,7 +4,7 @@
 |---|---|
 | Görev | `PH1-T03` |
 | Yürütme zamanı | `2026-08-14T18:16:02Z` |
-| Durum | `LOCAL_PASS — HOSTED_CI_PENDING` |
+| Durum | `LOCAL_PASS — HOSTED_CI_PASS` |
 | Audit aracı | `uv 0.12.3` |
 | Vulnerability ignore/allowlist | Yok |
 | Alternate index/insecure host | Yok |
@@ -78,5 +78,7 @@ Unknown, proprietary, noncommercial, research-only, GPL/AGPL, SSPL, BSL veya
 ## 4. Sonuç
 
 Local dependency, adverse-status, malware configuration, SBOM ve lisans kapısı
-`PASS` sonucundadır. Nihai görev kararı için aynı denetimlerin read-only hosted
-workflow'da başarılı olması zorunludur.
+`PASS` sonucundadır. Read-only hosted workflow run `31875871429` aynı project ve
+build graph'larını sırasıyla 13 ve 6 package ile taradı; `0` vulnerability ve
+`0` adverse status sonucu üretti. Hosted audit JSON hash'leri local audit
+hash'leriyle eşleşti; artifact upload yapılmadı.

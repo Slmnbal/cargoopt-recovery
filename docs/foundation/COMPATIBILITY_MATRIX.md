@@ -4,7 +4,7 @@
 |---|---|
 | Görev | `PH1-T01`, `PH1-T02`, `PH1-T03` |
 | Araştırma tarihi | 2026-08-13 |
-| Durum | PH1-T03 Linux clean-room, iki sync, quality, build, audit ve lisans doğrulandı; hosted CI bekliyor |
+| Durum | PH1-T03 Linux clean-room ve GitHub-hosted CI dahil bütün foundation kapıları geçti |
 | Primary reference | Linux x86_64, CPU-only, standard GIL-enabled CPython |
 
 ## 1. Ortak runtime matrisi

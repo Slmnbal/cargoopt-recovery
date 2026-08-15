@@ -5,7 +5,7 @@
 | İlk üreten görev | `PH1-T01` |
 | Revize eden görev | `PH1-T03` planlaması |
 | Yürütme sahibi | `PH1-T03` |
-| Durum | `EXECUTED — LOCAL_PASS — HOSTED_CI_PENDING` |
+| Durum | `EXECUTED — LOCAL_PASS — HOSTED_CI_PASS` |
 | Primary ortam | Fresh Linux x86_64, CPU-only |
 | Onaylı CI stack | GitHub-hosted `ubuntu-24.04` |
 

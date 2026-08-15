@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R4
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T15:34:32Z"
+closed_result: CONTRACT_SOURCE_MISMATCH
+closed_reason_code: CHECKED_CONTROL_OUTSIDE_EXACT_15
+extract_status: NOT_RUN
 planned_at: "2026-08-15T15:24:50Z"
 approved_at: "2026-08-15T15:24:50Z"
 approval_source: explicit_user_command
@@ -220,29 +224,36 @@ stop_conditions:
   - cleanup cannot prove the temporary path absent
   - dependency artifact secret source test config data migration or PH2-T03 work is required
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  extract_workflow_conclusion: PENDING
-  extract_foundation_run: PENDING
-  extract_foundation_job: PENDING
-  extract_foundation_conclusion: PENDING
-  workflow_artifact_count: PENDING
-  foundation_artifact_count: PENDING
-  offline_result_schema: PENDING
-  result: PENDING
-  request_count: PENDING
-  post_count: PENDING
-  fresh_form_contract_sha256: PENDING
-  exact_field_count: PENDING
-  exact_year: PENDING
-  exact_month: PENDING
-  temporary_zip_count: PENDING
-  header_records_read: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
-  artifact_count: PENDING
-  temporary_workflow_cleanup: PENDING
+  bootstrap_commit: d0088bb26bef7469512891901227e7315fb5c0ed
+  extract_workflow_run: 31893089533
+  extract_workflow_job: 95032182552
+  extract_workflow_conclusion: success
+  extract_foundation_run: 31893089563
+  extract_foundation_job: 95032182592
+  extract_foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  offline_result_schema: PASSED
+  result: CONTRACT_SOURCE_MISMATCH
+  reason_code: CHECKED_CONTROL_OUTSIDE_EXACT_15
+  request_count: 1
+  post_count: 0
+  redirect_count: 0
+  automatic_retry_count: 0
+  fresh_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  fresh_form_contract_exact: true
+  fresh_form_response_status: 200
+  fresh_form_response_bytes: 171840
+  fresh_form_response_sha256: d579684eeb9e4529b817dce11c4585c6e36c9fb208baa87c5b70aabb63341164
+  exact_field_count: 15
+  exact_year: 2024
+  exact_month: January
+  temporary_zip_count: 0
+  header_records_read: 0
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
+  temporary_workflow_cleanup: PENDING_REMOTE_VERIFICATION
   result_commit: PENDING
   result_foundation_run: PENDING
   result_foundation_job: PENDING

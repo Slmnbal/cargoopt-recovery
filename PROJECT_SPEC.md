@@ -3,11 +3,11 @@
 | Alan | Değer |
 |---|---|
 | Belge sürümü | `0.10.1` |
-| Durum | `PHASE_2_ACTIVE — PH2_T01_HOSTED_VALIDATION_PENDING` |
+| Durum | `PHASE_2_ACTIVE — PH2_T01_PLAN_READY_FOR_HUMAN_APPROVAL` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T01` — plan hazır; hosted Foundation doğrulaması bekleniyor |
+| Aktif görev | Yok — `PH2-T01` tamamlandı; plan sonucu için insan onayı bekleniyor |
 
 ## 1. Tek cümlelik tanım
 
@@ -308,13 +308,14 @@ gerektirir.
 
 - Tamamlanan fazlar: `PHASE_0 — COMPLETED/PASSED`, `PHASE_1 — COMPLETED/PASSED`
 - Aktif faz: `PHASE_2 — data_and_domain`
-- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`
-- Aktif görev: `PH2-T01`; source/toolchain/implementation planı hazır, hosted doğrulama bekliyor
+- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`, `PH2-T01`
+- Aktif görev: yok; PH2-T01 source/toolchain/implementation plan sonucu insan onayı bekliyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
 - Local sonuç: 13 package project graph + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
+- PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
 - Sıradaki kapı: PH2-T01 toolchain/uygulama planının kabulü ve yalnız PH2-T02 task planını hazırlama onayı
 - Runtime dependency sayısı: `0`

@@ -1,14 +1,21 @@
 schema_version: 1
 task_id: PH2-T03
 phase: PHASE_2
-status: PLANNED
+status: IN_PROGRESS
 planned_at: "2026-08-15T16:49:35Z"
 planning_approval_source: explicit_user_command
 planning_approval_text: "devam edelim"
-execution_requires_separate_human_approval: true
-execution_approval_status: PENDING
-exact_next_approval_text: >-
-  PH2-T03 exact dependency lock planını onaylıyorum; başlat.
+execution_requires_separate_human_approval: false
+execution_approval_status: APPROVED
+execution_approved_at: "2026-08-15"
+execution_approval_source: explicit_user_command
+execution_approval_text: "bu iki aşamayı tekte yap"
+conditional_downstream_authorization:
+  task_id: PH2-T04
+  plan_and_execute_without_intermediate_approval: true
+  condition: PH2_T03_MUST_CLOSE_PASSED_FIRST
+  authorization_text: "bu iki aşamayı tekte yap"
+exact_next_approval_text: ALREADY_SATISFIED_BY_COMBINED_USER_AUTHORIZATION
 task_type: EXACT_DEPENDENCY_LOCK_AND_SUPPLY_CHAIN_VERIFICATION_ONLY
 goal: >-
   PH2-T01'de kabul edilen exact beş Phase 2 paketini mevcut foundation
@@ -29,12 +36,18 @@ preconditions:
   ph2_t02_result_status: SOURCE_COMPATIBLE
   ph2_t02_mapping_status: PASSED_EXACT_15_TO_15_ORDERED_UNIQUE
   phase_3_to_phase_8_status: LOCKED
-  execution_approval: NOT_YET_SATISFIED
+  execution_approval: SATISFIED
   baseline_main_commit: 447b1bf5c2b432b90f72db7d573ae8cab53f5ed5
   baseline_foundation_run: 31895844869
   baseline_foundation_job: 95038931249
   baseline_foundation_conclusion: success
   baseline_foundation_artifacts: 0
+  execution_baseline_main_commit: 68142ff3469914cae7dc7e02ec13fe63e37eff74
+  execution_baseline_tree: fea459c0d400fb954b473a3197207cb89a8f8b70
+  execution_baseline_foundation_run: 31896720112
+  execution_baseline_foundation_job: 95041047613
+  execution_baseline_foundation_conclusion: success
+  execution_baseline_foundation_artifacts: 0
 
 normative_inputs:
   - docs/governance/PHASE_2_ENTRY_CONTRACT.md
@@ -121,6 +134,8 @@ files_allowed_is_exact_allowlist: true
 files_allowed_during_execution:
   - pyproject.toml
   - uv.lock
+  - .github/workflows/foundation.yml
+  - .github/workflows/ph2-t03-lock-resolve.yml
   - PROJECT_SPEC.md
   - docs/phase-status.yaml
   - docs/tasks/PH2-T03.yaml
@@ -131,7 +146,8 @@ files_forbidden_during_execution:
   - README.md
   - .python-version
   - .gitignore
-  - .github/**
+  - .github/workflows/*.yml except foundation.yml and ph2-t03-lock-resolve.yml
+  - .github/** except the two exact workflow paths above
   - src/**
   - tests/**
   - scripts/**
@@ -177,13 +193,18 @@ in_scope:
   - mevcut Ruff format lint mypy strict pytest wheel ve sdist build kapıları
   - candidate lock byte/hash ve normalized inventory kanıtı
   - bütün kapılar geçerse exact pyproject ve lock dosyalarının atomik promotion'ı
-  - mevcut Foundation workflow'unu değiştirmeden result commit hosted doğrulaması
+  - geçici credential-free hosted candidate resolver ile exact toolchain doğrulaması
+  - gözlenen exact graph sonrası Foundation workflow'unda yalnız inventory audit ve SBOM
+    count assertion'larının güncellenmesi
+  - result commit hosted Foundation doğrulaması
   - yalnız sanitize edilmiş dependency verification raporu
 
 out_of_scope:
   - herhangi bir BTS data request download ZIP CSV veya data row erişimi
   - acquisition client manifest schema quality timezone processing feature veya domain implementation'ı
-  - source test fixture config workflow migration data ya da artifact oluşturmak
+  - source test fixture config migration data ya da artifact oluşturmak
+  - Foundation workflow'unda count assertion'ları dışında kalıcı mutation yapmak
+  - geçici resolver workflow'unu PH2-T03 result commit'inde bırakmak
   - dependency version değiştirmek aralık kullanmak extra etkinleştirmek veya altıncı paket kabul etmek
   - vulnerability ya da license bulgusunu ignore suppress allowlist veya override etmek
   - foundation dependency'lerini yükseltmek veya alternate index kullanmak
@@ -193,6 +214,7 @@ out_of_scope:
 
 execution_sequence:
   - exact execution approval ve baseline main/Foundation preflight'i kaydet
+  - exact SHA pinli ve contents-read-only geçici hosted candidate resolver oluştur
   - repository mutation yapmadan OS temporary candidate copy oluştur
   - candidate pyproject'e exact five-package delta ve hypothesis cutoff uygula
   - uv 0.12.3 ile upgrade/refresh olmadan candidate lock çöz
@@ -202,6 +224,8 @@ execution_sequence:
   - import/version audit adverse-status license quality test ve build kapılarını çalıştır
   - bütün geçici environment cache SBOM build ve report byte'larını temizle
   - yalnız bütün kapılar geçerse candidate pyproject ve uv.lock dosyalarını repository'ye al
+  - gözlenen exact graph'a göre yalnız Foundation inventory audit ve SBOM sayılarını güncelle
+  - geçici candidate resolver workflow'unu repository'den kaldır
   - task phase project ve sanitize verification report'u güncelle
   - local final gate'leri yeniden çalıştır ve result commit'i main'e yayımla
   - hosted Foundation success ve artifact zero sonucunu doğrula
@@ -218,7 +242,10 @@ acceptance_criteria:
   - direct import/version sonuçları exact seçilen sürümlerle eşleşmeli
   - vulnerability adverse status malware veya kabul edilmeyen license sıfır olmalı
   - format lint strict type pytest build ve lock check geçmeli
-  - source tests workflow configs data ve accepted contracts byte-identical kalmalı
+  - source tests configs data ve accepted contracts byte-identical kalmalı
+  - Foundation workflow değişikliği yalnız gözlenen inventory audit ve SBOM sayılarına
+    ait exact integer assertion'larıyla sınırlı olmalı
+  - ph2-t03-lock-resolve.yml result commit'te bulunmamalı
   - transient environment cache wheel sdist SBOM veya audit byte'ı repository'de kalmamalı
   - PH2-T04 veya Phase 3+ dosyası oluşmamalı
   - current result commit Foundation workflow'unda success ve artifact zero olmalı
@@ -261,7 +288,15 @@ data_download_allowed: false
 persistent_data_allowed: false
 implementation_allowed: false
 migrations_allowed: false
-workflow_mutation_allowed: false
+workflow_mutation_allowed: BOUNDED_EXACT_TWO_PATHS_ONLY
+workflow_mutation_contract:
+  temporary_path: .github/workflows/ph2-t03-lock-resolve.yml
+  temporary_permissions: contents_read_only
+  temporary_artifacts_allowed: false
+  temporary_secrets_allowed: false
+  temporary_cleanup_required_before_result_commit: true
+  persistent_path: .github/workflows/foundation.yml
+  persistent_change_allowed: OBSERVED_INVENTORY_AUDIT_SBOM_INTEGER_ASSERTIONS_ONLY
 automatic_dependency_fallback_allowed: false
 automatic_version_change_allowed: false
 
@@ -292,7 +327,8 @@ stop_conditions:
   - import version quality test build veya audit kapılarından biri başarısızsa
   - bulguyu geçirmek için ignore suppression version değişikliği ya da alternate index gerekirse
   - onaylı exact file allowlist dışında mutation gerekirse
-  - data source test config workflow migration implementation PH2-T04 veya Phase 3+ işi gerekirse
+  - exact iki workflow path'i dışında workflow mutation gerekirse
+  - data source test config migration implementation PH2-T04 veya Phase 3+ işi gerekirse
 
 validation_results:
   planning_scope: PASSED
@@ -300,7 +336,7 @@ validation_results:
   baseline_main_foundation: PASSED
   exact_dependency_delta: PLANNED_NOT_EXECUTED
   package_specific_cutoff_conflict: RESOLVED_IN_PLAN_NOT_APPLIED
-  dependency_resolution: NOT_RUN_REQUIRES_EXECUTION_APPROVAL
-  repository_mutation: PLANNING_FILES_ONLY
+  dependency_resolution: AUTHORIZED_NOT_YET_RUN
+  repository_mutation: EXECUTION_PREFLIGHT_ONLY
   data_rows_read: 0
   data_downloads: 0

@@ -16,8 +16,6 @@ jobs:
     timeout-minutes: 15
     env:
       PYTEST_DISABLE_PLUGIN_AUTOLOAD: "1"
-      UV_CACHE_DIR: ${{ runner.temp }}/uv-cache
-      UV_PYTHON_INSTALL_DIR: ${{ runner.temp }}/uv-python
     steps:
       - name: Checkout without persisted credentials
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,6 +28,10 @@ jobs:
           version: "0.12.3"
           python-version: "3.14.7"
           enable-cache: false
+
+      - name: Configure isolated uv cache
+        shell: bash
+        run: printf 'UV_CACHE_DIR=%s/uv-cache\n' "$RUNNER_TEMP" >> "$GITHUB_ENV"
 
       - name: Verify runner and exact toolchain
         shell: bash

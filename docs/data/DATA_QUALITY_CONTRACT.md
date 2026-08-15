@@ -35,17 +35,31 @@ Aynı URL daha sonra farklı byte üretirse mevcut snapshot overwrite edilmez; y
 
 ## 3. Şema kontrolleri
 
-Beklenen kaynak kolon seti, BTS veri sözleşmesindeki 15 alanın tam eşitidir.
+Şema iki ayrı kapıda doğrulanır. Birinci kapı, raw CSV header'ının BTS veri
+sözleşmesindeki 15 fiziksel kaynak koduna sıra dahil tam eşitliğidir:
 
 ```text
-actual_columns == expected_selected_columns
+actual_raw_header_order == expected_physical_header_order
 ```
 
-- Eksik kolon: `SNAPSHOT_FATAL`
-- Fazladan/unclassified kolon: `SNAPSHOT_FATAL`
-- Aynı kolonun iki kez bulunması: `SNAPSHOT_FATAL`
+İkinci kapı, yalnızca sözleşmede yazılı bire bir eşleme uygulandıktan sonra
+canonical 15 iş alanının kabul edilen sıra ve kümeye tam eşitliğidir:
+
+```text
+mapped_and_reordered_columns == expected_canonical_columns_order
+```
+
+- Raw header'da eksik, fazla, duplicate, boş veya yeri değişmiş kolon: `SNAPSHOT_FATAL`
+- Kapalı mapping dışında kalan fiziksel veya canonical kolon: `SNAPSHOT_FATAL`
+- Mapping cardinality'sinin `15 -> 15` olmaması: `SNAPSHOT_FATAL`
+- Canonical alanda eksik, fazla veya duplicate kolon: `SNAPSHOT_FATAL`
 - Beklenmeyen tip: güvenli ve kayıpsız parse mümkün değilse `SNAPSHOT_FATAL`
-- Kolon adı otomatik fuzzy match veya sessiz rename: yasak
+- Otomatik fuzzy match, case-insensitive tahmin, alias fallback veya sessiz rename/projection: yasak
+
+Fiziksel kodların iş alanlarına farklı sırada gelmesi beklenen kaynak
+davranışıdır; yalnız exact raw sıra doğrulandıktan sonra contract mapping'iyle
+canonical sıraya deterministik reorder yapılabilir. Başka hiçbir reorder kabul
+edilmez.
 
 ## 4. Satır seviyesi structural kontroller
 

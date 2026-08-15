@@ -1,4 +1,4 @@
-# Phase 2 Kaynak Uyumluluk Probe Raporu
+# Phase 2 Kaynak Uyumluluk ve Uzlaştırma Raporu
 
 | Alan | Değer |
 |---|---|
@@ -6,13 +6,45 @@
 | Görev | `PH2-T02` |
 | Dönem | `2024-01` |
 | Başlangıç | `2026-08-15T13:44:10Z` |
-| Bitiş | `2026-08-15T13:48:02Z` |
-| Kapalı sonuç | `PROBE_SECURITY_ABORTED` |
-| Reason code | `EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT` |
+| İlk probe bitişi | `2026-08-15T13:48:02Z` |
+| Toplam kapı bitişi | `2026-08-15T16:27:27Z` |
+| Kapalı sonuç | `SOURCE_COMPATIBLE` |
+| Reason code | `EXACT_PHYSICAL_TO_CANONICAL_MAPPING_CONFIRMED` |
 | Kalıcı kaynak byte'ı | `0` |
 | Okunan veri satırı | `0` |
 
 ## 1. Karar özeti
+
+`PH2-T02` görev zinciri `PH2-T02-R11` ile tamamlanmıştır. R2'de formdaki 15
+iş alanının fiziksel kaynak kodları exact olarak kanıtlanmış, R10'da Ocak 2024
+selected-field ZIP içindeki tek CSV'nin 15 kolonlu fiziksel header'ı header-only
+olarak gözlenmiştir. İki kanıt offline ve mekanik biçimde birleştirildiğinde 15
+benzersiz fiziksel kolonun 15 canonical iş alanına bire bir eşlendiği,
+eksik/fazla/duplicate kolon bulunmadığı doğrulanmıştır.
+
+Haklar kapısı R3'te resmî public government-works metadata zinciriyle ayrıca
+geçilmiştir: attribution zorunlu local analysis doğrulanmış, raw redistribution
+kapalı tutulmuştur.
+
+Bu nedenle toplam kaynak uyumluluk kapısı `SOURCE_COMPATIBLE` olarak kapanır.
+İlk probe'un aşağıdaki `PROBE_SECURITY_ABORTED` sonucu tarihsel olarak
+korunur; sonraki bounded görevlerin kanıtıyla geçersiz kılınmış değil,
+tamamlanmış görev zincirinin ilk adımı olarak çözülmüştür. Raw veri kalıcı
+saklanmamış ve hiçbir data row okunmamıştır.
+
+### 1.1 Kapalı fiziksel header
+
+```text
+FL_DATE,OP_UNIQUE_CARRIER,OP_CARRIER_AIRLINE_ID,OP_CARRIER_FL_NUM,
+ORIGIN_AIRPORT_ID,ORIGIN,DEST_AIRPORT_ID,DEST,CRS_DEP_TIME,CRS_ARR_TIME,
+ARR_DELAY_NEW,CANCELLED,DIVERTED,CRS_ELAPSED_TIME,DISTANCE
+```
+
+Exact mapping ve downstream fail-closed kuralları
+`BTS_DATA_CONTRACT.md`, `DATA_QUALITY_CONTRACT.md` ve
+`ADR-010-bts-physical-header-mapping.md` içinde normatifleştirilmiştir.
+
+## 2. İlk probe'un tarihsel sonucu
 
 Resmî BTS dataset kimliği, alan sözlüğü ve Ocak 2024 PREZIP kaydı
 doğrulanabildi. Ancak onaylı standard-library probe istemcisi çalışma
@@ -31,7 +63,7 @@ Bu kanıtlarla `SOURCE_COMPATIBLE` veya kalıcı bir source mismatch iddiası
 kurulamaz. Transport güvenlik sözleşmesi ispatlanamadığı için görev
 `PROBE_SECURITY_ABORTED` ile fail-closed durmuştur.
 
-## 2. Onay ve yürütme sınırı
+## 3. İlk probe onay ve yürütme sınırı
 
 | Kontrol | Sonuç |
 |---|---|
@@ -50,7 +82,7 @@ kurulamaz. Transport güvenlik sözleşmesi ispatlanamadığı için görev
 | Kalıcı HTML/ZIP/CSV/cookie/token | `0` |
 | Okunan veya parse edilen data row | `0` |
 
-## 3. Resmî kaynak kanıtları
+## 4. İlk probe resmî kaynak kanıtları
 
 Bütün kaynaklar `2026-08-15` tarihinde yalnız task allowlist'indeki resmî
 hostlardan incelendi.
@@ -65,7 +97,7 @@ hostlardan incelendi.
 | `BTS-06` | https://transtats.bts.gov/PREZIP/On_Time_Reporting_Carrier_On_Time_Performance_1987_present_2024_1.zip | Tanılama istemcisi `application/x-zip-compressed` gördü fakat binary içeriği desteklemedi | Byte/hash/member/header kanıtı yok; artifact budget harcanmadı |
 | `DOT-01` | https://ntl.bts.gov/ntl/public-access/managing-rights | DOT-funded research çıktıları için genel rights yaklaşımı ve CC-BY teşviki görüldü | Exact TranStats dataset lisansı olarak yorumlanmadı |
 
-## 4. Request ve hata kanıtı
+## 5. İlk probe request ve hata kanıtı
 
 | Mantıksal operasyon | Hedef | Sonuç | Kalıcı byte |
 |---:|---|---|---:|
@@ -85,7 +117,7 @@ safety kontrolü network'e çıkmadan durduğu için request bütçesine katılm
 Hiçbir 3xx redirect zinciri diagnostic katmandan açıklanmadı; bu eksik kanıt
 success yerine security abort gerekçesidir.
 
-## 5. Exact-15 header kapısı
+## 6. İlk probe exact-15 header kapısı
 
 Beklenen header sırası:
 
@@ -121,7 +153,7 @@ ArrDelayMinutes
 Field dictionary'de alanların bulunması, selected output header'ının exact ve
 aynı sırada olduğunun kanıtı değildir.
 
-## 6. Rights kararı
+## 7. İlk probe rights kararı
 
 DOT Managing Rights sayfası genel public-access ve araştırma fonlama
 koşullarını açıklar; exact TranStats flight archive için dataset-specific
@@ -133,7 +165,7 @@ license grant sunmaz. Bu yüzden:
 - primary result transport security abort olduğu için ayrı bir ikinci closed
   result üretilmez, ancak rights kapısı da başarıyla geçmemiştir.
 
-## 7. Cleanup ve kalıcılık kanıtı
+## 8. İlk probe cleanup ve kalıcılık kanıtı
 
 - Strict network denemesi HTML, cookie veya artifact üretmedi.
 - Diagnostic erişimler repository'ye page/archive byte'ı yazmadı.
@@ -144,7 +176,7 @@ license grant sunmaz. Bu yüzden:
 - Cookie, anti-CSRF, token, ZIP, CSV, header buffer veya source row kalmadı.
 - `data/`, `artifacts/`, `configs/` veya cache dizini oluşturulmadı.
 
-## 8. Downstream kapısı
+## 9. Tarihsel downstream kapısı
 
 `PH2-T03` planlanamaz. Retry, source-contract değişikliği veya başka bir
 governance kararı kendiliğinden başlatılamaz. Güvenli retry için en az:
@@ -159,7 +191,7 @@ governance kararı kendiliğinden başlatılamaz. Güvenli retry için en az:
 gerekir. Bu koşullar oluşmadan full-width PREZIP projection, mirror, manuel
 browser, dependency kurulumu veya 12 aylık acquisition yapılmaz.
 
-## 9. Repository ve hosted doğrulama
+## 10. İlk probe repository ve hosted doğrulama
 
 | Kontrol | Sonuç |
 |---|---|
@@ -173,3 +205,20 @@ browser, dependency kurulumu veya 12 aylık acquisition yapılmaz.
 
 Bu hosted success yalnız repository bütünlüğünü doğrular; source compatibility
 probe'unun `PROBE_SECURITY_ABORTED` sonucunu `SOURCE_COMPATIBLE` yapmaz.
+
+## 11. Nihai çözüm ve downstream kapısı
+
+- Nihai görev: `PH2-T02-R11 — COMPLETED/SOURCE_COMPATIBLE`
+- Karar dayanağı: `PH2-T02-R2` exact field-control mapping + `PH2-T02-R10`
+  exact physical CSV header
+- Mapping: `15 -> 15`, benzersiz ve kapalı
+- Raw header sırası: exact equality zorunlu
+- Canonical çıktı sırası: exact mapping sonrası sözleşme sırasına reorder
+- Fuzzy rename, alias fallback, sessiz projection: yasak
+- Network request: `0`
+- Yeni data row: `0`
+- Kalıcı probe byte'ı: `0`
+- Sonraki izinli hareket: yalnız `PH2-T03` planlama
+
+`PH2-T03` bu raporla oluşturulmamış veya başlatılmamıştır. Veri ingestion
+uygulaması ve 12 aylık veri acquisition ayrı görev planı olmadan yapılamaz.

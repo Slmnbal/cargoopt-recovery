@@ -1,7 +1,7 @@
 schema_version: 1
 task_id: PH2-T02
 phase: PHASE_2
-status: BLOCKED
+status: COMPLETED
 planned_at: "2026-08-15"
 planning_approval_source: explicit_user_command
 planning_approval_text: >-
@@ -13,9 +13,9 @@ execution_approved_at: "2026-08-15T13:44:10Z"
 execution_approval_text: >-
   PH2-T02 source compatibility probe planını onaylıyorum; başlat.
 started_at: "2026-08-15T13:44:10Z"
-completed_at: "2026-08-15T13:48:02Z"
-result_status: PROBE_SECURITY_ABORTED
-result_reason_code: EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT
+completed_at: "2026-08-15T16:27:27Z"
+result_status: SOURCE_COMPATIBLE
+result_reason_code: EXACT_PHYSICAL_TO_CANONICAL_MAPPING_CONFIRMED
 result_report: docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
 result_approval_required: true
 result_approval_status: APPROVED_FOR_SAFE_RETRY_PLANNING
@@ -24,7 +24,7 @@ result_approved_at: "2026-08-15T14:00:41Z"
 result_approval_text: >-
   PH2-T02 PROBE_SECURITY_ABORTED sonucunu kabul ediyorum; güvenli retry
   görevini planla.
-next_task_planning_status: PH2_T02_R1_PLANNED_AWAITING_EXECUTION_APPROVAL
+next_task_planning_status: PH2_T03_READY_FOR_PLANNING_ONLY
 retry_task: PH2-T02-R1
 exact_next_approval_text: >-
   PH2-T02-R1 güvenli hosted retry planını onaylıyorum; başlat.
@@ -344,3 +344,29 @@ hosted_validation_evidence:
   primary_steps: 17
   primary_steps_passed: 17
   artifacts: 0
+historical_initial_probe_result:
+  completed_at: "2026-08-15T13:48:02Z"
+  result_status: PROBE_SECURITY_ABORTED
+  result_reason_code: EXECUTION_ENVIRONMENT_CANNOT_ENFORCE_PROBE_TRANSPORT_CONTRACT
+final_reconciliation:
+  task: PH2-T02-R11
+  status: COMPLETED
+  result_status: SOURCE_COMPATIBLE
+  evidence:
+    rights_task: PH2-T02-R3
+    local_analysis_with_attribution: true
+    raw_redistribution_enabled: false
+    form_control_mapping_task: PH2-T02-R2
+    physical_header_observation_task: PH2-T02-R10
+    mapping_count: 15
+    physical_header_count: 15
+    missing_columns: 0
+    extra_columns: 0
+    duplicate_columns: 0
+    data_rows_read: 0
+    persistent_probe_bytes: 0
+  decision: >-
+    Raw BTS physical header ve canonical business schema exact one-to-one
+    mapping ile ayrılmış, sırası dondurulmuş ve drift halinde fail-closed
+    duracak biçimde sözleşmeye bağlanmıştır.
+  next_step: PH2-T03_PLANNING_ONLY

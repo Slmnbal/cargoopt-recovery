@@ -87,6 +87,57 @@ Yalnızca aşağıdaki 15 BTS alanı indirme seçimine alınır:
 
 Bu liste dışında gelen her BTS alanı için varsayılan politika `REJECT_UNCLASSIFIED_FIELD` olur. Schema drift pipeline'ı fail-closed durdurur; yeni alan otomatik kabul edilmez.
 
+### 5.1 Fiziksel CSV header ve exact canonical mapping
+
+BTS selected-field formundaki iş alanı adları ile indirilen CSV'nin fiziksel
+kolon kodları aynı identifier değildir. Kaynak archive kabul edilmeden önce raw
+CSV header aşağıdaki sıraya **tam eşit** olmalıdır:
+
+```text
+FL_DATE
+OP_UNIQUE_CARRIER
+OP_CARRIER_AIRLINE_ID
+OP_CARRIER_FL_NUM
+ORIGIN_AIRPORT_ID
+ORIGIN
+DEST_AIRPORT_ID
+DEST
+CRS_DEP_TIME
+CRS_ARR_TIME
+ARR_DELAY_NEW
+CANCELLED
+DIVERTED
+CRS_ELAPSED_TIME
+DISTANCE
+```
+
+İzin verilen tek fiziksel-to-canonical dönüşüm aşağıdaki kapalı eşlemedir:
+
+| Sıra | Fiziksel kaynak kolonu | Canonical iş alanı |
+|---:|---|---|
+| 1 | `FL_DATE` | `FlightDate` |
+| 2 | `OP_UNIQUE_CARRIER` | `Reporting_Airline` |
+| 3 | `OP_CARRIER_AIRLINE_ID` | `DOT_ID_Reporting_Airline` |
+| 4 | `OP_CARRIER_FL_NUM` | `Flight_Number_Reporting_Airline` |
+| 5 | `ORIGIN_AIRPORT_ID` | `OriginAirportID` |
+| 6 | `ORIGIN` | `Origin` |
+| 7 | `DEST_AIRPORT_ID` | `DestAirportID` |
+| 8 | `DEST` | `Dest` |
+| 9 | `CRS_DEP_TIME` | `CRSDepTime` |
+| 10 | `CRS_ARR_TIME` | `CRSArrTime` |
+| 11 | `ARR_DELAY_NEW` | `ArrDelayMinutes` |
+| 12 | `CANCELLED` | `Cancelled` |
+| 13 | `DIVERTED` | `Diverted` |
+| 14 | `CRS_ELAPSED_TIME` | `CRSElapsedTime` |
+| 15 | `DISTANCE` | `Distance` |
+
+Bu eşleme `PH2-T02-R2` form-control kanıtı ile `PH2-T02-R10` raw header
+kanıtının exact birleşimidir. Fuzzy match, case-fold tabanlı tahmin, alias
+keşfi, eksik/fazla kolon toleransı veya sessiz projection yasaktır. Pipeline
+önce raw header sırasını doğrular, sonra bu tabloyla rename eder ve canonical
+15 alanı Bölüm 5'teki sözleşme sırasına yeniden dizer. Herhangi bir drift
+`SNAPSHOT_FATAL` olur.
+
 ## 6. Uçuş kimliği ve duplicate politikası
 
 Canonical doğal anahtar:

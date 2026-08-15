@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R8
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T16:10:43Z"
+closed_result: UPSTREAM_UNAVAILABLE
+closed_reason_code: TRANSPORT_TIMEOUT
+root_cause: SECOND_HTTPS_CONNECTION_TIMED_OUT_BEFORE_POST_RESPONSE_HEADERS
 planned_at: "2026-08-15T16:07:49Z"
 approved_at: "2026-08-15T16:07:49Z"
 approval_source: explicit_user_command
@@ -70,20 +74,28 @@ stop_conditions:
   - payload semantics or task allowlist must expand
   - more than one POST or any data row read is required
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  extract_workflow_conclusion: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  foundation_conclusion: PENDING
-  result: PENDING
-  reason_code: PENDING
-  post_count: PENDING
-  temporary_zip_count: PENDING
-  header_records_read: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
+  bootstrap_commit: 3813c21546c77e0066dbee9f0182260167951d64
+  extract_workflow_run: 31894769144
+  extract_workflow_job: 95036279609
+  extract_workflow_conclusion: success
+  foundation_run: 31894769137
+  foundation_job: 95036279439
+  foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: UPSTREAM_UNAVAILABLE
+  reason_code: TRANSPORT_TIMEOUT
+  request_count: 2
+  post_count: 1
+  fresh_form_contract_exact: true
+  default_excluded_control_count: 4
+  selected_field_count: 15
+  submission_contract_sha256: 2a0b2c2b5e4b1e538faa1bdd3a7629ed5147c158216ff3aa57f17f81ead42f2a
+  temporary_zip_count: 0
+  header_records_read: 0
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
   temporary_workflow_cleanup: PENDING
   result_commit: PENDING
   result_foundation_run: PENDING

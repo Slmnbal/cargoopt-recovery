@@ -1,0 +1,89 @@
+schema_version: 1
+task_id: PH2-T02-R9
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T16:11:57Z"
+approved_at: "2026-08-15T16:11:57Z"
+approval_source: explicit_user_command
+approval_text: "artık bunu bitirelim"
+task_type: SAME_CONNECTION_BOUNDED_EXTRACT
+goal: >-
+  R8'de doğrulanan fresh GET HTTPS connection'ını, body tamamen okunduktan
+  sonra aynı hosttaki exact POST için bir kez yeniden kullanmak; yeni POST
+  connection timeout'unu ortadan kaldırırken bütün form payload ZIP header row
+  ve cleanup sözleşmelerini değiştirmeden source kapısını kesin sonuçlandırmak.
+preconditions:
+  ph2_t02_r8_result: UPSTREAM_UNAVAILABLE
+  ph2_t02_r8_reason_code: TRANSPORT_TIMEOUT
+  ph2_t02_r8_form_and_payload_contracts: PASSED
+  ph2_t02_r8_post_count: 1
+  ph2_t02_r8_zip_and_row: ZERO
+in_scope:
+  - keep alive only the fully consumed final fresh GET connection
+  - reuse it for exactly one same-host POST without fallback or retry
+  - close connection on every success failure and cleanup path
+  - unchanged R8 headers payload transport classification ZIP header and zero-row gates
+out_of_scope:
+  - second connection fallback second POST retry dependency browser curl or PH2-T03
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R9.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R9.md
+  - .github/workflows/ph2-t02-r9-extract.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r9-extract.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+acceptance_criteria:
+  - final GET response is fully consumed before connection reuse
+  - reused connection host equals allowlisted action host
+  - no fallback connection or POST retry exists
+  - exact fingerprint exact-four exact-15 and submission hash pass before POST
+  - SOURCE_COMPATIBLE requires exact ordered header zero rows and cleanup true
+  - all connections and temporary paths are absent after cleanup
+  - hosted runs have zero artifacts and temporary workflows are removed
+tests_required:
+  - YAML AST stdlib synthetic self-tests
+  - connection ownership reuse no-fallback and cleanup invariants
+  - sanitize result remote 404 and final Foundation
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: true
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - same final GET connection cannot be reused safely
+  - any fallback connection or retry is required
+  - payload data row or task scope must expand
+validation_results:
+  bootstrap_commit: PENDING
+  extract_workflow_run: PENDING
+  extract_workflow_job: PENDING
+  foundation_run: PENDING
+  foundation_job: PENDING
+  result: PENDING
+  reason_code: PENDING
+  post_count: PENDING
+  temporary_zip_count: PENDING
+  header_records_read: PENDING
+  data_rows_read: PENDING
+  cleanup_path_absent: PENDING
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

@@ -1,15 +1,15 @@
-name: PH2-T02-R8 Bounded Extract
+name: PH2-T02-R9 Bounded Extract
 
 on:
   push:
     branches: [main]
     paths:
-      - .github/workflows/ph2-t02-r8-extract.yml
+      - .github/workflows/ph2-t02-r9-extract.yml
 
 permissions: {}
 
 concurrency:
-  group: ph2-t02-r8-bounded-extract
+  group: ph2-t02-r9-bounded-extract
   cancel-in-progress: false
 
 jobs:
@@ -44,7 +44,7 @@ jobs:
           from urllib.parse import urlencode, urljoin, urlsplit
 
 
-          PREFIX = "PH2_T02_R8_RESULT_JSON="
+          PREFIX = "PH2_T02_R9_RESULT_JSON="
           FORM_URL = (
               "https://www.transtats.bts.gov/"
               "DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ"
@@ -172,6 +172,9 @@ jobs:
                   self.cookies: dict[str, dict[str, str]] = {}
                   self.temp_count = 0
                   self.temp_path: str | None = None
+                  self.reusable_connection: http.client.HTTPSConnection | None = None
+                  self.reusable_host: str | None = None
+                  self.reused_connection_for_post = False
 
               def _pace(self) -> None:
                   now = time.monotonic()
@@ -225,7 +228,7 @@ jobs:
                   headers = {
                       "Accept": accept,
                       "Accept-Encoding": "identity",
-                      "User-Agent": "CargoOptRecovery-PH2-T02-R8/1.0",
+                      "User-Agent": "CargoOptRecovery-PH2-T02-R9/1.0",
                   }
                   cookie_jar = self.cookies.get(host, {})
                   if cookie_jar:
@@ -236,12 +239,11 @@ jobs:
                       headers.update(
                           {
                               "Accept-Language": "en-US,en;q=0.9",
-                              "Connection": "close",
                               "User-Agent": (
                                   "Mozilla/5.0 (X11; Linux x86_64) "
                                   "AppleWebKit/537.36 (KHTML, like Gecko) "
                                   "Chrome/140.0 Safari/537.36 "
-                                  "CargoOptRecovery-PH2-T02-R8/1.0"
+                                  "CargoOptRecovery-PH2-T02-R9/1.0"
                               ),
                               "Origin": "https://www.transtats.bts.gov",
                               "Referer": FORM_URL,
@@ -256,12 +258,25 @@ jobs:
                           security("POST_BODY_SIZE_POLICY_VIOLATION")
                       headers["Content-Type"] = "application/x-www-form-urlencoded"
                       headers["Content-Length"] = str(len(body))
-                  connection = http.client.HTTPSConnection(
-                      host,
-                      parsed.port or 443,
-                      timeout=CONNECT_TIMEOUT,
-                      context=self.context,
-                  )
+                  if method == "POST":
+                      if self.reusable_connection is None or self.reusable_host != host:
+                          upstream("REUSABLE_GET_CONNECTION_NOT_AVAILABLE")
+                      connection = self.reusable_connection
+                      self.reusable_connection = None
+                      self.reusable_host = None
+                      if connection.sock is None:
+                          connection.close()
+                          upstream("REUSABLE_GET_CONNECTION_NOT_OPEN")
+                      self.reused_connection_for_post = True
+                  else:
+                      if self.reusable_connection is not None:
+                          security("UNCONSUMED_REUSABLE_CONNECTION_STATE")
+                      connection = http.client.HTTPSConnection(
+                          host,
+                          parsed.port or 443,
+                          timeout=CONNECT_TIMEOUT,
+                          context=self.context,
+                      )
                   try:
                       connection.request(method, target, body=body, headers=headers)
                       response = connection.getresponse()
@@ -305,6 +320,10 @@ jobs:
                               if len(body) > MAX_FORM_BYTES:
                                   security("FORM_RESPONSE_BYTE_LIMIT_EXCEEDED")
                           raw = bytes(body)
+                          if connection.sock is None:
+                              upstream("FINAL_GET_CONNECTION_NOT_REUSABLE")
+                          self.reusable_connection = connection
+                          self.reusable_host = check_url(current)[0]
                           return (
                               {
                                   "status": status,
@@ -319,7 +338,8 @@ jobs:
                               raw,
                           )
                       finally:
-                          connection.close()
+                          if self.reusable_connection is not connection:
+                              connection.close()
 
               def post_archive(self, action: str, body: bytes) -> dict[str, Any]:
                   current = action
@@ -372,7 +392,7 @@ jobs:
                               security("TEMPORARY_ZIP_COUNT_EXCEEDED")
                           temporary = tempfile.NamedTemporaryFile(
                               mode="wb",
-                              prefix="cargoopt-r8-",
+                              prefix="cargoopt-r9-",
                               suffix=".zip",
                               dir=tempfile.gettempdir(),
                               delete=False,
@@ -407,6 +427,10 @@ jobs:
                           connection.close()
 
               def cleanup(self) -> bool:
+                  if self.reusable_connection is not None:
+                      self.reusable_connection.close()
+                      self.reusable_connection = None
+                      self.reusable_host = None
                   if self.temp_path is None:
                       return True
                   try:
@@ -1085,7 +1109,9 @@ jobs:
                   "connect_timeout_seconds": CONNECT_TIMEOUT,
                   "read_timeout_seconds": READ_TIMEOUT,
                   "automatic_retry_count": 0,
-                  "transport_profile": "BROWSER_EQUIVALENT_SAME_ORIGIN_NAVIGATION",
+                  "transport_profile": "REUSED_FRESH_GET_HTTPS_CONNECTION",
+                  "reused_connection_for_post": client.reused_connection_for_post,
+                  "fallback_connection_count": 0,
                   "exception_messages_logged": False,
                   "elapsed_ms": round((time.monotonic() - started) * 1000),
               },

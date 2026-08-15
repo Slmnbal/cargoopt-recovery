@@ -1,0 +1,128 @@
+schema_version: 1
+task_id: PH1-T04
+phase: PHASE_1
+status: COMPLETED
+planned_at: "2026-08-15"
+approved_at: "2026-08-15"
+completed_at: "2026-08-15"
+planning_source: explicit_user_request
+approval_source: explicit_user_command
+approval_text: "PH1-T04 atomic transition planını onaylıyorum; uygula."
+goal: >-
+  Doğrulanmış Phase 1 foundation durumunu, başarılı hosted CI kanıtını ve açık
+  insan onayını tek bir atomic governance değişikliğinde bağlayarak Phase 1'i
+  COMPLETED/PASSED kapatmak; Phase 2'yi ACTIVE yapmak ve ayrıca yürütme yetkisi
+  vermeden planning/research-only PH2-T01 görevini aktive etmek.
+preconditions:
+  phase_1_status: ACTIVE
+  phase_1_gate: READY_FOR_HUMAN_APPROVAL
+  ph1_t01_status: COMPLETED
+  ph1_t02_status: COMPLETED
+  ph1_t03_status: COMPLETED
+  final_main_commit: f4871063c5480c9b32ce004834f3ff2aa6373fcb
+  final_hosted_workflow: Foundation
+  final_hosted_run_id: 31876120914
+  final_hosted_job_id: 94991989667
+  final_hosted_conclusion: success
+  phase_1_checkpoint:
+    path_outside_repository: CargoOpt_Recovery_PH1_T03_Hosted_Success.zip
+    sha256: 193fb70ecb7abbaa57afbc903f4f4928e1f7549712614cf39ceec0ce0f87326f
+    integrity: VERIFIED
+  explicit_phase_transition_approval: SATISFIED
+  atomic_file_plan_approval: SATISFIED
+in_scope:
+  - Phase 1 task statusları exit gate hosted CI ve checkpoint preflight'i
+  - explicit atomic transition plan onayının exact kaydı
+  - PHASE_1 status COMPLETED ve gate PASSED
+  - PHASE_2 status ACTIVE ve gate PH2_T01_AWAITING_APPROVAL
+  - PHASE_3 ile PHASE_8 status LOCKED korunması
+  - active_phase PHASE_2 ve active_task PH2-T01
+  - Phase 1 to Phase 2 transition kaydı
+  - Phase 2 entry contract'i
+  - PH2-T01 planning/research-only görev sözleşmesinin ACTIVE oluşturulması
+out_of_scope:
+  - PH2-T01 official-source araştırmasını yürütmek
+  - Phase 2 dependency veya araç sürümü seçmek kurmak indirmek ya da lock etmek
+  - BTS verisi indirmek veya data artifact'ı üretmek
+  - source test migration database API UI Docker ML OR RAG ya da LLM işi
+  - mevcut data domain ML OR evaluation contract gövdelerini değiştirmek
+  - PHASE_3 ile PHASE_8 implementation veya placeholder
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - README.md
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH1-T04.yaml
+  - docs/tasks/PH2-T01.yaml
+  - docs/governance/PHASE_1_TO_2_TRANSITION.md
+  - docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  - docs/foundation/PHASE_1_EXIT_REPORT.md
+files_forbidden:
+  - AGENTS.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/**
+  - src/**
+  - tests/**
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-T01.yaml
+  - docs/tasks/PH1-T02.yaml
+  - docs/tasks/PH1-T03.yaml
+  - docs/governance/CONTRACT_REGISTRY.yaml
+  - docs/adr/**
+  - docs/data/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - PH1-T01 PH1-T02 ve PH1-T03 COMPLETED olmalı
+  - final main commit hosted Foundation workflow'unda success olmalı
+  - Phase 1 checkpoint exact SHA-256 ve archive integrity doğrulanmalı
+  - açık phase transition ve atomic plan onayları exact kaydedilmeli
+  - transition sonrasında tam bir ACTIVE faz bulunmalı ve PHASE_2 olmalı
+  - PHASE_1 COMPLETED/PASSED olmalı
+  - PHASE_2 ACTIVE/PH2_T01_AWAITING_APPROVAL olmalı
+  - PHASE_3 ile PHASE_8 LOCKED kalmalı
+  - active_task PH2-T01 olmalı
+  - PH1-T04 COMPLETED ve PH2-T01 ACTIVE olmalı
+  - PH2-T01 execution ayrı açık onay beklemeli
+  - dependency data veya implementation artifact'ı oluşmamalı
+tests_required:
+  - bütün YAML dosyaları safe parser ile parse edilebilmeli
+  - phase state exact truth table ile eşleşmeli
+  - active phase ve task referansları tutarlı olmalı
+  - PH0 ve önceki PH1 task dosyaları byte-identical kalmalı
+  - project metadata lock source tests workflow ve contract dosyaları değişmemeli
+  - yalnız exact files_allowed kümesi değişmeli
+  - dependency data implementation ve transient artifact oluşmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+data_download_allowed: false
+implementation_allowed: false
+stop_conditions:
+  - final main commit veya hosted CI success kanıtı eşleşmezse
+  - checkpoint hash veya archive integrity doğrulanamazsa
+  - aynı anda iki ACTIVE faz ya da dangling active_task oluşursa
+  - PH2-T01 araştırmasını veya implementation planını bu görevde yürütmek gerekirse
+  - onaylı exact files_allowed dışında değişiklik gerekirse
+validation_results:
+  phase_1_task_completion: PASSED
+  final_main_and_hosted_ci: PASSED
+  checkpoint_sha256_and_integrity: PASSED
+  explicit_transition_approval: PASSED
+  atomic_file_plan_approval: PASSED
+  atomic_phase_state_truth_table: PASSED
+  active_phase_and_task_reference_integrity: PASSED
+  phase_3_to_phase_8_lock_invariants: PASSED
+  ph2_t01_separate_execution_approval_boundary: PASSED
+  authorized_file_set: PASSED
+  forbidden_foundation_and_contract_files_unchanged: PASSED
+  dependency_data_and_implementation_absence: PASSED
+  document_structure: PASSED

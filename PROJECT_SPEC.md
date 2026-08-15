@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.9.4` |
-| Durum | `PHASE_1_ACTIVE — READY_FOR_HUMAN_APPROVAL` |
+| Belge sürümü | `0.10.0` |
+| Durum | `PHASE_2_ACTIVE — PH2_T01_AWAITING_APPROVAL` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | Yok — `PH1-T03` tamamlandı; insan faz geçiş kararı bekleniyor |
+| Aktif görev | `PH2-T01` — planning/research-only; ayrı yürütme onayı bekleniyor |
 
 ## 1. Tek cümlelik tanım
 
@@ -306,18 +306,18 @@ gerektirir.
 
 ## 14. Mevcut durum
 
-- Tamamlanan faz: `PHASE_0 — COMPLETED/PASSED`
-- Aktif faz: `PHASE_1 — repository_foundation`
-- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`
-- Aktif görev: Yok; Phase 1 insan geçiş kararı bekliyor
-- PH1-T03 durumu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
+- Tamamlanan fazlar: `PHASE_0 — COMPLETED/PASSED`, `PHASE_1 — COMPLETED/PASSED`
+- Aktif faz: `PHASE_2 — data_and_domain`
+- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`
+- Aktif görev: `PH2-T01`; planning/research-only yürütme için ayrı insan onayı bekliyor
+- Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
 - Local sonuç: 13 package project graph + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
 - Hosted kanıt: `Foundation` run `31875871429`, commit `d4cc97845b66d1ab97c8555d517f7075a966ca33`, conclusion `success`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: Ayrı insan onayıyla Phase 1 close ve Phase 2 open kararı
+- Sıradaki kapı: `PH2-T01` official-source research ve exact implementation planı için ayrı insan onayı
 - Runtime dependency sayısı: `0`
-- Ürün/domain davranışı: Yok; Phase 2+ erken hazırlığı yasak
-- Kilitli fazlar: `PHASE_2..PHASE_8`
-- Phase 1 kapanışı: PH1-T03 başarısı sonrasında bile ayrı insan geçiş onayı gerektirir
+- Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
+- Kilitli fazlar: `PHASE_3..PHASE_8`
+- Faz disiplini: PH2-T01 tamamlanmadan sonraki Phase 2 görevi hazırlanmaz veya başlatılmaz

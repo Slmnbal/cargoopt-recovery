@@ -1,13 +1,14 @@
-# Phase 1 Exit Hazırlık Raporu
+# Phase 1 Exit Raporu
 
 | Alan | Değer |
 |---|---|
 | Görev | `PH1-T03` |
 | Rapor zamanı | `2026-08-15T09:00:30Z` |
-| Phase 1 | `ACTIVE` |
-| Phase 1 gate | `READY_FOR_HUMAN_APPROVAL` |
-| Phase 2–8 | `LOCKED` |
-| Geçiş yetkisi | Yalnız ayrı insan onayı |
+| Phase 1 | `COMPLETED` |
+| Phase 1 gate | `PASSED` |
+| Phase 2 | `ACTIVE / PH2_T01_AWAITING_APPROVAL` |
+| Phase 3–8 | `LOCKED` |
+| Geçiş kaydı | `phase-1-to-2-transition-v1` / `PH1-T04` |
 
 ## 1. Kapı özeti
 
@@ -69,6 +70,11 @@ testi geçti; SHA-256 değeri
 
 ## 5. Exit kararı
 
-`PH1-T03` `COMPLETED` ve Phase 1 gate'i `READY_FOR_HUMAN_APPROVAL`dır. Phase 1
-bilinçli olarak `ACTIVE`, Phase 2–8 `LOCKED` bırakılmıştır. Phase 1 kapanışı veya
-Phase 2 açılışı otomatik yapılmayacaktır; ayrı açık insan geçiş onayı gerekir.
+`PH1-T03` bütün foundation kapılarını tamamladı. Proje sahibinin ayrı faz geçiş
+onayı ve ayrıca onaylanan PH1-T04 atomic planı sonrasında Phase 1
+`COMPLETED/PASSED` kapatılmış, Phase 2 `ACTIVE` açılmıştır. `PH2-T01` yalnız
+planning/research-only görev olarak aktive edilmiştir; yürütme onayı henüz
+verilmemiştir. Phase 3–8 kilitli kalır.
+
+Transition kanıtı `docs/governance/PHASE_1_TO_2_TRANSITION.md`, Phase 2 sınırları
+ise `docs/governance/PHASE_2_ENTRY_CONTRACT.md` içinde tutulur.

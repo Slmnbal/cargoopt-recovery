@@ -1,0 +1,122 @@
+schema_version: 1
+task_id: PH2-T01
+phase: PHASE_2
+status: ACTIVE
+activated_at: "2026-08-15"
+activation_source: explicit_phase_transition_approval
+execution_requires_separate_human_approval: true
+execution_approval_status: AWAITING_EXPLICIT_APPROVAL
+execution_approval_source: null
+execution_approved_at: null
+exact_next_approval_text: "PH2-T01 planlama görevini onaylıyorum; başlat."
+task_type: PLANNING_AND_OFFICIAL_SOURCE_RESEARCH_ONLY
+goal: >-
+  Kabul edilmiş Phase 2 veri/domain contract'larını implementation'a çevirmek
+  için yalnız official primary sources üzerinden kaynak erişimi, lisans ve
+  schema gerçeklerini; exact ücretsiz tool/dependency adaylarını; provenance,
+  leakage, determinism ve fail-closed test stratejisini araştırmak ve sonraki
+  bounded Phase 2 görevleri için exact file-by-file uygulama planı üretmek.
+preconditions:
+  phase_1_status: COMPLETED
+  phase_1_gate: PASSED
+  phase_2_status: ACTIVE
+  phase_2_gate: PH2_T01_AWAITING_APPROVAL
+  phase_3_to_phase_8_status: LOCKED
+  phase_2_entry_contract: docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  execution_approval: REQUIRED_NOT_YET_GRANTED
+normative_contracts:
+  - bts-reporting-otp-contract-v1
+  - cargoopt-data-quality-v2
+  - cargo-domain-v1
+  - synthetic-cargo-v1
+  - flight-feature-availability-v2
+in_scope:
+  - resmî BTS erişim endpoint'i dosya biçimi schema ve kullanım koşulu araştırması
+  - acquisition checksum provenance manifest retry timeout ve fail-closed davranış planı
+  - ücretsiz CPU-first Phase 2 tool ve dependency adaylarının official-source karşılaştırması
+  - exact version Python 3.14.7 uyumluluk lisans maintenance security ve transitive impact araştırması
+  - raw staged processed snapshot sınırları ve schedule outcome fiziksel ayrım planı
+  - quality gate schema type null uniqueness domain temporal ve leakage test matrisi
+  - deterministic cargo domain generator config seed version ve hash planı
+  - test fixture property invariant integration ve clean-room doğrulama planı
+  - sonraki bounded Phase 2 görevleri için exact sıra precondition ve file allowlist önerisi
+  - dependency data download migration ve network yetkilerinin görev bazında ayrı tanımı
+out_of_scope:
+  - dependency kurmak indirmek veya lock çözmek
+  - pyproject.toml uv.lock source test workflow migration ya da data artifact'ı değiştirmek
+  - BTS verisi indirmek örneklemek dönüştürmek veya cache'lemek
+  - contract semantiğini registry lifecycle'ını ya da accepted artifact gövdesini değiştirmek
+  - Phase 3 model feature computation training calibration veya Hugging Face kullanımı
+  - Phase 4 OR solver validator ya da cost implementation'ı
+  - Phase 5 replay evaluation Phase 6 API UI Phase 7 hardening Phase 8 RAG LLM işi
+  - ücretli API managed database cloud servis ya da secret gereksinimi
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T01.yaml
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/**
+  - src/**
+  - tests/**
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-*.yaml
+  - docs/governance/**
+  - docs/adr/**
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/SYNTHETIC_CARGO_CONTRACT.md
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - data/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+acceptance_criteria:
+  - yalnız official primary source veya canonical package metadata kullanılmalı
+  - her kaynak URL erişim tarihi desteklediği claim ve kullanım koşuluyla kaydedilmeli
+  - her tool/dependency adayı için exact version uyumluluk lisans maintenance security transitive impact ve removal cost bulunmalı
+  - ücretsiz local CPU-first yol managed servis gerektirmeden tanımlanmalı
+  - veri acquisition ile offline transform ve test sınırı açık olmalı
+  - raw byte provenance ve immutable manifest fail-closed tasarlanmalı
+  - schedule input ile outcome label alanları ayrı trust zone olarak planlanmalı
+  - leakage testleri T-24 T-18 T-12 T-6 cutoff'larını kapsamalı
+  - generator determinism seed config version sort tie-break ve byte hash ile tanımlanmalı
+  - sonraki her görev bounded sorumluluk exact allowlist precondition test ve stop condition taşımalı
+  - hiçbir dependency data implementation ya da placeholder artifact'ı oluşmamalı
+tests_required:
+  - bütün yeni YAML dosyaları safe parser ile parse edilebilmeli
+  - research source'ları official domain veya canonical package metadata olmalı
+  - candidate version alanları exact olmalı latest range pre-release yanked veya Git branch olmamalı
+  - seçilen adayların CPython 3.14.7 ve Linux x86_64 CPU-only uyumu kanıtlanmalı
+  - proposed dependency graph lisans ve vulnerability kontrol planı taşımalı
+  - implementation plan contract dependency sırasına uymalı
+  - hiçbir görev bir sonraki görev dosyasını onaysız oluşturmamalı
+  - onaylı exact files_allowed dışında dosya değişmemeli
+  - dependency lock data source test workflow ve migration mutation'ı olmamalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+dependencies_allowed: false
+migrations_allowed: false
+data_download_allowed: false
+implementation_allowed: false
+external_research_allowed: true
+research_source_policy: OFFICIAL_PRIMARY_ONLY
+stop_conditions:
+  - execution approval açıkça verilmemişse
+  - resmî kaynak kullanım koşulu schema veya erişim yöntemi doğrulanamazsa
+  - exact ve desteklenen ücretsiz toolchain adayı bulunamazsa
+  - araştırmayı doğrulamak için install lock data download veya implementation gerekirse
+  - contract değişikliği veya Phase 3+ hazırlığı gerekirse
+  - onaylı exact files_allowed dışında değişiklik gerekirse
+validation_results: null

@@ -1,13 +1,16 @@
 # CargoOpt Recovery
 
-CargoOpt Recovery şu anda yalnızca **Phase 1 repository foundation**
-aşamasındadır. Bu checkpoint; exact Python/toolchain sürümlerini, deterministic
-lock dosyasını, import edilebilir boş package shell'ini, local clean-room
-kanıtlarını ve read-only GitHub Actions foundation kapısını içerir.
+CargoOpt Recovery, **Phase 1 repository foundation** kapılarını tamamladı ve
+**Phase 2 data/domain** fazını açtı. Repository; exact Python/toolchain
+sürümlerini, deterministic lock dosyasını, import edilebilir boş package
+shell'ini, local clean-room kanıtlarını ve read-only GitHub Actions foundation
+kapısını içerir.
 
-Bu aşamada data, cargo domain, ML, Operations Research, solver, API, database,
-UI, Docker, RAG veya LLM davranışı uygulanmamıştır. Sonraki fazlara ait
-placeholder, interface ya da erken dependency de bulunmaz.
+`PH2-T01` yalnız official-source research ve exact uygulama planı görevi olarak
+aktiftir; yürütülmesi ayrı insan onayı bekler. Data indirilmemiş, dependency
+eklenmemiş ve cargo domain, ML, Operations Research, solver, API, database, UI,
+Docker, RAG veya LLM davranışı uygulanmamıştır. Sonraki fazlara ait placeholder,
+interface ya da erken dependency bulunmaz.
 
 ## Exact gereksinimler
 
@@ -54,9 +57,10 @@ uv lock --check --python 3.14.7 --managed-python
 
 `PH1-T03` local clean-room, ikinci frozen sync, build, dependency/security,
 CycloneDX, lisans ve gerçek hosted `Foundation` workflow kapılarını geçti.
-Phase 1 `READY_FOR_HUMAN_APPROVAL` durumundadır. Phase 1 kapanışı ve Phase 2
-açılışı yalnız ayrı insan onayıyla yapılır; hiçbir sonraki görev veya faz
-otomatik başlatılmaz.
+`PH1-T04` Phase 1'i `COMPLETED/PASSED` kapattı ve Phase 2'yi atomik olarak açtı.
+`PH2-T01` `ACTIVE` olsa da research/planning yürütmesi için ayrı açık onay
+zorunludur. `PHASE_3..PHASE_8` kilitlidir; hiçbir sonraki görev veya faz otomatik
+başlatılmaz.
 
 Kalıcı kanıtlar `docs/foundation/CLEAN_ROOM_VERIFICATION_REPORT.md`,
 `docs/foundation/DEPENDENCY_AUDIT_REPORT.md` ve

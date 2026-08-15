@@ -13,8 +13,14 @@ started_at: "2026-08-15"
 completed_at: "2026-08-15T10:07:06Z"
 result_status: PLAN_READY_FOR_HUMAN_APPROVAL
 result_approval_required: true
-exact_next_approval_text: >-
+result_approval_status: APPROVED
+result_approval_source: explicit_user_command
+result_approved_at: "2026-08-15"
+result_approval_text: >-
   PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini planla.
+next_task_planning_status: PH2_T02_PLANNED_AWAITING_EXECUTION_APPROVAL
+exact_next_approval_text: >-
+  PH2-T02 source compatibility probe planını onaylıyorum; başlat.
 task_type: PLANNING_AND_OFFICIAL_SOURCE_RESEARCH_ONLY
 goal: >-
   Kabul edilmiş Phase 2 veri/domain contract'larını implementation'a çevirmek
@@ -139,8 +145,8 @@ decisions:
   selected_development_dependencies:
     - hypothesis==6.165.9
     - sortedcontainers==2.4.0
-  dependency_status: PROPOSED_NOT_INSTALLED
-  next_task: PH2-T02_SOURCE_COMPATIBILITY_PROBE_PLANNING_ONLY_AFTER_APPROVAL
+  dependency_status: APPROVED_NOT_INSTALLED
+  next_task: PH2-T02_SOURCE_COMPATIBILITY_PROBE_AWAITING_EXECUTION_APPROVAL
 validation_results:
   official_primary_source_policy: PASSED
   exact_version_and_compatibility_evidence: PASSED

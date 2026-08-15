@@ -5,7 +5,8 @@
 | Belge kimliği | `phase-2-implementation-plan-v1` |
 | Görev | `PH2-T01` |
 | Plan tarihi | `2026-08-15` |
-| Durum | `PROPOSED — HUMAN APPROVAL REQUIRED` |
+| Durum | `APPROVED — PH2-T02 PLANNING AUTHORIZED` |
+| Onay | `2026-08-15` — explicit user command |
 | Kapsam | Yalnız Phase 2 data/domain ve leakage-safe feature foundation |
 | Implementation durumu | **Başlamadı** |
 
@@ -462,11 +463,18 @@ ve açık insan onayı gerekir.
 
 ## 11. PH2-T01 sonrası exact onay sınırı
 
-PH2-T01 tamamlandığında henüz PH2-T02 task dosyası oluşturulmaz. Bir sonraki
-geçerli komut:
+PH2-T01 tamamlandıktan sonra aşağıdaki komutla plan ve toolchain kabul edilmiş,
+yalnız PH2-T02 task dosyasının oluşturulmasına izin verilmiştir:
 
 > `PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini planla.`
 
-Bu komut yalnız bu planı ve exact toolchain adayını kabul eder; PH2-T02 için
-bounded task contract'ının hazırlanmasına izin verir. Probe'u çalıştırmak için
-oluşturulacak PH2-T02 planının ayrıca açıkça onaylanması gerekir.
+PH2-T02 planı `docs/tasks/PH2-T02.yaml` içinde oluşturulmuştur. Probe'u
+çalıştırmak için bu task'ın `exact_next_approval_text` komutu ayrıca verilmeden
+network isteği veya geçici artifact download yapılmaz.
+
+Bir sonraki geçerli insan komutu:
+
+> `PH2-T02 source compatibility probe planını onaylıyorum; başlat.`
+
+Bu onay yalnız PH2-T02'nin bounded probe sınırını açar; dependency kurulumu,
+tam yıl veri edinimi, product implementation veya PH2-T03 planlaması yapmaz.

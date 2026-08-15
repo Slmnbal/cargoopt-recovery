@@ -1,0 +1,301 @@
+schema_version: 1
+task_id: PH2-T02
+phase: PHASE_2
+status: PLANNED
+planned_at: "2026-08-15"
+planning_approval_source: explicit_user_command
+planning_approval_text: >-
+  PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini planla.
+execution_requires_separate_human_approval: true
+execution_approval_status: AWAITING_EXPLICIT_APPROVAL
+execution_approval_source: null
+execution_approved_at: null
+exact_next_approval_text: >-
+  PH2-T02 source compatibility probe planını onaylıyorum; başlat.
+task_type: OFFICIAL_SOURCE_COMPATIBILITY_PROBE_ONLY
+goal: >-
+  Resmî BTS Reporting Carrier On-Time Performance kaynağında Ocak 2024 için
+  exact 15-field extract'in scriptable ve tekrarlanabilir bir public interface
+  üzerinden üretilebildiğini; kullanım koşulunun proje içi local processing'e
+  yeterli olduğunu; request, archive member ve header kanıtlarının fail-closed
+  biçimde kaydedilebildiğini bounded ve geçici bir probe ile doğrulamak.
+preconditions:
+  phase_1_status: COMPLETED
+  phase_1_gate: PASSED
+  phase_2_status: ACTIVE
+  phase_2_gate_at_planning: PH2_T01_PLAN_READY_FOR_HUMAN_APPROVAL
+  ph2_t01_status: COMPLETED
+  ph2_t01_result_status: PLAN_READY_FOR_HUMAN_APPROVAL
+  ph2_t01_result_approval: SATISFIED
+  ph2_t01_source_status: CONDITIONAL_GO_SOURCE_COMPATIBILITY_PROBE_REQUIRED
+  phase_3_to_phase_8_status: LOCKED
+  execution_approval: REQUIRED_NOT_YET_GRANTED
+normative_inputs:
+  - docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+expected_selected_columns_exact_order:
+  - FlightDate
+  - Reporting_Airline
+  - DOT_ID_Reporting_Airline
+  - Flight_Number_Reporting_Airline
+  - OriginAirportID
+  - Origin
+  - DestAirportID
+  - Dest
+  - CRSDepTime
+  - CRSArrTime
+  - CRSElapsedTime
+  - Distance
+  - Cancelled
+  - Diverted
+  - ArrDelayMinutes
+in_scope:
+  - resmî dataset profile field dictionary download form PREZIP index ve policy rights sayfalarının yeniden doğrulanması
+  - selected-field form action method hidden field session cookie ve anti-CSRF gereksiniminin read-only incelenmesi
+  - exact year 2024 month January ve exact 15 field request'inin canonical request fingerprint'inin çıkarılması
+  - önce metadata ve form inspection sonra yalnız gerekiyorsa tek bounded artifact GET veya form POST
+  - en fazla bir Ocak 2024 source archive veya selected-field eşdeğerinin OS temporary dizinine alınması
+  - response status final URL redirect chain content type content length ETag Last-Modified byte count ve SHA-256 kaydı
+  - ZIP central directory member count member adı declared compressed/uncompressed size ve encryption flag kontrolü
+  - tek CSV member'ın yalnız BOM artı header satırının bounded biçimde okunması ve exact 15 alanla karşılaştırılması
+  - public interface'in authentication CAPTCHA manual browser veya reusable secret gerektirmediğinin doğrulanması
+  - exact license ifadesi yoksa public local processing koşulu attribution ve raw redistribution yasağının açık kararı
+  - SOURCE_COMPATIBLE CONTRACT_SOURCE_MISMATCH RIGHTS_UNRESOLVED UPSTREAM_UNAVAILABLE veya PROBE_SECURITY_ABORTED sonucu
+  - geçici script session cookie HTML ZIP ve CSV byte'larının success veya failure sonrasında silindiğinin kanıtı
+  - yalnız sonuç ve kanıt özetini PHASE_2_SOURCE_COMPATIBILITY_REPORT.md içinde kalıcılaştırmak
+out_of_scope:
+  - 2024 Şubat ile Aralık verisini istemek indirmek veya incelemek
+  - Ocak source içinden data row parse etmek saymak örneklemek dönüştürmek veya saklamak
+  - full CSV decompress hash quality profile timezone mapping top-20 split feature veya label üretmek
+  - PREZIP full-width veriden kod içinde 15 kolon project etmek
+  - BTS dışı mirror Kaggle Hugging Face GitHub dataset veya üçüncü taraf API fallback'i
+  - login credential API key token proxy browser profile veya kullanıcı cookie'si kullanmak
+  - source test config data directory cache migration workflow dependency veya lock değiştirmek
+  - acquisition client veya başka product implementation yazmak
+  - DuckDB airportsdata tzdata Hypothesis sortedcontainers ya da başka paket kurmak
+  - PH2-T03 task dosyası dependency lock scaffold placeholder interface adapter veya TODO oluşturmak
+  - Phase 3 model Phase 4 OR Phase 5 replay Phase 6 API UI Phase 7 hardening Phase 8 RAG LLM işi
+files_allowed_is_exact_allowlist: true
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .python-version
+  - .gitignore
+  - .github/**
+  - src/**
+  - tests/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH0-*.yaml
+  - docs/tasks/PH1-*.yaml
+  - docs/tasks/PH2-T01.yaml
+  - docs/tasks/PH2-T03.yaml
+  - docs/tasks/PH2-T04.yaml
+  - docs/tasks/PH2-T05.yaml
+  - docs/tasks/PH2-T06.yaml
+  - docs/tasks/PH2-T07.yaml
+  - docs/tasks/PH2-T08.yaml
+  - docs/tasks/PH2-T09.yaml
+  - docs/tasks/PH2-T10.yaml
+  - docs/tasks/PH2-T11.yaml
+  - docs/governance/**
+  - docs/adr/**
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/SYNTHETIC_CARGO_CONTRACT.md
+  - docs/data/PHASE_2_SOURCE_RESEARCH.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - frontend/**
+  - migrations/**
+  - knowledge/**
+network_policy:
+  allowed_only_after_execution_approval: true
+  tls_verification: REQUIRED_DEFAULT_TRUST_STORE
+  schemes: [https]
+  hosts:
+    - transtats.bts.gov
+    - www.transtats.bts.gov
+    - bts.gov
+    - www.bts.gov
+    - ntl.bts.gov
+    - transportation.gov
+    - www.transportation.gov
+  fixed_entry_urls:
+    - https://www.transtats.bts.gov/ontime/
+    - https://transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD
+    - https://www.transtats.bts.gov/Fields.asp?gnoyr_VQ=FGJ
+    - https://www.transtats.bts.gov/DL_SelectFields.aspx?QO_fu146_anzr=b0-gvzr&gnoyr_VQ=FGJ
+    - https://transtats.bts.gov/PREZIP/
+    - https://ntl.bts.gov/ntl/public-access/managing-rights
+  methods:
+    HEAD: ALLOWED_FOR_METADATA
+    GET: ALLOWED
+    POST: ALLOWED_ONLY_TO_DISCOVERED_OFFICIAL_SELECTED_FIELD_FORM_ACTION
+  concurrency: 1
+  max_total_requests: 12
+  minimum_interval_seconds: 1
+  max_redirects: 5
+  connect_timeout_seconds: 10
+  read_timeout_seconds: 60
+  max_total_execution_seconds: 600
+  retries:
+    max_additional_attempts: 2
+    allowed_for: [HEAD, GET]
+    retry_statuses: [429, 500, 502, 503, 504]
+    post_automatic_retry: false
+    retry_after_max_seconds: 30
+  proxy_policy: DISABLE_ENVIRONMENT_PROXIES
+  authentication: FORBIDDEN
+  persistent_cookie_jar: FORBIDDEN
+  session_cookie_scope: MEMORY_ONLY_SINGLE_EXECUTION
+  user_agent: CargoOpt-Recovery-source-compatibility-probe/1
+  redirect_rule: REVALIDATE_HTTPS_AND_HOST_AFTER_EVERY_REDIRECT
+bounded_artifact_policy:
+  allowed_only_after_execution_approval: true
+  target_period: "2024-01"
+  max_artifact_count: 1
+  max_compressed_bytes: 268435456
+  max_archive_members: 1
+  max_declared_uncompressed_member_bytes: 2147483648
+  max_header_read_bytes: 1048576
+  data_rows_read: 0
+  expected_member_type: SINGLE_REGULAR_UNENCRYPTED_CSV
+  expected_content_types:
+    - application/zip
+    - application/x-zip-compressed
+    - application/octet-stream
+  storage: OS_TEMPORARY_DIRECTORY_OUTSIDE_REPOSITORY
+  persistent_raw_or_csv_bytes: FORBIDDEN
+  cleanup: REQUIRED_ON_SUCCESS_FAILURE_AND_INTERRUPTION
+  cleanup_evidence: TEMPORARY_PATH_ABSENT_AFTER_PROBE
+transient_execution_files:
+  allowed_outside_repository:
+    - ephemeral Python standard-library probe script
+    - in-memory HTML form and cookie state
+    - at most one bounded January 2024 archive or selected-field equivalent
+    - at most one bounded header buffer
+    - temporary stdout and error log without cookie or anti-CSRF values
+  persistence_rule: DELETE_BEFORE_TASK_RESULT_IS_COMMITTED
+  secret_redaction:
+    - do not persist cookie values
+    - do not persist anti-CSRF values
+    - record only field names presence and one-way content fingerprints when necessary
+probe_sequence:
+  - revalidate current main commit Phase 2 gate and task execution approval
+  - create OS temporary directory and register cleanup guard
+  - fetch official profile field dictionary PREZIP index and rights pages with fixed URLs
+  - fetch selected-field page and record form structure without persisting token or cookie values
+  - construct exact 2024 January 15-field request from discovered official form controls
+  - if deterministic public form request is impossible do not use browser automation and set CONTRACT_SOURCE_MISMATCH
+  - spend the single artifact budget on selected-field output when possible otherwise optionally on January PREZIP header confirmation
+  - validate every redirect response size archive member and bounded CSV header fail-closed
+  - compare parsed header names and order with expected_selected_columns_exact_order
+  - determine rights decision only from official source text and project local-use/no-redistribution policy
+  - delete every transient byte and verify temporary path absence
+  - write report and update task phase and project status without creating PH2-T03
+success_contract:
+  result: SOURCE_COMPATIBLE
+  required_all:
+    - official source identity and January 2024 filter are unambiguous
+    - public request can be reconstructed from recorded form structure without authentication manual browser CAPTCHA or reusable secret
+    - selected output contains exactly one regular unencrypted CSV member
+    - parsed CSV header exactly equals expected 15 names in expected order
+    - request response redirect and archive metadata are completely recorded
+    - official terms are sufficient for local analysis with attribution while raw redistribution remains disabled
+    - all transient page session archive and header bytes are deleted
+  phase_result:
+    phase_2_status: ACTIVE
+    phase_2_gate: PH2_T02_RESULT_READY_FOR_HUMAN_APPROVAL
+    active_task: null
+  next_task_rule: PH2_T03_MAY_ONLY_BE_PLANNED_AFTER_SEPARATE_RESULT_APPROVAL
+failure_contracts:
+  CONTRACT_SOURCE_MISMATCH:
+    examples:
+      - only full-width source is scriptable
+      - selected-field interface cannot be reconstructed deterministically
+      - header is missing extra reordered duplicated or renamed
+      - output requires manual browser CAPTCHA login or reusable session state
+    action: STOP_AND_REQUIRE_SEPARATE_GOVERNANCE_DECISION
+  RIGHTS_UNRESOLVED:
+    examples:
+      - official terms cannot support local processing decision
+      - exact rights claim would require inference from a third-party source
+    action: STOP_WITHOUT_PERSISTENT_DATA_OR_NEXT_TASK
+  UPSTREAM_UNAVAILABLE:
+    examples:
+      - bounded retries end without an official response
+      - official page or form contract cannot be reached within time and request bounds
+    action: STOP_WITHOUT_MIRROR_FALLBACK
+  PROBE_SECURITY_ABORTED:
+    examples:
+      - redirect leaves allowlisted HTTPS hosts
+      - byte member time or request limit is exceeded
+      - encrypted multiple unsafe or ambiguous archive member is observed
+    action: DELETE_TRANSIENT_BYTES_AND_STOP
+acceptance_criteria:
+  - execution başlamadan exact execution approval task içinde kaydedilmiş olmalı
+  - yalnız network_policy içindeki resmî HTTPS host ve method sınırı kullanılmalı
+  - fixed input January 2024 ve exact 15 field olmalı
+  - en fazla bir bounded source artifact geçici olarak alınmalı
+  - hiçbir data row okunmamalı veya parse edilmemeli
+  - header karşılaştırması BOM dışında fuzzy rename trim reorder projection veya coercion yapmamalı
+  - request ve response provenance URL redirect method status headers byte count ve SHA-256 ile kaydedilmeli
+  - rights kararı official source claim'i ile local processing ve raw redistribution sınırını ayrı yazmalı
+  - result success_contract veya failure_contracts içindeki tek bir closed status olmalı
+  - report raw data cookie token anti-CSRF değeri veya local absolute path içermemeli
+  - temporary path probe sonunda mevcut olmamalı
+  - dependency lock source tests config workflow data artifact migration ve Phase 3+ dosyası değişmemeli
+  - PH2-T03 task veya placeholder oluşturulmamalı
+  - yalnız exact files_allowed repository içinde değişmeli
+tests_required:
+  - bütün repository YAML dosyaları safe parser ile parse edilebilmeli
+  - task phase ve project state tek ACTIVE phase ve tutarlı active_task taşımalı
+  - official URL scheme host ve redirect chain allowlist doğrulaması geçmeli
+  - request count timeout retry byte member ve header read sınırları raporda kanıtlanmalı
+  - archive member regular unencrypted single CSV olmalı
+  - raw ve parsed header evidence exact 15 field equality sonucunu taşımalı
+  - no-data-row-read invariant'i kanıtlanmalı
+  - cleanup guard success failure ve interruption yolunda temporary path bırakmamalı
+  - report yalnız official source URL'leri claim ve accessed_at kaydı içermeli
+  - pyproject.toml uv.lock source tests configs workflow ve accepted contracts byte-identical kalmalı
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+  - current main commit hosted Foundation workflow'unda success olmalı
+dependencies_allowed: false
+migrations_allowed: false
+implementation_allowed: false
+network_allowed_before_execution_approval: false
+network_allowed_after_execution_approval: true
+data_download_allowed_before_execution_approval: false
+data_download_allowed_after_execution_approval: BOUNDED_TEMPORARY_PROBE_ONLY
+persistent_data_allowed: false
+report_placeholder_allowed_during_planning: false
+stop_conditions:
+  - execution approval exact verilmemişse
+  - current main PH2-T02 plan commit'i hosted Foundation workflow'unda başarısızsa
+  - resmî source identity field dictionary form action veya January filter belirsizse
+  - exact 15-field output yalnız projection veya contract değişikliğiyle mümkünse
+  - rights sonucu project local processing scope'u için yeterince doğrulanamıyorsa
+  - authentication manual browser CAPTCHA credential proxy veya third-party source gerekirse
+  - request redirect timeout retry byte archive member header veya total-time sınırı aşılırsa
+  - transient byte veya cookie token anti-CSRF değeri kalıcılaştırılacaksa
+  - onaylı exact files_allowed dışında repository mutation gerekirse
+  - dependency install lock source test config workflow migration data directory artifact veya implementation gerekirse
+  - PH2-T03 veya Phase 3+ hazırlığı gerekirse
+validation_results: null

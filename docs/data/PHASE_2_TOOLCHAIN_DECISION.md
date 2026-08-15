@@ -5,7 +5,8 @@
 | Belge kimliği | `phase-2-toolchain-decision-v1` |
 | Görev | `PH2-T01` |
 | Karar tarihi | `2026-08-15` |
-| Durum | `PROPOSED — HUMAN APPROVAL REQUIRED` |
+| Durum | `APPROVED — NOT INSTALLED` |
+| Onay | `2026-08-15` — explicit user command |
 | Hedef runtime | Standard GIL-enabled `CPython 3.14.7`, Linux x86_64, CPU-only |
 | Maliyet | Ücretsiz; managed servis, token veya secret yok |
 | Bu görevde kurulum | **Yok** |
@@ -25,9 +26,11 @@
 | Canonical domain | `dataclasses`, `enum`, `decimal`, `json` | Standard library | Strict domain value ve byte-stable JSON; Phase 2'de Pydantic gerektirmez |
 | Test runner | Mevcut `pytest==9.1.1` | Development | Foundation'da zaten exact pinli |
 
-Bu karar onaylanmadan `pyproject.toml`, `uv.lock` veya environment değişmez.
-Onay yalnız bir sonraki task'ın planlanmasına izin verir; dependency çözmek için
-ayrıca exact task yürütme onayı gerekir.
+Bu karar `PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini
+planla.` komutuyla kabul edildi. Onay yalnız PH2-T02 task planının oluşturulmasına
+izin verir; `pyproject.toml`, `uv.lock` veya environment değişmez. Dependency
+çözmek için PH2-T02 başarıyla kapanmalı, PH2-T03 ayrıca planlanmalı ve ayrıca
+exact yürütme onayı almalıdır.
 
 ## 2. Canonical metadata kanıtı
 
@@ -185,13 +188,15 @@ zorunludur.
 
 ## 9. Karar kapısı
 
-Proposed stack teknik olarak ücretsiz, CPU-first ve Python 3.14.7 Linux x86_64
-ile uyumludur. PH2-T01 tamamlandığında henüz package mutation yoktur.
+Exact stack teknik olarak onaylanmıştır fakat **kurulmamış ve lock
+edilmemiştir**. `PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02
+görevini planla.` komutu kaydedilmiş, PH2-T02 bounded source compatibility
+probe görevi planlanmıştır.
 
 Bir sonraki geçerli insan komutu:
 
-> `PH2-T01 toolchain ve uygulama planını onaylıyorum; PH2-T02 görevini planla.`
+> `PH2-T02 source compatibility probe planını onaylıyorum; başlat.`
 
-Bu komut yalnız PH2-T01 kararını kabul eder ve PH2-T02 task dosyasının
-planlanmasına izin verir. Source probe, dependency install veya data download
-başlatmaz.
+Bu komut yalnız PH2-T02'de tanımlanan bounded resmî kaynak probe'unu başlatır.
+Dependency kurulumu/lock, tam 2024 veri edinimi, source implementation veya
+PH2-T03 planlaması için yetki vermez.

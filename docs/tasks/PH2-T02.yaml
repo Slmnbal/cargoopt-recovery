@@ -13,7 +13,7 @@ execution_approved_at: "2026-08-15T13:44:10Z"
 execution_approval_text: >-
   PH2-T02 source compatibility probe planını onaylıyorum; başlat.
 started_at: "2026-08-15T13:44:10Z"
-completed_at: "2026-08-15T16:27:27Z"
+completed_at: "2026-08-15T16:32:40Z"
 result_status: SOURCE_COMPATIBLE
 result_reason_code: EXACT_PHYSICAL_TO_CANONICAL_MAPPING_CONFIRMED
 result_report: docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT.md
@@ -370,3 +370,14 @@ final_reconciliation:
     mapping ile ayrılmış, sırası dondurulmuş ve drift halinde fail-closed
     duracak biçimde sözleşmeye bağlanmıştır.
   next_step: PH2-T03_PLANNING_ONLY
+final_hosted_validation_evidence:
+  result_commit: 50a2426d6ba880ed3a7f3517acf101ff336bfc19
+  workflow: Foundation
+  run_id: 31895752725
+  job_id: 95038708960
+  conclusion: success
+  primary_steps: 17
+  primary_steps_passed: 17
+  artifacts: 0
+  closeout_commit: THIS_COMMIT
+  closeout_foundation: VERIFY_AFTER_PUSH

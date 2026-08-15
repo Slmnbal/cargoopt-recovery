@@ -70,7 +70,7 @@ migrations_allowed: false
 implementation_allowed: false
 network_allowed: false
 persistent_data_allowed: false
-completed_at: "2026-08-15T16:27:27Z"
+completed_at: "2026-08-15T16:32:40Z"
 result_status: SOURCE_COMPATIBLE
 result_reason_code: EXACT_PHYSICAL_TO_CANONICAL_MAPPING_CONFIRMED
 stop_conditions:
@@ -83,7 +83,10 @@ validation_results:
   data_rows_read: 0
   network_requests: 0
   temporary_workflow_cleanup: PASSED_LOCAL_ABSENT_REMOTE_404
-  result_commit: PENDING
-  result_foundation_run: PENDING
-  final_closeout_commit: PENDING
-  final_closeout_foundation_run: PENDING
+  result_commit: 50a2426d6ba880ed3a7f3517acf101ff336bfc19
+  result_foundation_run: 31895752725
+  result_foundation_job: 95038708960
+  result_foundation_conclusion: success
+  result_foundation_artifacts: 0
+  final_closeout_commit: THIS_COMMIT
+  final_closeout_foundation_run: VERIFY_AFTER_PUSH

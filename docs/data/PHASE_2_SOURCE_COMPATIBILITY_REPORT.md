@@ -7,7 +7,7 @@
 | Dönem | `2024-01` |
 | Başlangıç | `2026-08-15T13:44:10Z` |
 | İlk probe bitişi | `2026-08-15T13:48:02Z` |
-| Toplam kapı bitişi | `2026-08-15T16:27:27Z` |
+| Toplam kapı bitişi | `2026-08-15T16:32:40Z` |
 | Kapalı sonuç | `SOURCE_COMPATIBLE` |
 | Reason code | `EXACT_PHYSICAL_TO_CANONICAL_MAPPING_CONFIRMED` |
 | Kalıcı kaynak byte'ı | `0` |
@@ -222,3 +222,9 @@ probe'unun `PROBE_SECURITY_ABORTED` sonucunu `SOURCE_COMPATIBLE` yapmaz.
 
 `PH2-T03` bu raporla oluşturulmamış veya başlatılmamıştır. Veri ingestion
 uygulaması ve 12 aylık veri acquisition ayrı görev planı olmadan yapılamaz.
+
+Nihai contract result commit'i
+`50a2426d6ba880ed3a7f3517acf101ff336bfc19`, Foundation run/job kanıtı
+`31895752725 / 95038708960`, sonuç `success`, ana adım `17/17` ve artifact
+sayısı `0`dır. Bu kanıtı kaydeden closeout commit'inin Foundation sonucu push
+sonrasında ayrıca doğrulanır.

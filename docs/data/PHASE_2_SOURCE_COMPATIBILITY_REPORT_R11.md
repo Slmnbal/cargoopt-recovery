@@ -73,3 +73,15 @@ sırası değiştirilmiş kabul edilmez.
 aktif kalır; sıradaki izinli iş yalnız `PH2-T03` görevini planlamaktır.
 `PH2-T03` oluşturulmamış, ingestion implementation başlatılmamış ve 12 aylık
 veri acquisition yapılmamıştır.
+
+## Hosted doğrulama
+
+| Kontrol | Sonuç |
+|---|---|
+| Result commit | `50a2426d6ba880ed3a7f3517acf101ff336bfc19` |
+| Foundation run / job | `31895752725` / `95038708960` |
+| Ana adımlar | `17 / 17 PASSED` |
+| Sonuç | `success` |
+| Artifact | `0` |
+| Closeout commit | Bu raporun kanıt kayıt commit'i |
+| Closeout Foundation | Push sonrasında ayrıca doğrulanır |

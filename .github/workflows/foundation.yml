@@ -40,6 +40,7 @@ jobs:
           test "$(uname -s)" = "Linux"
           test "$(uname -m)" = "x86_64"
           test "$(uv --version)" = "uv 0.12.3"
+          uv python install 3.14.7
           uv python find 3.14.7 --managed-python
           uv run --python 3.14.7 --managed-python --no-project python - <<'PY'
           import platform

@@ -1,0 +1,91 @@
+schema_version: 1
+task_id: PH2-T02-R8
+phase: PHASE_2
+status: IN_PROGRESS
+planned_at: "2026-08-15T16:07:49Z"
+approved_at: "2026-08-15T16:07:49Z"
+approval_source: explicit_user_command
+approval_text: "artık bunu bitirelim"
+task_type: MINIMAL_POST_ONLY_TRANSPORT_PROFILE_FIX
+goal: >-
+  R7'de GET'e taşan browser profilini kaldırmak; fresh GET'i R6 deterministic
+  header profiline exact döndürmek; browser-equivalent same-origin header'ları
+  yalnız POST branch'ine uygulayarak değişmeyen exact-15 bounded Extract'i
+  sonuçlandırmak.
+preconditions:
+  ph2_t02_r6_fingerprint_exact: true
+  ph2_t02_r6_post_count: 1
+  ph2_t02_r7_post_count: 0
+  ph2_t02_r7_root_cause: BROWSER_USER_AGENT_WAS_APPLIED_TO_GET_INSTEAD_OF_POST_ONLY
+in_scope:
+  - GET headers exact R6 deterministic profile
+  - POST-only browser Accept User-Agent Origin Referer fetch metadata and Connection close
+  - unchanged R7 exception classification and all R6 form payload archive cleanup gates
+  - one POST maximum no retry zero data row mandatory cleanup
+out_of_scope:
+  - any payload or source contract change
+  - dependency browser curl source test config data PH2-T03 or later phase work
+files_allowed:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T02-R8.yaml
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R8.md
+  - .github/workflows/ph2-t02-r8-extract.yml
+files_required_absent_at_final:
+  - .github/workflows/ph2-t02-r8-extract.yml
+files_forbidden:
+  - AGENTS.md
+  - README.md
+  - pyproject.toml
+  - uv.lock
+  - .github/workflows/foundation.yml
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - docs/tasks/PH2-T03.yaml
+acceptance_criteria:
+  - GET request headers contain only R6 Accept Accept-Encoding and deterministic User-Agent profile
+  - browser headers are assigned only under method POST
+  - fresh fingerprint exact-four exact-15 and R6 submission hash pass before POST
+  - no more than one POST one ZIP one header record and zero data rows
+  - cleanup is true and workflows are absent at final main
+  - hosted Extract and Foundation evidence have zero artifacts
+tests_required:
+  - YAML AST standard-library and synthetic self-tests
+  - GET versus POST header branch AST invariant
+  - unchanged build_payload AST fingerprint
+  - sanitize result cleanup remote 404 and final Foundation
+dependencies_allowed: false
+migrations_allowed: false
+product_implementation_allowed: false
+extract_allowed: true
+persistent_data_allowed: false
+automatic_rerun_allowed: false
+stop_conditions:
+  - GET profile cannot be proven R6-equivalent
+  - payload semantics or task allowlist must expand
+  - more than one POST or any data row read is required
+validation_results:
+  bootstrap_commit: PENDING
+  extract_workflow_run: PENDING
+  extract_workflow_job: PENDING
+  extract_workflow_conclusion: PENDING
+  foundation_run: PENDING
+  foundation_job: PENDING
+  foundation_conclusion: PENDING
+  result: PENDING
+  reason_code: PENDING
+  post_count: PENDING
+  temporary_zip_count: PENDING
+  header_records_read: PENDING
+  data_rows_read: PENDING
+  cleanup_path_absent: PENDING
+  temporary_workflow_cleanup: PENDING
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

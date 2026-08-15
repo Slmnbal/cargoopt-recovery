@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R7
 phase: PHASE_2
-status: IN_PROGRESS
+status: BLOCKED
+closed_at: "2026-08-15T16:06:46Z"
+closed_result: CONTRACT_SOURCE_MISMATCH
+closed_reason_code: FRESH_FORM_FINGERPRINT_MISMATCH
+root_cause: BROWSER_USER_AGENT_WAS_APPLIED_TO_GET_INSTEAD_OF_POST_ONLY
 planned_at: "2026-08-15T16:01:48Z"
 approved_at: "2026-08-15T16:01:48Z"
 approval_source: explicit_user_command
@@ -128,23 +132,26 @@ stop_conditions:
   - external dependency curl browser or non-approved host is required
   - archive header row cleanup or sanitization gate fails
 validation_results:
-  bootstrap_commit: PENDING
-  extract_workflow_run: PENDING
-  extract_workflow_job: PENDING
-  extract_workflow_conclusion: PENDING
-  foundation_run: PENDING
-  foundation_job: PENDING
-  foundation_conclusion: PENDING
-  workflow_artifact_count: PENDING
-  foundation_artifact_count: PENDING
-  result: PENDING
-  reason_code: PENDING
-  request_count: PENDING
-  post_count: PENDING
-  temporary_zip_count: PENDING
-  header_records_read: PENDING
-  data_rows_read: PENDING
-  cleanup_path_absent: PENDING
+  bootstrap_commit: 994331dcfbd3453fdfaec790751ac5bfae073189
+  extract_workflow_run: 31894598315
+  extract_workflow_job: 95035849388
+  extract_workflow_conclusion: success
+  foundation_run: 31894598316
+  foundation_job: 95035849222
+  foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  result: CONTRACT_SOURCE_MISMATCH
+  reason_code: FRESH_FORM_FINGERPRINT_MISMATCH
+  request_count: 1
+  post_count: 0
+  observed_form_contract_sha256: 6a2b89d87dae22fbcb5958efece4134068f928ab232dacd43d72152ceec49c31
+  expected_form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  temporary_zip_count: 0
+  header_records_read: 0
+  data_rows_read: 0
+  cleanup_path_absent: true
+  artifact_count: 0
   temporary_workflow_cleanup: PENDING
   result_commit: PENDING
   result_foundation_run: PENDING

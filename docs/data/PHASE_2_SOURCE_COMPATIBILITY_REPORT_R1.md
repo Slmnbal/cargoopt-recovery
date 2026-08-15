@@ -95,8 +95,14 @@ source compatibility başarısı değildir. Aynı commit üzerindeki Foundation 
 `31889912921`, job `95024552833` ile bütün 17 işlevsel adımda geçti. İki
 workflow da sıfır artifact üretti.
 
-Result ve final closeout commit/run kanıtları cleanup doğrulamasından sonra bu
-bölüme eklenir.
+Result/cleanup commit'i `cdf07f3f9066dd8bd4f33a786c05b9d275f07802`
+üzerindeki Foundation run `31890119004`, job `95025037639` ile bütün 17
+işlevsel adımda geçti ve sıfır artifact üretti. Aynı commit'te geçici workflow
+yolunun GitHub Contents API sonucu `404 Not Found` olarak doğrulandı.
+
+Final closeout commit ve onun Foundation sonucu repository dışı hosted kanıt
+olarak görev kapanışında doğrulanır; commit'in kendi SHA'sı commit içeriğine
+öz-referanslı olarak yazılmaz.
 
 ## 8. Downstream kapısı
 

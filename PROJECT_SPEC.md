@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.10.7` |
-| Durum | `PHASE_2_ACTIVE — PH2_T02_R1_CLEANUP_VALIDATION` |
+| Belge sürümü | `0.10.8` |
+| Durum | `PHASE_2_ACTIVE — PH2_T02_R1_CLOSED_FAILURE_REQUIRES_HUMAN_DECISION` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T02-R1` — Discovery fail-closed sonucu sonrası cleanup doğrulanıyor |
+| Aktif görev | Yok — `PH2-T02-R1` fail-closed kapandı |
 
 ## 1. Tek cümlelik tanım
 
@@ -310,7 +310,8 @@ gerektirir.
 - Aktif faz: `PHASE_2 — data_and_domain`
 - Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`, `PH2-T01`
 - Sonuçlanan görev: `PH2-T02 — BLOCKED/PROBE_SECURITY_ABORTED`; sonuç kabul edildi, source başarı iddiası kurulmadı
-- Aktif görev: `PH2-T02-R1`; Discovery `PROBE_SECURITY_ABORTED`, Extract `NOT_RUN`, cleanup doğrulanıyor
+- Sonuçlanan retry görevi: `PH2-T02-R1 — BLOCKED/PROBE_SECURITY_ABORTED`; Extract `NOT_RUN`, cleanup `PASSED`
+- Aktif görev: yok
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
@@ -318,7 +319,7 @@ gerektirir.
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: geçici retry workflow'unun silindiğini ve result commit Foundation CI sonucunu doğrulamak
+- Sıradaki kapı: form action protokolü ve erişilebilir resmî rights kaynağı için yeni insan güvenlik kararı
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`

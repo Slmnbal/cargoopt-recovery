@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.10.0` |
-| Durum | `PHASE_2_ACTIVE — PH2_T01_AWAITING_APPROVAL` |
+| Belge sürümü | `0.10.1` |
+| Durum | `PHASE_2_ACTIVE — PH2_T01_HOSTED_VALIDATION_PENDING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T01` — planning/research-only; ayrı yürütme onayı bekleniyor |
+| Aktif görev | `PH2-T01` — plan hazır; hosted Foundation doğrulaması bekleniyor |
 
 ## 1. Tek cümlelik tanım
 
@@ -309,15 +309,15 @@ gerektirir.
 - Tamamlanan fazlar: `PHASE_0 — COMPLETED/PASSED`, `PHASE_1 — COMPLETED/PASSED`
 - Aktif faz: `PHASE_2 — data_and_domain`
 - Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`
-- Aktif görev: `PH2-T01`; planning/research-only yürütme için ayrı insan onayı bekliyor
+- Aktif görev: `PH2-T01`; source/toolchain/implementation planı hazır, hosted doğrulama bekliyor
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
 - Local sonuç: 13 package project graph + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
-- Hosted kanıt: `Foundation` run `31875871429`, commit `d4cc97845b66d1ab97c8555d517f7075a966ca33`, conclusion `success`
+- Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: `PH2-T01` official-source research ve exact implementation planı için ayrı insan onayı
+- Sıradaki kapı: PH2-T01 toolchain/uygulama planının kabulü ve yalnız PH2-T02 task planını hazırlama onayı
 - Runtime dependency sayısı: `0`
 - Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`
-- Faz disiplini: PH2-T01 tamamlanmadan sonraki Phase 2 görevi hazırlanmaz veya başlatılmaz
+- Faz disiplini: PH2-T01 sonucu kabul edilmeden PH2-T02 task dosyası hazırlanmaz; hazırlanmış PH2-T02 ayrıca onaylanmadan probe başlatılmaz

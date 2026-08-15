@@ -16,7 +16,7 @@ phases:
   PHASE_2:
     name: data_and_domain
     status: ACTIVE
-    gate: PH2_T01_AWAITING_APPROVAL
+    gate: PH2_T01_HOSTED_VALIDATION_PENDING
   PHASE_3:
     name: ml_risk_model
     status: LOCKED

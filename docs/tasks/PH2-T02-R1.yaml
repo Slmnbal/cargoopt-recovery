@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R1
 phase: PHASE_2
-status: IN_PROGRESS
+status: CLOSING
+closed_at: "2026-08-15T14:28:47Z"
+closed_result: PROBE_SECURITY_ABORTED
+closed_reason_code: DISCOVERY_FORM_ACTION_POLICY_ABORT_AND_RIGHTS_ENDPOINT_403
+extract_status: NOT_RUN
 planned_at: "2026-08-15T14:00:41Z"
 planning_approval_source: explicit_user_command
 planning_approval_text: >-
@@ -417,4 +421,24 @@ stop_conditions:
   - raw page cookie token hidden value ZIP CSV row veya absolute path loglanacaksa
   - temporary workflow cleanup commit'inde silinemiyorsa
   - dependency lock source test config data migration product code PH2-T03 veya Phase 3+ hazırlığı gerekirse
-validation_results: null
+validation_results:
+  discovery_commit: f8ce2cef29ac1d9e387ba0254e1eca8645fe3000
+  discovery_workflow_run: 31889912917
+  discovery_workflow_job: 95024553029
+  discovery_workflow_conclusion: success
+  discovery_closed_result: PROBE_SECURITY_ABORTED
+  discovery_reason_code: RuntimeError:URL_POLICY_VIOLATION
+  discovery_request_count: 5
+  discovery_redirect_count: 0
+  discovery_artifact_count: 0
+  discovery_data_rows_read: 0
+  discovery_extract_status: NOT_RUN
+  discovery_foundation_run: 31889912921
+  discovery_foundation_job: 95024552833
+  discovery_foundation_conclusion: success
+  discovery_artifacts_uploaded: 0
+  temporary_workflow_cleanup: IN_PROGRESS
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

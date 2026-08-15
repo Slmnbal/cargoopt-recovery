@@ -16,7 +16,7 @@ phases:
   PHASE_2:
     name: data_and_domain
     status: ACTIVE
-    gate: PH2_T02_R1_DISCOVERY_RUNNING
+    gate: PH2_T02_R1_CLEANUP_VALIDATION
   PHASE_3:
     name: ml_risk_model
     status: LOCKED

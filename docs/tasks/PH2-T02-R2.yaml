@@ -1,7 +1,11 @@
 schema_version: 1
 task_id: PH2-T02-R2
 phase: PHASE_2
-status: IN_PROGRESS
+status: CLOSING
+closed_at: "2026-08-15T14:46:22Z"
+closed_result: UPSTREAM_UNAVAILABLE
+closed_reason_code: OFFICIAL_DATA_GOV_CATALOG_API_ENDPOINTS_RETURNED_404
+extract_status: NOT_RUN
 planned_at: "2026-08-15T14:40:32Z"
 approved_at: "2026-08-15T14:40:32Z"
 approval_source: explicit_user_command_with_immediate_conversation_reference
@@ -218,4 +222,33 @@ stop_conditions:
   - POST ZIP CSV header or row access becomes necessary
   - task allowlist must expand
   - dependency source test data config migration or PH2-T03 work is required
-validation_results: null
+validation_results:
+  discovery_commit: 52b636b6fc083615e690d40658eba5f8da7a5e8d
+  discovery_workflow_run: 31890793103
+  discovery_workflow_job: 95026641555
+  discovery_workflow_conclusion: success
+  discovery_foundation_run: 31890792970
+  discovery_foundation_job: 95026640835
+  discovery_foundation_conclusion: success
+  workflow_artifact_count: 0
+  foundation_artifact_count: 0
+  offline_result_schema: PASSED
+  result: UPSTREAM_UNAVAILABLE
+  reason_code: OFFICIAL_DISCOVERY_GET_NOT_200
+  request_count: 4
+  redirect_count: 0
+  form_ready: true
+  form_contract_sha256: 3d9227bf05af8dcf8f4fef99aef86ebbbcbe43561869ba43444079d913b3f8b0
+  exact_field_count: 15
+  exact_year: 2024
+  exact_month: January
+  safe_action_method: POST
+  rights_ready: false
+  extract: NOT_RUN
+  artifact_count: 0
+  data_rows_read: 0
+  temporary_workflow_cleanup: IN_PROGRESS
+  result_commit: PENDING
+  result_foundation_run: PENDING
+  final_closeout_commit: PENDING
+  final_closeout_foundation_run: PENDING

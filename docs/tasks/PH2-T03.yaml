@@ -1,7 +1,9 @@
 schema_version: 1
 task_id: PH2-T03
 phase: PHASE_2
-status: IN_PROGRESS
+status: COMPLETED
+completed_at: "2026-08-15"
+result_status: DEPENDENCY_LOCK_VERIFIED
 planned_at: "2026-08-15T16:49:35Z"
 planning_approval_source: explicit_user_command
 planning_approval_text: "devam edelim"
@@ -345,7 +347,7 @@ validation_results:
   vulnerability_gate: PASSED_ZERO
   adverse_status_gate: PASSED_ZERO
   sbom_gate: PASSED_18_COMPONENTS_CYCLONEDX_1_5
-  repository_mutation: VERIFIED_CANDIDATE_PROMOTED_AWAITING_HOSTED_FOUNDATION
+  repository_mutation: VERIFIED_CANDIDATE_PROMOTED_AND_HOSTED_VALIDATED
   data_rows_read: 0
   data_downloads: 0
 
@@ -370,4 +372,10 @@ candidate_evidence:
   sbom_components: 18
   pyproject_sha256: d355df0f044febbad6bf54dbc7af6b03fa14cc5a1aee9660e4e9b3ba15475722
   uv_lock_sha256: af33afda49ad0f295a9f76de42c4b3a48cd0c4e39c73a4fda9d2626e0a17acd7
-  final_hosted_foundation: PENDING_RESULT_COMMIT
+  result_commit: 88fa3d541572016c529ac5b01b9ff3e527d32a6a
+  final_hosted_foundation_run: 31897665330
+  final_hosted_foundation_job: 95043387645
+  final_hosted_foundation_steps_passed: 17
+  final_hosted_foundation: success
+  final_hosted_artifacts: 0
+  final_gate: PH2_T03_DEPENDENCY_LOCK_VERIFIED_READY_FOR_PH2_T04_PLANNING

@@ -2,7 +2,7 @@ schema_version: 1
 project: cargoopt-recovery
 updated_at: "2026-08-15"
 active_phase: PHASE_2
-active_task: PH2-T03
+active_task: null
 phase_transition_requires_human_approval: true
 phases:
   PHASE_0:
@@ -16,7 +16,7 @@ phases:
   PHASE_2:
     name: data_and_domain
     status: ACTIVE
-  gate: PH2_T03_RESULT_CANDIDATE_AWAITING_HOSTED_FOUNDATION
+  gate: PH2_T03_DEPENDENCY_LOCK_VERIFIED_READY_FOR_PH2_T04_PLANNING
   PHASE_3:
     name: ml_risk_model
     status: LOCKED

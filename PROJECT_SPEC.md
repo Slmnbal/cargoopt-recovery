@@ -2,12 +2,12 @@
 
 | Alan | Değer |
 |---|---|
-| Belge sürümü | `0.11.17` |
-| Durum | `PHASE_2_ACTIVE — PH2_T03_RESULT_CANDIDATE_AWAITING_HOSTED_FOUNDATION` |
+| Belge sürümü | `0.11.18` |
+| Durum | `PHASE_2_ACTIVE — PH2_T03_DEPENDENCY_LOCK_VERIFIED_READY_FOR_PH2_T04_PLANNING` |
 | Onay tarihi | `2026-08-13` |
 | Belge sahibi | Proje sahibi |
 | Uygulama ortamı | Codex in ChatGPT Work |
-| Aktif görev | `PH2-T03` — exact lock doğrulandı; kalıcı hosted Foundation sonucu bekleniyor |
+| Aktif görev | Yok; `PH2-T03` tamamlandı, `PH2-T04` planlama kapısı açık |
 
 ## 1. Tek cümlelik tanım
 
@@ -308,7 +308,7 @@ gerektirir.
 
 - Tamamlanan fazlar: `PHASE_0 — COMPLETED/PASSED`, `PHASE_1 — COMPLETED/PASSED`
 - Aktif faz: `PHASE_2 — data_and_domain`
-- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`, `PH2-T01`, `PH2-T02`
+- Tamamlanan görevler: `PH1-T01`, `PH1-T02`, `PH1-T03`, `PH1-T04`, `PH2-T01`, `PH2-T02`, `PH2-T03`
 - Sonuçlanan görev: `PH2-T02 — BLOCKED/PROBE_SECURITY_ABORTED`; sonuç kabul edildi, source başarı iddiası kurulmadı
 - Sonuçlanan retry görevi: `PH2-T02-R1 — BLOCKED/PROBE_SECURITY_ABORTED`; Extract `NOT_RUN`, cleanup `PASSED`
 - Sonuçlanan görev: `PH2-T02-R2 — BLOCKED/UPSTREAM_UNAVAILABLE`; form sözleşmesi `PASSED`, rights metadata `404`
@@ -322,16 +322,16 @@ gerektirir.
 - Sonuçlanan görev: `PH2-T02-R10 — BLOCKED/CONTRACT_SOURCE_MISMATCH`; exact 15 fiziksel BTS kodu gözlendi, business-label header varsayımı reddedildi
 - Sonuçlanan görev: `PH2-T02-R11 — COMPLETED/SOURCE_COMPATIBLE`; R2 field mapping ile R10 physical header bire bir ve sıralı biçimde offline uzlaştırıldı
 - Toplam kaynak kapısı: `PH2-T02 — COMPLETED/SOURCE_COMPATIBLE`; fiziksel kaynak şeması ve canonical iş şeması ayrı, exact ve fail-closed sözleşmeler olarak donduruldu
-- Aktif görev: `PH2-T03 — IN_PROGRESS`; exact lock candidate bütün geçici doğrulama kapılarını geçti, kalıcı hosted Foundation sonucu bekleniyor
+- Sonuçlanan görev: `PH2-T03 — COMPLETED/DEPENDENCY_LOCK_VERIFIED`; resolver ve kalıcı Foundation bütün kapıları geçti, artifact `0`
 - Phase 1 sonucu: Local clean-room ve gerçek GitHub-hosted CI dahil bütün foundation kapıları geçti
 - Onay kaydı: GitHub Actions, `ubuntu-24.04`, full-SHA checkout/setup-uv, read-only token, cache/secret/artifact yok
 - Repository: `Slmnbal/cargoopt-recovery`; `main` ve GitHub Actions yazma/çalıştırma yetkisi doğrulandı
-- Local sonuç: 13 package project graph + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
+- Phase 2 lock sonucu: 18 aktif audited package + 6 package build graph; `0` vulnerability/adverse status; lisans envanteri PASS
 - Phase 2 açılış hosted kanıtı: `Foundation` run `31876915844`, commit `44a5bfad2389a7efbfadecee82f6d9d256015055`, conclusion `success`
 - PH2-T01 hosted kanıtı: `Foundation` run `31878673155`, commit `03181925cd10eb9c9dcd1b75152d35d39114b710`, job `94998027186`, conclusion `success`, artifact `0`
 - Uygulanan foundation: Minimal package shell, exact lock ve local kalite/build gate'leri
-- Sıradaki kapı: `PH2-T03` exact dependency ve supply-chain kapılarının tamamının geçmesi
-- Runtime dependency sayısı: `0`
-- Phase 2 implementation: Henüz yok; dependency kurulmadı ve veri indirilmedi
+- Sıradaki kapı: `PH2-T04` acquisition/provenance planlama ve fixture-backed implementation
+- Runtime dependency sayısı: `3` (`airportsdata`, `duckdb`, `tzdata`); dev dependency delta `2`
+- Phase 2 implementation: Acquisition/provenance henüz yok; veri indirilmedi
 - Kilitli fazlar: `PHASE_3..PHASE_8`
-- Faz disiplini: `PH2-T03` tamamlanmadan `PH2-T04` dosyası, source/test scaffold'ı veya acquisition implementation'ı oluşturulmaz; PH2-T03 geçerse mevcut birleşik kullanıcı yetkisiyle PH2-T04 planlanıp yürütülür
+- Faz disiplini: `PH2-T03` tamamlandı; mevcut birleşik kullanıcı yetkisi yalnız `PH2-T04` planlama ve fixture-backed acquisition/provenance implementation'ını açar

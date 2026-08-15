@@ -68,7 +68,9 @@ result commit öncesinde kaldırılmıştır. Kalıcı Foundation workflow'unda 
 gözlenen Linux inventory (`17`), audit (`18`) ve SBOM (`18`) integer assertion'ları
 güncellenmiştir; build graph sayacı ve diğer komutlar değiştirilmemiştir.
 
-## Kapanış kuralı
+## Kapanış
 
-Bu candidate commit'in hosted Foundation sonucu `success` ve artifact sayısı `0`
-olmadan PH2-T03 tamamlanmış sayılmaz ve PH2-T04 dosyası oluşturulmaz.
+Candidate commit `88fa3d541572016c529ac5b01b9ff3e527d32a6a` için hosted Foundation run
+`31897665330`, job `95043387645` içindeki 17 gate'in tamamı `success` oldu; artifact
+sayısı `0` olarak doğrulandı. PH2-T03 `DEPENDENCY_LOCK_VERIFIED` sonucu ile kapatıldı
+ve PH2-T04 planlama kapısı açıldı.

@@ -1,0 +1,306 @@
+schema_version: 1
+task_id: PH2-T03
+phase: PHASE_2
+status: PLANNED
+planned_at: "2026-08-15T16:49:35Z"
+planning_approval_source: explicit_user_command
+planning_approval_text: "devam edelim"
+execution_requires_separate_human_approval: true
+execution_approval_status: PENDING
+exact_next_approval_text: >-
+  PH2-T03 exact dependency lock planını onaylıyorum; başlat.
+task_type: EXACT_DEPENDENCY_LOCK_AND_SUPPLY_CHAIN_VERIFICATION_ONLY
+goal: >-
+  PH2-T01'de kabul edilen exact beş Phase 2 paketini mevcut foundation
+  dependency graph'ını yükseltmeden canonical PyPI üzerinden candidate lock'a
+  çözmek; CPython 3.14.7 Linux x86_64 wheel, exact graph, iki frozen clean-room
+  sync, import/version, vulnerability, adverse-status, SPDX license, kalite ve
+  build kapılarını fail-closed doğrulamak; yalnız bütün kapılar geçerse
+  pyproject.toml ve uv.lock candidate'ını repository'ye atomik olarak almak.
+
+preconditions:
+  phase_1_status: COMPLETED
+  phase_1_gate: PASSED
+  phase_2_status: ACTIVE
+  phase_2_gate_at_planning: PH2_T02_SOURCE_COMPATIBLE_READY_FOR_PH2_T03_PLANNING
+  ph2_t01_status: COMPLETED
+  ph2_t01_toolchain_status: APPROVED_NOT_INSTALLED
+  ph2_t02_status: COMPLETED
+  ph2_t02_result_status: SOURCE_COMPATIBLE
+  ph2_t02_mapping_status: PASSED_EXACT_15_TO_15_ORDERED_UNIQUE
+  phase_3_to_phase_8_status: LOCKED
+  execution_approval: NOT_YET_SATISFIED
+  baseline_main_commit: 447b1bf5c2b432b90f72db7d573ae8cab53f5ed5
+  baseline_foundation_run: 31895844869
+  baseline_foundation_job: 95038931249
+  baseline_foundation_conclusion: success
+  baseline_foundation_artifacts: 0
+
+normative_inputs:
+  - docs/governance/PHASE_2_ENTRY_CONTRACT.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+  - docs/data/PHASE_2_SOURCE_COMPATIBILITY_REPORT_R11.md
+  - docs/tasks/PH2-T02.yaml
+  - docs/tasks/PH2-T02-R11.yaml
+
+baseline_immutable_hashes:
+  pyproject_toml: db02c0b9ea47e128a595682da17c9176dac55b9052e900d5dc67084076bc9b6b
+  uv_lock: 3f1fce29dd14fac81f56aaea1226131cd93d451c2c2ffe38730171e29e3697b4
+  foundation_workflow: 3136bd22a62128242732962a892e63ca3c1792c22a9bd12aa68c5270b073e3b3
+  package_init: 64772bd814f916477a01504f11a4488a80774184b221fd62cfaa9691f79daabb
+  foundation_test: fc2816402ce84ab6180374a793898d404d2ce68ce4cd759e804282e0df696afc
+
+approved_dependency_delta:
+  runtime_direct:
+    - airportsdata==20260803
+    - duckdb==1.5.5
+    - tzdata==2026.3
+  development_direct:
+    - hypothesis==6.165.9
+    - sortedcontainers==2.4.0
+  expected_new_lock_packages_exact:
+    - airportsdata==20260803
+    - duckdb==1.5.5
+    - hypothesis==6.165.9
+    - sortedcontainers==2.4.0
+    - tzdata==2026.3
+  optional_extras: []
+  expected_additional_transitive_packages: []
+  service_dependencies: []
+  os_packages: []
+  gpu_dependencies: []
+
+resolution_contract:
+  package_manager: uv==0.12.3
+  interpreter: CPython==3.14.7
+  interpreter_variant: standard_gil_enabled
+  target: linux_x86_64_cpu_only
+  canonical_index: https://pypi.org/simple
+  alternate_indexes: []
+  git_dependencies: []
+  editable_third_party_dependencies: []
+  prerelease_policy: DISALLOW
+  upgrade_flag_allowed: false
+  refresh_flag_allowed: false
+  existing_locked_package_version_or_source_change_allowed: false
+  global_exclude_newer: "2026-08-13T23:59:59Z"
+  package_specific_exclude_newer:
+    hypothesis: "2026-08-15T23:59:59Z"
+  package_specific_cutoff_reason: >-
+    hypothesis 6.165.9 PyPI'ye 2026-08-15 tarihinde yüklenmiştir; global
+    foundation cutoff'u değiştirilmez. uv'nin exact package-specific override
+    ayarı yalnız hypothesis için kullanılır.
+  no_build_package_additions:
+    - airportsdata
+    - duckdb
+    - hypothesis
+    - sortedcontainers
+    - tzdata
+  source_distribution_build_allowed: false
+  lock_generation_location: OS_TEMPORARY_CANDIDATE_COPY_FIRST
+  promotion_rule: ALL_GATES_PASS_THEN_ATOMIC_REPOSITORY_PROMOTION
+
+canonical_configuration_evidence:
+  uv_settings_url: https://docs.astral.sh/uv/reference/settings/#exclude-newer-package
+  uv_resolution_url: https://docs.astral.sh/uv/concepts/resolution/#reproducible-resolutions
+  hypothesis_pypi_url: https://pypi.org/project/hypothesis/6.165.9/
+  accessed_at: "2026-08-15"
+  verified_claims:
+    - uv supports package-specific RFC3339 exclude-newer overrides in tool.uv
+    - package-specific cutoff takes precedence over global cutoff
+    - existing lock versions are preferred unless constraints require change
+    - hypothesis 6.165.9 was uploaded on 2026-08-15 and supports Python 3.14
+
+planning_files_modified:
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T03.yaml
+
+files_allowed_is_exact_allowlist: true
+files_allowed_during_execution:
+  - pyproject.toml
+  - uv.lock
+  - PROJECT_SPEC.md
+  - docs/phase-status.yaml
+  - docs/tasks/PH2-T03.yaml
+  - docs/data/PHASE_2_DEPENDENCY_VERIFICATION.md
+
+files_forbidden_during_execution:
+  - AGENTS.md
+  - README.md
+  - .python-version
+  - .gitignore
+  - .github/**
+  - src/**
+  - tests/**
+  - scripts/**
+  - tools/**
+  - configs/**
+  - data/**
+  - artifacts/**
+  - migrations/**
+  - frontend/**
+  - knowledge/**
+  - docs/adr/**
+  - docs/governance/**
+  - docs/domain/**
+  - docs/ml/**
+  - docs/or/**
+  - docs/evaluation/**
+  - docs/data/BTS_DATA_CONTRACT.md
+  - docs/data/DATA_QUALITY_CONTRACT.md
+  - docs/data/PHASE_2_TOOLCHAIN_DECISION.md
+  - docs/data/PHASE_2_IMPLEMENTATION_PLAN.md
+  - docs/tasks/PH2-T04.yaml
+  - docs/tasks/PH2-T05.yaml
+  - docs/tasks/PH2-T06.yaml
+  - docs/tasks/PH2-T07.yaml
+  - docs/tasks/PH2-T08.yaml
+  - docs/tasks/PH2-T09.yaml
+  - docs/tasks/PH2-T10.yaml
+  - docs/tasks/PH2-T11.yaml
+
+in_scope:
+  - baseline main commit Foundation success ve immutable hash preflight'i
+  - exact pyproject dependency delta'sının OS temporary candidate copy'de uygulanması
+  - yalnız hypothesis için package-specific upload cutoff eklenmesi
+  - beş yeni paketin no-build-package listesine eklenmesi
+  - canonical PyPI üzerinden candidate uv.lock çözümü
+  - existing lock package version source marker ve hash'lerinin korunması
+  - observed candidate graph'ın exact expected delta ile karşılaştırılması
+  - CPython 3.14.7 Linux x86_64 için wheel-only installability doğrulaması
+  - iki bağımsız temiz environment'ta frozen all-groups sync ve inventory hash eşitliği
+  - direct package import ve runtime version doğrulaması
+  - uv audit vulnerability deprecation quarantine ve malware-status kapıları
+  - direct ve transitive dependency SPDX license inventory'si
+  - mevcut Ruff format lint mypy strict pytest wheel ve sdist build kapıları
+  - candidate lock byte/hash ve normalized inventory kanıtı
+  - bütün kapılar geçerse exact pyproject ve lock dosyalarının atomik promotion'ı
+  - mevcut Foundation workflow'unu değiştirmeden result commit hosted doğrulaması
+  - yalnız sanitize edilmiş dependency verification raporu
+
+out_of_scope:
+  - herhangi bir BTS data request download ZIP CSV veya data row erişimi
+  - acquisition client manifest schema quality timezone processing feature veya domain implementation'ı
+  - source test fixture config workflow migration data ya da artifact oluşturmak
+  - dependency version değiştirmek aralık kullanmak extra etkinleştirmek veya altıncı paket kabul etmek
+  - vulnerability ya da license bulgusunu ignore suppress allowlist veya override etmek
+  - foundation dependency'lerini yükseltmek veya alternate index kullanmak
+  - uv Python paket yöneticisi veya build backend değiştirmek
+  - Phase 3 ve sonrası için dependency placeholder interface adapter veya TODO
+  - PH2-T04 görevini oluşturmak veya planlamak
+
+execution_sequence:
+  - exact execution approval ve baseline main/Foundation preflight'i kaydet
+  - repository mutation yapmadan OS temporary candidate copy oluştur
+  - candidate pyproject'e exact five-package delta ve hypothesis cutoff uygula
+  - uv 0.12.3 ile upgrade/refresh olmadan candidate lock çöz
+  - graph diff source marker upload cutoff wheel ve license metadata kapılarını çalıştır
+  - iki bağımsız temporary environment'ta frozen all-groups sync yap
+  - normalized package inventory hash'lerini karşılaştır
+  - import/version audit adverse-status license quality test ve build kapılarını çalıştır
+  - bütün geçici environment cache SBOM build ve report byte'larını temizle
+  - yalnız bütün kapılar geçerse candidate pyproject ve uv.lock dosyalarını repository'ye al
+  - task phase project ve sanitize verification report'u güncelle
+  - local final gate'leri yeniden çalıştır ve result commit'i main'e yayımla
+  - hosted Foundation success ve artifact zero sonucunu doğrula
+
+acceptance_criteria:
+  - execution başlamadan exact approval task içinde kaydedilmiş olmalı
+  - global foundation cutoff byte-anlamıyla korunmalı
+  - package-specific cutoff yalnız hypothesis için exact timestamp taşımalı
+  - project graph'a yalnız approved beş package eklenmeli
+  - mevcut lock package version source ve resolution marker'ları değişmemeli
+  - bütün yeni direct package sürümleri exact ve extrasız olmalı
+  - zorunlu source distribution build olmamalı
+  - iki clean-room frozen sync normalized inventory hash'i aynı olmalı
+  - direct import/version sonuçları exact seçilen sürümlerle eşleşmeli
+  - vulnerability adverse status malware veya kabul edilmeyen license sıfır olmalı
+  - format lint strict type pytest build ve lock check geçmeli
+  - source tests workflow configs data ve accepted contracts byte-identical kalmalı
+  - transient environment cache wheel sdist SBOM veya audit byte'ı repository'de kalmamalı
+  - PH2-T04 veya Phase 3+ dosyası oluşmamalı
+  - current result commit Foundation workflow'unda success ve artifact zero olmalı
+
+tests_required:
+  - bütün repository YAML dosyaları safe parser ile parse edilebilmeli
+  - pyproject TOML standard parser ile parse edilebilmeli
+  - uv lock --check ve iki frozen exact sync geçmeli
+  - observed package-name version source marker graph diff exact olmalı
+  - existing external package setinin name-version-source üçlüleri aynı kalmalı
+  - five new package için Linux x86_64 CPython 3.14 compatible wheel seçilmeli
+  - no-build policy altında hiçbir package build edilmemeli
+  - airportsdata duckdb hypothesis sortedcontainers tzdata import/version smoke geçmeli
+  - uv audit vulnerability deprecation quarantine malware kapıları geçmeli
+  - license inventory yalnız MIT Apache-2.0 MPL-2.0 ve mevcut accepted license setini taşımalı
+  - Ruff format check lint mypy strict pytest wheel sdist build geçmeli
+  - immutable hash ve exact execution file allowlist kontrolü geçmeli
+  - conflict marker ve dengesiz Markdown code fence bulunmamalı
+
+result_contracts:
+  PASSED:
+    task_status: COMPLETED
+    result_status: DEPENDENCY_LOCK_VERIFIED
+    phase_2_status: ACTIVE
+    phase_2_gate: PH2_T03_DEPENDENCY_LOCK_VERIFIED_READY_FOR_PH2_T04_PLANNING
+    active_task: null
+    next_task_rule: PH2_T04_MAY_ONLY_BE_PLANNED
+  BLOCKED:
+    task_status: BLOCKED
+    phase_2_status: ACTIVE
+    phase_2_gate: PH2_T03_BLOCKED_REQUIRES_HUMAN_DECISION
+    active_task: null
+    next_task_rule: PH2_T04_FORBIDDEN
+
+dependencies_allowed_before_execution_approval: false
+dependencies_allowed_after_execution_approval: EXACT_APPROVED_FIVE_ONLY
+network_allowed_before_execution_approval: false
+network_allowed_after_execution_approval: CANONICAL_PYPI_AND_EXISTING_GITHUB_FOUNDATION_ONLY
+data_download_allowed: false
+persistent_data_allowed: false
+implementation_allowed: false
+migrations_allowed: false
+workflow_mutation_allowed: false
+automatic_dependency_fallback_allowed: false
+automatic_version_change_allowed: false
+
+transient_paths:
+  allowed_during_execution:
+    - OS temporary candidate project
+    - OS temporary clean environments
+    - .venv/**
+    - .ruff_cache/**
+    - .mypy_cache/**
+    - .pytest_cache/**
+    - __pycache__/**
+    - uv cache outside repository
+    - build dist SBOM audit and license files outside repository
+  checkpoint_rule: MUST_BE_REMOVED_OR_IGNORED_BEFORE_RESULT_COMMIT
+
+stop_conditions:
+  - exact execution approval kaydedilmemişse
+  - baseline main veya Foundation sonucu değişmiş ya da başarısızsa
+  - baseline immutable hash'lerden biri uyuşmuyorsa
+  - uv exact package-specific cutoff ayarını reddederse
+  - global cutoff'u değiştirmek veya hypothesis dışında override eklemek gerekirse
+  - existing locked package version source marker veya hash değişirse
+  - approved beş package dışında yeni package oluşursa
+  - zorunlu wheel bulunmaz veya sdist build gerekirse
+  - yanked prerelease vulnerability adverse status malware ya da kabul edilmeyen license görülürse
+  - iki clean-room inventory hash'i farklıysa
+  - import version quality test build veya audit kapılarından biri başarısızsa
+  - bulguyu geçirmek için ignore suppression version değişikliği ya da alternate index gerekirse
+  - onaylı exact file allowlist dışında mutation gerekirse
+  - data source test config workflow migration implementation PH2-T04 veya Phase 3+ işi gerekirse
+
+validation_results:
+  planning_scope: PASSED
+  ph2_t02_source_compatible_precondition: PASSED
+  baseline_main_foundation: PASSED
+  exact_dependency_delta: PLANNED_NOT_EXECUTED
+  package_specific_cutoff_conflict: RESOLVED_IN_PLAN_NOT_APPLIED
+  dependency_resolution: NOT_RUN_REQUIRES_EXECUTION_APPROVAL
+  repository_mutation: PLANNING_FILES_ONLY
+  data_rows_read: 0
+  data_downloads: 0

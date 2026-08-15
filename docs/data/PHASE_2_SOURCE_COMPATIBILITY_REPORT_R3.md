@@ -98,8 +98,15 @@ değiştirilmeden referans alınmıştır. R3 formu tekrar fetch etmemiştir.
 ## 7. Hosted kanıt
 
 Discovery workflow ve aynı commit'teki Foundation workflow `success` ile
-tamamlanmış, ikisi de sıfır artifact üretmiştir. Result ve final closeout
-commit/run kanıtları cleanup doğrulamasından sonra bu bölüme eklenir.
+tamamlanmış, ikisi de sıfır artifact üretmiştir. Result/cleanup commit'i
+`24e2bd29966ef3e02c0eaff4a346c884f6f24155` üzerindeki Foundation run
+`31891334535`, job `95027937098` ile başarıyla tamamlanmış ve sıfır artifact
+üretmiştir. Geçici workflow yolu aynı commit'te GitHub Contents API üzerinden
+`404 Not Found` olarak doğrulanmıştır.
+
+Final closeout commit ve onun Foundation sonucu repository dışı hosted kanıt
+olarak görev kapanışında doğrulanır; commit kendi SHA'sını öz-referanslı olarak
+içeriğine yazmaz.
 
 ## 8. Downstream kapısı
 
